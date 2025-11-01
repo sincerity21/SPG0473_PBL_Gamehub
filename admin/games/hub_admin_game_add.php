@@ -1,6 +1,6 @@
 <?php
 define('ROOT_PATH', __DIR__ . '/');
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 $error = '';
 

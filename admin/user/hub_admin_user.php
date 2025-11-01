@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // --- 1. Authentication Check (Must be logged in) ---
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
@@ -12,7 +12,7 @@ if (!isset($_SESSION['username'])) {
 // We check if the 'is_admin' session variable is NOT set OR if it is set but NOT true (i.e., not an admin).
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     // Redirect non-admin users to the regular user home page
-    header('Location: ../hub_home.php'); 
+    header('Location: ../../main/hub_home.php'); 
     exit();
 }
 
@@ -113,8 +113,8 @@ $users = selectAllUsers();
 <body>
 <div class="navbar">
     <a href="hub_admin_user.php" class="active">Admin Home</a>
-    <a href="hub_admin_games.php">Manage Games</a>
-    <a href="../hub_logout.php">Logout</a>
+    <a href="../games/hub_admin_games.php">Manage Games</a>
+    <a href="../../hub_logout.php">Logout</a>
 </div>
 
 <div class="content">

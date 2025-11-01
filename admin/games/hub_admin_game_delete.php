@@ -1,5 +1,5 @@
 <?php
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // Define the root path for file deletion
 define('ROOT_PATH', __DIR__ . '/'); 

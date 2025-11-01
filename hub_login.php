@@ -23,7 +23,7 @@ if ($_POST) {
             // Admin User
             $_SESSION['is_admin'] = true;
             // Redirect Admin to the index/user listing page
-            header("Location: admin/hub_admin_user.php"); 
+            header("Location: admin/user/hub_admin_user.php"); 
         } else {
             // Standard User
             $_SESSION['is_admin'] = false;

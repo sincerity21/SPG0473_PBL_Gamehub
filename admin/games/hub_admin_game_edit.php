@@ -1,5 +1,5 @@
 <?php
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // Define the root path and upload directory for file handling
 define('ROOT_PATH', __DIR__ . '/'); 

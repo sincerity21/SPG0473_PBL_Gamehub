@@ -2,7 +2,7 @@
 // Ensure this file is now called hub_admin_gallery_add.php
 session_start();
 // Assuming hub_conn.php is one level up from the admin folder
-require '../hub_conn.php'; 
+require '../../hub_conn.php'; 
 
 // Define ROOT_PATH relative to the PHP file's location
 // This helps locate the actual uploads directory on the server's file system
@@ -10,7 +10,7 @@ define('ROOT_PATH', __DIR__ . '/');
 
 // Check for user login
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gallery_images'])) {
     // Create the physical upload directory if it doesn't exist (e.g., /PBL/uploads/gallery/)
     // We navigate UP one directory (../) from the 'admin' folder to reach the 'PBL' root,
     // then define the full server path to the gallery folder.
-    $server_upload_path = __DIR__ . '/../' . $upload_dir; 
+    $server_upload_path = __DIR__ . '/../../' . $upload_dir; 
 
     if (!is_dir($server_upload_path)) {
         mkdir($server_upload_path, 0777, true);
@@ -136,9 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gallery_images'])) {
 </head>
 <body>
     <div class="navbar">
-        <a href="hub_admin_user.php">Admin Home</a>
-        <a href="hub_admin_games.php"class="active">Manage Games</a>
-        <a href="../hub_logout.php">Logout</a>
+        <a href="../user/hub_admin_user.php">Admin Home</a>
+        <a href="../games/hub_admin_games.php"class="active">Manage Games</a>
+        <a href="../../hub_logout.php">Logout</a>
     </div>
 
     <div class="container">

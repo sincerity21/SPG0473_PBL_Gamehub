@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // --- SECURITY CHECKS START ---
 

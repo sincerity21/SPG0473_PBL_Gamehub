@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // Assuming you have added the selectAllGames function to ../hub_conn.php:
 // function selectAllGames(){
@@ -11,7 +11,7 @@ require '../hub_conn.php';
 // }
 
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }   
 
@@ -128,9 +128,9 @@ $games = selectAllGames();
 </head>
 <body>
 <div class="navbar">
-    <a href="hub_admin_user.php">Admin Home</a>
+    <a href="../user/hub_admin_user.php">Admin Home</a>
     <a href="hub_admin_games.php" class="active">Manage Games</a>
-    <a href="../hub_logout.php">Logout</a>
+    <a href="../../hub_logout.php">Logout</a>
 </div>
 
 <div class="content">
@@ -160,7 +160,7 @@ $games = selectAllGames();
                 <td>
                     <?php if ($game['game_img']): ?>
                         <img 
-                            src="../<?php echo htmlspecialchars($game['game_img']); ?>" 
+                            src="../../<?php echo htmlspecialchars($game['game_img']); ?>" 
                             alt="<?php echo htmlspecialchars($game['game_name']); ?> Cover" 
                             class="game-image"
                         >
@@ -170,7 +170,7 @@ $games = selectAllGames();
                 </td>
                 <td><a href="<?php echo htmlspecialchars($game['game_trailerLink']); ?>" target="_blank">Watch Trailer</a></td>
                 <td>
-                    <a href="hub_admin_img.php?game_id=<?php echo htmlspecialchars($game['game_id']); ?>">🖼️ Gallery</a> |
+                    <a href="../img/hub_admin_img.php?game_id=<?php echo htmlspecialchars($game['game_id']); ?>">🖼️ Gallery</a> |
                     <a href="hub_admin_game_edit.php?id=<?php echo htmlspecialchars($game['game_id']); ?>">Edit</a> |
                     <a href="hub_admin_game_delete.php?id=<?php echo htmlspecialchars($game['game_id']); ?>">Delete</a>
                 </td>

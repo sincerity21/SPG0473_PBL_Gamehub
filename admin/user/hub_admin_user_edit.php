@@ -1,7 +1,7 @@
 <?php
 // Ensure session is started if needed for admin authentication (though not explicitly shown here)
 // session_start(); 
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // Check if ID is provided and numeric
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

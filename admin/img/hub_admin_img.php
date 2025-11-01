@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../hub_conn.php';
+require '../../hub_conn.php';
 
 // Check for user login
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
@@ -70,9 +70,9 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
 </head>
 <body>
 <div class="navbar">
-    <a href="hub_admin_user.php">Admin Home</a>
-    <a href="hub_admin_games.php"class="active">Manage Games</a>
-    <a href="../hub_logout.php">Logout</a>
+    <a href="../user/hub_admin_user.php">Admin Home</a>
+    <a href="../games/hub_admin_games.php"class="active">Manage Games</a>
+    <a href="../../hub_logout.php">Logout</a>
 </div>
 
 <div class="content">
@@ -82,7 +82,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
     
         <div class="current-game-info">
             Managing Gallery for: <strong><?php echo htmlspecialchars($current_game['game_name']); ?></strong> (ID: <?php echo $game_id; ?>) | 
-            <a href="hub_admin_games.php">← Back to Game List</a>
+            <a href="../games/hub_admin_games.php">← Back to Game List</a>
         </div>
         
         <a href="hub_admin_img_add.php?game_id=<?php echo $game_id; ?>" class="add-link">➕ Add New Pictures to Gallery</a>
@@ -94,7 +94,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
             <?php foreach ($gallery_images as $image): ?>
                 <div class="gallery-image-card">
                     <img 
-                        src="../<?php echo htmlspecialchars($image['img_path']); ?>" 
+                        src="../../<?php echo htmlspecialchars($image['img_path']); ?>" 
                         alt="Gallery Image ID <?php echo $image['game_img_id']; ?>"
                     >
 
@@ -144,7 +144,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
                         <td><?php echo htmlspecialchars($game['game_name']); ?></td>
                         <td>
                             <?php if ($game['game_img']): ?>
-                                <img src="../<?php echo htmlspecialchars($game['game_img']); ?>" class="game-image">
+                                <img src="../../<?php echo htmlspecialchars($game['game_img']); ?>" class="game-image">
                             <?php else: ?>
                                 No Cover
                             <?php endif; ?>

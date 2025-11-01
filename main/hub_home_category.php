@@ -38,9 +38,8 @@ if (empty($random_images)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category'])) {
     $category = strtolower(trim($_POST['selected_category']));
     
-    // Redirect to the category-specific page. 
-    // Example: hub_games_rpg.php, hub_games_fps.php
-    header("Location: hub_games_{$category}.php");
+    // New: Redirect to the single view file with the category as a URL parameter
+    header("Location: category/hub_games_view.php?cat={$category}");
     exit();
 }
 ?>

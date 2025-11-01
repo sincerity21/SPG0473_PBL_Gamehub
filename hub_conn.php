@@ -469,6 +469,32 @@ function selectRandomGalleryImages($limit = 9){
 }
 
 /**
+ * Retrieves all games belonging to a specific category.
+ * @param string $category_value The unique category string (e.g., 'rpg').
+ * @return array An array of game records, or an empty array on failure/no games.
+ */
+function selectGamesByCategory($category_value){
+    global $conn;
+    
+    $sql = "SELECT * FROM games WHERE game_category = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        error_log("Prepare failed in selectGamesByCategory: " . $conn->error);
+        return [];
+    }
+
+    $stmt->bind_param("s", $category_value);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $games = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    
+    return $games;
+}
+
+
+/**
  * Retrieves the user's ID and current security answer (sec_answer) by username.
  * This function is used by the admin tool to check/update old plain text answers.
  * @param mysqli $conn The MySQLi database connection object.

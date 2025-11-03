@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
     $category = strtolower(trim($_POST['selected_category']));
     
     // New: Redirect to the single view file with the category as a URL parameter
-    header("Location: category/hub_games_view.php?cat={$category}");
+    header("Location: hub_games_view.php?cat={$category}");
     exit();
 }
 ?>

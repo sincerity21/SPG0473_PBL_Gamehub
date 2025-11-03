@@ -1,4 +1,5 @@
-// Image file types; all images will be put inside Releases instead
+# Image file types; all images will be put inside Releases instead
+uploads/*
 *.avif
 *.jpeg
 *.jpg

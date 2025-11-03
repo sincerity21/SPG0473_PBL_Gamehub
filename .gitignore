@@ -6,3 +6,7 @@ uploads/*
 *.png
 *.webp
 uploads.7z
+
+# Github-related files
+.gitattributes
+.gitignore

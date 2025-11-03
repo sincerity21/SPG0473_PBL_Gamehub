@@ -236,8 +236,6 @@ $username = htmlspecialchars($_SESSION['username']);
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <!-- Assuming you will create a Library page for games -->
     <a href="hub_library.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
-    <!-- Assuming you will create a Profile page -->
-    <a href="hub_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
 
     <div class="menu-divider"></div>
     

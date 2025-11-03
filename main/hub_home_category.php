@@ -267,7 +267,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
-    <a href="hub_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
 
     <div class="menu-divider"></div>
     

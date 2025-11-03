@@ -1,16 +1,16 @@
 <?php
 session_start();
-require '../../hub_conn.php'; 
+require '../hub_conn.php'; 
 
 if (!isset($_SESSION['username'])) {
-    header('Location: ../../hub_login.php');
+    header('Location: ../hub_login.php');
     exit();
 } 
 
 $current_category_value = isset($_GET['cat']) ? strtolower(trim($_GET['cat'])) : '';
 
 if (empty($current_category_value)) {
-    header('Location: ../hub_home_category.php');
+    header('Location: hub_home_category.php');
     exit();
 }
 
@@ -178,8 +178,8 @@ $username = htmlspecialchars($_SESSION['username']);
 </div>
 
 <div class="side-menu" id="sideMenu">
-    <a href="../hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="../hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
 
     <div class="menu-divider"></div>
     
@@ -190,14 +190,14 @@ $username = htmlspecialchars($_SESSION['username']);
 
     <div class="menu-divider"></div>
 
-    <a href="../../hub_logout.php" class="logout-link">
+    <a href="../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
     </a>
 </div>
 
 <div class="content-container">
-    <a href="../hub_home_category.php" class="back-link">
+    <a href="hub_home_category.php" class="back-link">
         <i class="fas fa-chevron-left"></i> Back to Categories
     </a>
 
@@ -226,7 +226,7 @@ $username = htmlspecialchars($_SESSION['username']);
                 <?php if (!empty($initial_game_images_data)): ?>
                     <?php foreach ($initial_game_images_data as $index => $image_data): ?>
                         <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                            <img src="../../<?php echo htmlspecialchars($image_data['img_path']); ?>" alt="Game Screenshot">
+                            <img src="../<?php echo htmlspecialchars($image_data['img_path']); ?>" alt="Game Screenshot">
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -382,7 +382,7 @@ $username = htmlspecialchars($_SESSION['username']);
     async function updateGameDisplay(gameId) {
         // ... (The rest of your AJAX and DOM manipulation code remains the same) ...
         try {
-            const response = await fetch(`../../hub_fetch_game_images.php?game_id=${gameId}`);
+            const response = await fetch(`../hub_fetch_game_images.php?game_id=${gameId}`);
             const data = await response.json();
 
             const slideshowContent = document.getElementById('slideshow-content');
@@ -404,7 +404,7 @@ $username = htmlspecialchars($_SESSION['username']);
                     const slideDiv = document.createElement('div');
                     slideDiv.className = `slide ${index === 0 ? 'active' : ''}`;
                     const img = document.createElement('img');
-                    img.src = `../../${image_data.img_path}`; 
+                    img.src = `../${image_data.img_path}`; 
                     img.alt = 'Game Screenshot';
                     slideDiv.appendChild(img);
                     slideshowContent.appendChild(slideDiv);

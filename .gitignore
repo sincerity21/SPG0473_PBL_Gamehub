@@ -1,0 +1,6 @@
+// Image file types; all images will be put inside Releases instead
+*.avif
+*.jpeg
+*.jpg
+*.png
+*.webp

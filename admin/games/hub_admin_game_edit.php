@@ -2,7 +2,7 @@
 require '../../hub_conn.php';
 
 // Define the root path and upload directory for file handling
-define('ROOT_PATH', __DIR__ . '/'); 
+define('ROOT_PATH', __DIR__ . '/../../'); 
 $upload_dir = 'uploads/images/';
 
 // 1. Get initial data

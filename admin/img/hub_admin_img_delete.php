@@ -28,9 +28,8 @@ if ($deleted_data) {
     // --- CRITICAL STEP: Physical File Deletion ---
     
     // 1. Define the full server path to the file.
-    // We are currently in /PBL/admin/, and files are stored as uploads/gallery/...
-    // So we need to go UP one directory (../) to the project root /PBL/.
-    $server_file_path = __DIR__ . '/../' . $file_path; 
+    // UPDATED: Path corrected from /../ to /../../ to point to project root
+    $server_file_path = __DIR__ . '/../../' . $file_path; 
 
     // 2. Check if the file exists on the server and attempt to delete it
     if (file_exists($server_file_path)) {
@@ -55,3 +54,4 @@ $redirect_url = ($game_id) ? 'hub_admin_img.php?game_id=' . $game_id : 'hub_admi
 header('Location: ' . $redirect_url);
 exit();
 ?>
+

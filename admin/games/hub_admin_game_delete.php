@@ -2,7 +2,7 @@
 require '../../hub_conn.php';
 
 // Define the root path for file deletion
-define('ROOT_PATH', __DIR__ . '/'); 
+define('ROOT_PATH', __DIR__ . '/../../'); 
 
 // 1. Check for ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {

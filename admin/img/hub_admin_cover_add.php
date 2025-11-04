@@ -113,30 +113,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['cover_image'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Game Cover - <?php echo htmlspecialchars($current_game['game_name']); ?></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* 2. CSS VARIABLES ADDED */
+        :root {
+            --bg-color: #f4f7f6;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-color: #ccc;
+            --header-text-color: #2c3e50;
+            --accent-color: #9b59b6; /* Purple accent for this page */
+            --label-text-color: #555;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #f4f4f4;
+            --card-bg-color: #1e1e1e;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --border-color: #555;
+            --header-text-color: #ecf0f1;
+            --accent-color: #bb86fc; /* Lighter purple */
+            --label-text-color: #bbb;
+        }
+        /* END CSS VARIABLES */
+
+        /* 3. EXISTING CSS UPDATED TO USE VARIABLES */
         /* Consistent Styling from hub_game_add.php and hub_admin_img.php */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--main-text-color); transition: background-color 0.3s, color 0.3s; }
         .navbar { background-color: #2c3e50; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         .navbar a { float: left; display: block; color: white; text-align: center; padding: 16px 20px; text-decoration: none; transition: background-color 0.3s; }
         .navbar a:hover { background-color: #34495e; }
         .navbar a.active { background-color: #1abc9c; } 
-        .container { max-width: 600px; margin: 50px auto; padding: 30px; background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        h2 { color: #2c3e50; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #9b59b6; padding-bottom: 10px; }
+        .container { max-width: 600px; margin: 50px auto; padding: 30px; background-color: var(--card-bg-color); border-radius: 8px; box-shadow: 0 4px 8px var(--shadow-color); }
+        h2 { color: var(--header-text-color); text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; }
+        h3 { color: var(--header-text-color); }
+        a { color: var(--accent-color); }
         .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
-        .btn { width: 100%; padding: 12px; background-color: #9b59b6; color: white; border: none; border-radius: 4px; font-size: 18px; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--label-text-color); }
+        input[type="file"] { width: 100%; padding: 10px; border: 1px solid var(--border-color); background-color: var(--card-bg-color); color: var(--main-text-color); border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 4px; font-size: 18px; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
         .btn:hover { background-color: #8e44ad; }
         .message { padding: 15px; margin-bottom: 20px; border-radius: 4px; font-weight: bold; text-align: center;}
         .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* 4. DARK MODE SWITCH STYLE ADDED */
+        .dark-mode-switch {
+            float: right;
+            padding: 16px 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.1em;
+            transition: color 0.3s;
+        }
+        .dark-mode-switch:hover {
+            color: #1abc9c;
+        }
     </style>
 </head>
-<body>
-    <div class="navbar">
+<body id="appBody"> <div class="navbar">
         <a href="../user/hub_admin_user.php">Admin Home</a>
         <a href="../games/hub_admin_games.php"class="active">Manage Games</a>
         <a href="../../hub_logout.php">Logout</a>
+
+        <div class="dark-mode-switch" onclick="toggleDarkMode()">
+            <i class="fas fa-moon" id="darkModeIcon"></i>
+        </div>
     </div>
 
     <div class="container">
@@ -168,6 +212,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['cover_image'])) {
             <button type="submit" class="btn">Upload and Set as Cover</button>
         </form>
     </div>
+
+<script>
+    const body = document.getElementById('appBody');
+    const darkModeIcon = document.getElementById('darkModeIcon');
+    const darkModeKey = 'adminGamehubDarkMode';
+
+    function applyDarkMode(isDark) {
+        if (isDark) {
+            body.classList.add('dark-mode');
+            if (darkModeIcon) darkModeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            body.classList.remove('dark-mode');
+            if (darkModeIcon) darkModeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+    }
+
+    function toggleDarkMode() {
+        const isDark = body.classList.contains('dark-mode');
+        applyDarkMode(!isDark);
+        localStorage.setItem(darkModeKey, !isDark ? 'dark' : 'light');
+    }
+
+    (function loadDarkModePreference() {
+        const savedMode = localStorage.getItem(darkModeKey);
+        const isDark = savedMode === 'dark'; 
+        applyDarkMode(isDark);
+    })();
+</script>
 </body>
 </html>
-

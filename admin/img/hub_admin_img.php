@@ -18,7 +18,7 @@ $games = selectAllGames();
 $gallery_images = [];
 $cover_images = []; // <-- Initialize cover images array
 $current_game = null;
-$cover_button_text = "âž• Add New Cover"; // <-- NEW: Default button text
+$cover_button_text = "➕ Add New Cover"; // <-- NEW: Default button text
 
 if ($game_id) {
     // Get the main game data
@@ -34,7 +34,7 @@ if ($game_id) {
             
             // --- NEW: Set button text based on whether a cover exists ---
             if (!empty($cover_images)) {
-                $cover_button_text = "âž• Replace Game Cover";
+                $cover_button_text = "➕ Replace Game Cover";
             }
             // --- END NEW ---
 
@@ -161,7 +161,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     
         <div class="current-game-info">
             Managing Images for: <strong><?php echo htmlspecialchars($current_game['game_name']); ?></strong> (ID: <?php echo $game_id; ?>) | 
-            <a href="../games/hub_admin_games.php">â†  Back to Game List</a>
+            <a href="../games/hub_admin_games.php">← Back to Game List</a>
         </div>
         
         
@@ -196,7 +196,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
         <hr class="section-divider">
         <h2>Gallery Images</h2>
         
-        <a href="hub_admin_img_add.php?game_id=<?php echo $game_id; ?>" class="add-link">âž• Add New Pictures to Gallery</a>
+        <a href="hub_admin_img_add.php?game_id=<?php echo $game_id; ?>" class="add-link">➕ Add New Pictures to Gallery</a>
 
         <?php if (!empty($gallery_images)): ?>
             <div class="gallery-image-container">
@@ -213,13 +213,13 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
                             href="hub_admin_img_sortplus.php?id=<?php echo $image['game_img_id']; ?>&game_id=<?php echo $game_id; ?>"
                             title="Increase Order" style="text-decoration: none; font-weight: bold; margin-left: 10px;"
                         >
-                    âž•
+                    ➕
                     </a>
                         <a 
                             href="hub_admin_img_sortminus.php?id=<?php echo $image['game_img_id']; ?>&game_id=<?php echo $game_id; ?>"
                             title="Decrease Order" style="text-decoration: none; font-weight: bold; margin-left: 5px;"
                         >
-                    âž–
+                    ➖
                     </a>
                 </p>
                 <p>

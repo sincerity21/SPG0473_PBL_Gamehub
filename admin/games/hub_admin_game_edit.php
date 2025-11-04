@@ -1,5 +1,13 @@
 <?php
+session_start(); // Added session_start for admin auth
 require '../../hub_conn.php';
+
+// --- Admin Auth Check (Added) ---
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+    header('Location: ../../hub_login.php'); 
+    exit();
+}
+// --- End Auth Check ---
 
 // Define the root path and upload directory for file handling
 define('ROOT_PATH', __DIR__ . '/../../'); 
@@ -93,6 +101,29 @@ if ($_POST) {
             background-color: #f4f7f6;
             color: #333;
         }
+
+        /* --- NEW: Navbar Styles --- */
+        .navbar {
+            background-color: #2c3e50; /* Consistent Navbar Background */
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 16px 20px; /* Consistent Padding */
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #34495e;
+        }
+        .navbar a.active { 
+            background-color: #1abc9c; 
+        }
+        /* --- END: Navbar Styles --- */
         
         /* Consistent Container for Form */
         .container { 
@@ -177,10 +208,30 @@ if ($_POST) {
             margin-bottom: 15px; 
             text-align: center;
         }
+
+        /* --- NEW: Back Link Style --- */
+        .back-link {
+            text-decoration: none; 
+            color: #3498db; 
+            font-weight: bold; 
+            display: inline-block; 
+            margin-bottom: 15px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+
+<div class="navbar">
+    <a href="../user/hub_admin_user.php">Admin Home</a>
+    <a href="hub_admin_games.php" class="active">Manage Games</a>
+    <a href="../../hub_logout.php">Logout</a>
+</div>
 <div class="container">
+    
+    <a href="hub_admin_games.php" class="back-link">&larr; Back to Game List</a>
     <h2>Edit Game: <?php echo htmlspecialchars($game['game_name']); ?></h2>
     
     <?php if ($error): ?>
@@ -216,7 +267,7 @@ if ($_POST) {
         <div class="form-group">
             <label>Current Image:</label>
             <?php if (!empty($game['game_img'])): ?>
-                <img src="<?php echo htmlspecialchars($game['game_img']); ?>" class="current-img" alt="Current Game Image">
+                <img src="../../<?php echo htmlspecialchars($game['game_img']); ?>" class="current-img" alt="Current Game Image">
                 <p><small>File: <?php echo htmlspecialchars($game['game_img']); ?></small></p>
             <?php else: ?>
                 <p>No current image.</p>

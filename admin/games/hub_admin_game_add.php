@@ -1,9 +1,10 @@
 <?php
-define('ROOT_PATH', __DIR__ . '/');
+session_start(); // Added for consistency
+define('ROOT_PATH', __DIR__ . '/../../');
 require '../../hub_conn.php';
 
 $error = '';
-
+// ... (rest of your existing PHP code) ...
 if($_POST){
     // 1. Collect POST data
     $game_category = $_POST['game_category'];
@@ -75,21 +76,53 @@ if($_POST){
             background-color: #f4f7f6;
             color: #333;
         }
-        
-        /* Consistent Container for Form */
+
+        /* --- NEW: Navbar Styles --- */
+        .navbar {
+            background-color: #2c3e50;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 16px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #34495e;
+        }
+        .navbar a.active { 
+            background-color: #1abc9c; 
+        }
+        /* --- END NEW --- */
+
+        /* --- NEW: Content Wrapper --- */
+        .content {
+            padding: 30px;
+            max-width: 600px; /* Adjusted to match container */
+            margin: 0 auto;
+        }
+        /* --- END NEW --- */
+
+        /* Form Container */
         .container { 
-            max-width: 600px; 
-            margin: 50px auto; 
+            width: 100%; /* Fill the content area */
             padding: 30px; 
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            box-sizing: border-box; /* Added */
         }
         
         /* Consistent Heading */
         h2 {
             color: #2c3e50;
             text-align: center;
+            margin-top: 0; /* Adjusted */
             margin-bottom: 25px;
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
@@ -122,7 +155,7 @@ if($_POST){
             resize: vertical; /* Allows vertical resizing */
         }
         
-        /* Submit Button Styling (Consistent with other blue accents) */
+        /* Submit Button Styling */
         .btn {
             width: 100%;
             padding: 12px;
@@ -149,10 +182,38 @@ if($_POST){
             margin-bottom: 15px; 
             text-align: center;
         }
+
+        /* --- NEW: Back Link --- */
+        .back-link {
+            display: block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* --- END NEW --- */
     </style>
 </head>
 <body>
+
+<!-- --- NEW: Navbar --- -->
+<div class="navbar">
+    <a href="../user/hub_admin_user.php">Admin Home</a>
+    <a href="hub_admin_games.php" class="active">Manage Games</a>
+    <a href="../../hub_logout.php">Logout</a>
+</div>
+<!-- --- END NEW --- -->
+
+<!-- --- NEW: Content Wrapper --- -->
+<div class="content">
     <div class="container">
+        
+        <!-- --- NEW: Back Link --- -->
+        <a href="hub_admin_games.php" class="back-link">← Back to Game List</a>
+
         <h2>Add New Game</h2>
         
         <?php if ($error): ?>
@@ -197,8 +258,8 @@ if($_POST){
             
             <button type="submit" class="btn">Add Game</button>
         </form>
-
-        
     </div>
+</div> <!-- End Content Wrapper -->
+
 </body>
 </html>

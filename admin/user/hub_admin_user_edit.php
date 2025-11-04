@@ -1,9 +1,9 @@
 <?php
-// Ensure session is started if needed for admin authentication (though not explicitly shown here)
-// session_start(); 
+session_start(); // Added for consistency
 require '../../hub_conn.php';
 
 // Check if ID is provided and numeric
+// ... (rest of your existing PHP code) ...
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header('Location: hub_admin_user.php');
     exit();
@@ -69,21 +69,53 @@ $user = selectUserByID($id);
             background-color: #f4f7f6;
             color: #333;
         }
+
+        /* --- NEW: Navbar Styles --- */
+        .navbar {
+            background-color: #2c3e50;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 16px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #34495e;
+        }
+        .navbar a.active { 
+            background-color: #1abc9c; 
+        }
+        /* --- END NEW --- */
+
+        /* --- NEW: Content Wrapper --- */
+        .content {
+            padding: 30px;
+            max-width: 500px; /* Adjusted to match container */
+            margin: 0 auto;
+        }
+        /* --- END NEW --- */
         
-        /* Consistent Container for Form */
+        /* Form Container */
         .container { 
-            max-width: 500px; 
-            margin: 50px auto; 
+            width: 100%; /* Fill the content area */
             padding: 30px; 
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            box-sizing: border-box; /* Added */
         }
         
         /* Consistent Heading */
         h2 {
             color: #2c3e50;
             text-align: center;
+            margin-top: 0; /* Adjusted */
             margin-bottom: 25px;
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
@@ -112,7 +144,7 @@ $user = selectUserByID($id);
             font-size: 16px;
         }
         
-        /* Update Button Styling (Consistent blue accent) */
+        /* Update Button Styling */
         input[type="submit"] {
             width: 100%;
             padding: 12px;
@@ -128,37 +160,75 @@ $user = selectUserByID($id);
         input[type="submit"]:hover {
             background-color: #2980b9;
         }
-        .error { background-color: #e74c3c; color: white; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-weight: bold; }
+        .error { 
+            background-color: #e74c3c; 
+            color: white; 
+            padding: 10px; 
+            border-radius: 4px; 
+            margin-bottom: 15px; 
+            text-align: center; 
+            font-weight: bold; 
+        }
+
+        /* --- NEW: Back Link --- */
+        .back-link {
+            display: block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* --- END NEW --- */
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Edit User: <?php echo htmlspecialchars($user['user_username']); ?></h2>
-    
-    <?php if ($error): ?>
-        <div class="error"><?php echo $error; ?></div>
-    <?php endif; ?>
 
-    <form method="POST">
-        
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['user_username']); ?>" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['user_email']); ?>" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">Password (Leave blank to keep current password):</label>
-            <!-- IMPORTANT: Password field must be type="password" and LEFT BLANK for security -->
-            <input type="password" id="password" name="password" placeholder="Enter new password to change" value=""> 
-        </div>
-        
-        <input type="submit" value="Update User">
-    </form>
+<!-- --- NEW: Navbar --- -->
+<div class="navbar">
+    <a href="hub_admin_user.php" class="active">Admin Home</a>
+    <a href="../games/hub_admin_games.php">Manage Games</a>
+    <a href="../../hub_logout.php">Logout</a>
 </div>
+<!-- --- END NEW --- -->
+
+<!-- --- NEW: Content Wrapper --- -->
+<div class="content">
+    <div class="container">
+
+        <!-- --- NEW: Back Link --- -->
+        <a href="hub_admin_user.php" class="back-link">← Back to User List</a>
+
+        <h2>Edit User: <?php echo htmlspecialchars($user['user_username']); ?></h2>
+        
+        <?php if ($error): ?>
+            <div class="error"><?php echo $error; ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['user_username']); ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['user_email']); ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password (Leave blank to keep current password):</label>
+                <!-- IMPORTANT: Password field must be type="password" and LEFT BLANK for security -->
+                <input type="password" id="password" name="password" placeholder="Enter new password to change" value=""> 
+            </div>
+            
+            <input type="submit" value="Update User">
+        </form>
+    </div>
+</div> <!-- End Content Wrapper -->
+
 </body>
 </html>

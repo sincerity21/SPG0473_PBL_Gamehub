@@ -234,8 +234,12 @@ $username = htmlspecialchars($_SESSION['username']);
 <!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <!-- Assuming you will create a Library page for games -->
-    <a href="hub_library.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
+    
+    <!-- === ADDED LINKS === -->
+    <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
+    <a href="hub_main_about.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    <!-- === END OF ADDED LINKS === -->
 
     <div class="menu-divider"></div>
     
@@ -284,10 +288,10 @@ $username = htmlspecialchars($_SESSION['username']);
     function applyDarkMode(isDark) {
         if (isDark) {
             body.classList.add('dark-mode');
-            darkModeText.textContent = 'Switch Light Mode';
+            if (darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
             body.classList.remove('dark-mode');
-            darkModeText.textContent = 'Switch Dark Mode';
+            if (darkModeText) darkModeText.textContent = 'Switch Dark Mode';
         }
     }
 

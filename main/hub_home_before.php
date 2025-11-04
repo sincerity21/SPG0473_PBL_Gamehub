@@ -1,13 +1,14 @@
 <?php
-session_start();
+// session_start(); // Removed - No login required
 
 // Ensure the user is logged in, otherwise redirect them to the login page
-if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
-    exit();
-}
+// Removed authentication check
+// if (!isset($_SESSION['username'])) {
+//    header('Location: ../hub_login.php');
+//    exit();
+// }
 
-$username = htmlspecialchars($_SESSION['username']);
+// $username = htmlspecialchars($_SESSION['username']); // Removed - No user
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,13 +120,7 @@ $username = htmlspecialchars($_SESSION['username']);
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
         }
-        .logout-link {
-            color: #e74c3c !important; /* Red for Logout (kept static) */
-            font-weight: bold;
-        }
-        .logout-link:hover {
-            background-color: #4e2925; /* Darker hover for dark mode consistency */
-        }
+        /* Removed .logout-link styles as it's no longer present */
         .icon {
             margin-right: 10px;
             width: 20px;
@@ -156,13 +151,13 @@ $username = htmlspecialchars($_SESSION['username']);
             margin-bottom: 40px;
         }
 
-        /* Start Button (Red Accented) */
-        .start-button {
+        /* Login Button (Modified from .start-button) */
+        .login-button {
             padding: 15px 40px;
-            background: #e74c3c;
+            background: #2ecc71; /* Green for login */
             color: white;
             text-decoration: none;
-            border: 2px solid #c0392b;
+            border: 2px solid #27ae60;
             border-radius: 6px;
             font-size: 1.2em;
             font-weight: bold;
@@ -170,8 +165,8 @@ $username = htmlspecialchars($_SESSION['username']);
             transition: all 0.2s ease-in-out;
             margin-top: 50px;
         }
-        .start-button:hover {
-            background: #c0392b;
+        .login-button:hover {
+            background: #27ae60;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
             transform: translateY(-2px);
         }
@@ -231,11 +226,13 @@ $username = htmlspecialchars($_SESSION['username']);
     </button>
 </div>
 
-<!-- Side Menu -->
+<!-- Side Menu (Modified for "before login" state) -->
 <div class="side-menu" id="sideMenu">
-    <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <!-- Assuming you will create a Library page for games -->
-    <a href="hub_library.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    
+    <!-- === REMOVED Home === -->
+    
+    <!-- === UPDATED About Link === -->
+    <a href="hub_main_about_before.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
 
     <div class="menu-divider"></div>
     
@@ -245,22 +242,18 @@ $username = htmlspecialchars($_SESSION['username']);
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
 
-    <div class="menu-divider"></div>
-
-    <a href="../hub_logout.php" class="logout-link">
-        <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-        Logout
-    </a>
+    <!-- === REMOVED Logout === -->
+    
 </div>
 
 <div class="main-content">
-    <h1 class="welcome-title">WELCOME <?php echo strtoupper($username); ?></h1>
+    <h1 class="welcome-title">WELCOME</h1>
     <p class="welcome-subtitle">
         This is the GameHub, where you can rate your favourite games.
     </p>
 
-    <!-- START button (you'll link this to the main game view page next) -->
-    <a href="hub_home_category.php" class="start-button">START</a>
+    <!-- Changed to LOGIN button -->
+    <a href="../hub_login.php" class="login-button">LOGIN</a>
 
     <!-- Blue Wave Background Effect -->
     <div class="wave-container">
@@ -284,10 +277,10 @@ $username = htmlspecialchars($_SESSION['username']);
     function applyDarkMode(isDark) {
         if (isDark) {
             body.classList.add('dark-mode');
-            darkModeText.textContent = 'Switch Light Mode';
+            if (darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
             body.classList.remove('dark-mode');
-            darkModeText.textContent = 'Switch Dark Mode';
+            if (darkModeText) darkModeText.textContent = 'Switch Dark Mode';
         }
     }
 
@@ -315,3 +308,4 @@ $username = htmlspecialchars($_SESSION['username']);
 
 </body>
 </html>
+

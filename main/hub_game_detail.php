@@ -226,9 +226,16 @@ if (empty($gallery_images)) {
     </button>
 </div>
 
+<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    
+    <!-- === ADDED LINKS === -->
+    <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
+    <a href="hub_main_about.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    <!-- === END OF ADDED LINKS === -->
+
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
@@ -257,6 +264,7 @@ if (empty($gallery_images)) {
 
     <div class="game-detail-layout">
         
+        <!-- Left Column: Slideshow -->
         <div class="image-slideshow">
             <div id="slideshow-content">
                 <?php foreach ($gallery_images as $index => $image): ?>
@@ -281,6 +289,7 @@ if (empty($gallery_images)) {
             <?php endif; ?>
         </div>
 
+        <!-- Right Column: Info -->
         <div class="game-info">
             <div class="game-title-header">
                 <h2 class="game-title"><?php echo htmlspecialchars($game['game_name']); ?></h2>

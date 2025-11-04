@@ -54,4 +54,3 @@ $redirect_url = ($game_id) ? 'hub_admin_img.php?game_id=' . $game_id : 'hub_admi
 header('Location: ' . $redirect_url);
 exit();
 ?>
-

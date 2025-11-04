@@ -610,7 +610,120 @@ function deleteGameCover($cover_id) {
     return false;
 }
 
+/**
+ * Selects all games, joining with their respective cover image path.
+ * Uses a LEFT JOIN to include games that may not have a cover.
+ * @return array An array of all game records with cover_path.
+ */
+function selectAllGamesWithCovers(){
+    global $conn;
+    
+    // Selects game details and the cover path
+    $sql = "SELECT 
+                g.game_id, 
+                g.game_name, 
+                g.game_category,
+                gc.cover_path 
+            FROM 
+                games g
+            LEFT JOIN 
+                game_cover gc ON g.game_id = gc.game_id
+            ORDER BY 
+                g.game_name ASC";
+                
+    $result = $conn->query($sql);
+    
+    if ($result === false) {
+        error_log("Query failed in selectAllGamesWithCovers: " . $conn->error);
+        return [];
+    }
+    
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 
+/**
+ * Selects the existing feedback (rating and favorite) for a specific user and game
+ * by querying the new 'rating' and 'favourites' tables.
+ * @param int $user_id The ID of the user.
+ * @param int $game_id The ID of the game.
+ * @return array A combined array: ['game_rating' => 0, 'favorite_game' => 0]
+ */
+function selectUserGameFeedback($user_id, $game_id){
+    global $conn;
+    $feedback = ['game_rating' => 0, 'favorite_game' => 0]; // Default values
+
+    // 1. Get rating from 'rating' table
+    $sql_rating = "SELECT rating_game FROM rating WHERE user_id = ? AND game_id = ?";
+    $stmt_rating = $conn->prepare($sql_rating);
+    $stmt_rating->bind_param("ii", $user_id, $game_id);
+    $stmt_rating->execute();
+    $result_rating = $stmt_rating->get_result();
+    if ($row_rating = $result_rating->fetch_assoc()) {
+        $feedback['game_rating'] = (int)$row_rating['rating_game'];
+    }
+    $stmt_rating->close();
+
+    // 2. Get favorite from 'favourites' table
+    $sql_fav = "SELECT favourite_game FROM favourites WHERE user_id = ? AND game_id = ?";
+    $stmt_fav = $conn->prepare($sql_fav);
+    $stmt_fav->bind_param("ii", $user_id, $game_id);
+    $stmt_fav->execute();
+    $result_fav = $stmt_fav->get_result();
+    if ($row_fav = $result_fav->fetch_assoc()) {
+        $feedback['favorite_game'] = (int)$row_fav['favourite_game'];
+    }
+    $stmt_fav->close();
+
+    return $feedback; // Return the combined array
+}
+
+/**
+ * Inserts or updates a user's star rating for a game in the 'rating' table.
+ *
+ * @param int $user_id The user's ID.
+ * @param int $game_id The game's ID.
+ * @param int $rating The star rating (1-5).
+ * @return bool True on success, false on failure.
+ */
+function upsertGameRating($user_id, $game_id, $rating) {
+    global $conn;
+    $sql = "INSERT INTO rating (user_id, game_id, rating_game)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE rating_game = VALUES(rating_game)";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        error_log("Prepare failed in upsertGameRating: " . $conn->error); 
+        return false;
+    }
+    $stmt->bind_param("iii", $user_id, $game_id, $rating);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/**
+ * Inserts or updates a user's favorite status for a game in the 'favourites' table.
+ *
+ * @param int $user_id The user's ID.
+ * @param int $game_id The game's ID.
+ * @param int $favorite The favorite status (0 or 1).
+ * @return bool True on success, false on failure.
+ */
+function upsertGameFavourite($user_id, $game_id, $favorite) {
+    global $conn;
+    $sql = "INSERT INTO favourites (user_id, game_id, favourite_game)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE favourite_game = VALUES(favourite_game)";
+    $stmt = $conn->prepare($sql);
+     if ($stmt === false) {
+        error_log("Prepare failed in upsertGameFavourite: " . $conn->error); 
+        return false;
+    }
+    $stmt->bind_param("iii", $user_id, $game_id, $favorite);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
 
 /**
  * Retrieves the user's ID and current security answer (sec_answer) by username.

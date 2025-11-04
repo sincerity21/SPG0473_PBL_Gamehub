@@ -9,49 +9,23 @@ if (!isset($_SESSION['username'])) {
 }
 
 $username = htmlspecialchars($_SESSION['username']);
+
+// Fetch data for the page
 $categories = selectAllGameCategories();
-$random_images = selectRandomGalleryImages(9); // Fetch 9 random images for the slider
+$games = selectAllGamesWithCovers(); // Use the NEW function
 
-// --- CATEGORY MAPPING LOGIC ---
-// Maps short database values to user-friendly titles.
-$category_map = [
-    'fps' => 'First-Person Shooter',
-    'rpg' => 'Role-Playing Game',
-    'moba' => 'Multiplayer Online Battle Arena',
-    'puzzle' => 'Puzzle',
-    'sport' => 'Sports',
-    'racing' => 'Racing',
-    'sim' => 'Simulation',
-    'survival' => 'Survival',
-    'fight' => 'Fighting',
-    // Add any other categories here as needed
-];
-// ------------------------------
-
-// Fallback image array if no gallery images are found
-if (empty($random_images)) {
-    // Note: User needs to create this placeholder image at /PBL/uploads/placeholder.png
-    $random_images[] = 'uploads/placeholder.png'; 
-}
-
-// Handle form submission (The user clicked 'NEXT')
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category'])) {
-    $category = strtolower(trim($_POST['selected_category']));
-    
-    // New: Redirect to the single view file with the category as a URL parameter
-    header("Location: hub_games_view.php?cat={$category}");
-    exit();
-}
+// Define the placeholder image path
+$fallback_cover = 'uploads/placeholder.png'; 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub - Choose Category</title>
+    <title>GameHub - Library</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- Dark Mode Variables (Copied from hub_home.php for consistency) --- */
+        /* --- 1. CSS Variables for Theming (from hub_home.php) --- */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -59,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
             --secondary-text-color: #7f8c8d;
             --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.05);
-            --wave-opacity: 0.15;
+            --border-color: #ddd;
             --welcome-title-color: #2c3e50;
         }
 
@@ -70,11 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
             --secondary-text-color: #95a5a6;
             --card-bg-color: #1e1e1e;
             --shadow-color: rgba(0, 0, 0, 0.4);
-            --wave-opacity: 0.05;
+            --border-color: #444;
             --welcome-title-color: #ecf0f1;
         }
-        
-        /* General Styles */
+
+        /* --- 2. Base Styles (from hub_home.php) --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -84,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
         }
+
         .header {
             background-color: var(--card-bg-color);
             padding: 15px 30px;
@@ -91,11 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 4px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 1001;
         }
-        .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); }
+        .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
 
-        /* Side Menu Styles */
+        /* --- 3. Side Menu (from hub_home.php) --- */
         .side-menu {
             position: fixed; top: 60px; right: 0; width: 220px;
             background-color: var(--card-bg-color);
@@ -111,163 +89,121 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
+        .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
 
-        /* Content Layout */
+        /* --- 4. NEW: Content & Sketch Styles --- */
         .content-container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: var(--card-bg-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px var(--shadow-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
         }
-        .hello-title {
-            font-size: 2.2em;
-            font-weight: 500;
+        
+        .greeting {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: var(--welcome-title-color);
+            margin: 0;
+        }
+
+        /* Wavy Divider from Sketch */
+        .wave-divider {
+            width: 100%;
+            height: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .wave-divider svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--accent-color);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .category-title {
+            font-size: 1.5em;
+            font-weight: 600;
             color: var(--welcome-title-color);
             margin-bottom: 20px;
-        }
-        .wave-line {
-            height: 15px;
-            background: linear-gradient(to right, 
-                transparent 0%, var(--accent-color) 10%, 
-                var(--accent-color) 90%, transparent 100%);
-            border-radius: 50%/100px 100px 0 0;
-            margin: 20px 0;
-            opacity: 0.5;
-        }
-        h2 {
-            font-size: 1.8em;
-            color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 5px;
-            margin-bottom: 30px;
+            text-align: left;
+            border-bottom: 3px solid var(--accent-color);
             display: inline-block;
+            padding-bottom: 5px;
         }
-        
-        /* Selector and Image Grid */
-        .selector-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr; /* 1.5 ratio for image box */
-            gap: 40px;
-        }
-        .category-selector {
+
+        /* Category Filter Buttons */
+        .category-filters {
             display: flex;
             flex-wrap: wrap;
-            align-content: flex-start;
+            gap: 10px;
+            margin-bottom: 30px;
         }
-        .category-group {
-            display: flex;
-            flex-direction: column;
-            width: 50%; /* Two columns of radio buttons */
-            margin-bottom: 20px;
-        }
-        .category-group label {
-            cursor: pointer;
-            padding: 8px 0;
-            font-size: 1.1em;
-            color: var(--main-text-color);
-            transition: color 0.2s;
-        }
-        .category-group label:hover {
-            color: var(--accent-color);
-        }
-        input[type="radio"] {
-            margin-right: 10px;
-            accent-color: var(--accent-color);
-            transform: scale(1.2);
-        }
-
-        /* Image Slideshow (Carousel) */
-        .image-slideshow {
-            position: relative;
-            height: 350px; /* Fixed height for the gallery box */
-            overflow: hidden;
-            border: 2px solid var(--secondary-text-color);
-            border-radius: 8px;
+        .filter-btn {
+            padding: 8px 18px;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--secondary-text-color);
             background-color: var(--bg-color);
-        }
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .slide.active {
-            opacity: 1;
-        }
-        .slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* Prevents the image from being stretched or compressed outside the box */
-        }
-        .slider-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.4);
-            color: white;
-            border: none;
-            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
             cursor: pointer;
-            z-index: 10;
-            font-size: 1.5em;
-            line-height: 1;
+            transition: all 0.2s ease;
         }
-        .slider-control:hover {
-            background: rgba(0, 0, 0, 0.6);
+        .filter-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
         }
-        .prev { left: 0; border-radius: 0 5px 5px 0; }
-        .next { right: 0; border-radius: 5px 0 0 5px; }
-
-        /* Next Button */
-        .next-button {
-            padding: 12px 30px;
-            background-color: #9b59b6; /* Purple accent color */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.2em;
+        .filter-btn.active {
+            color: var(--accent-text-color, white);
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
             font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 30px;
-            display: block;
         }
-        .next-button:hover {
-            background-color: #8e44ad;
+
+        /* Game Grid */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .game-card {
+            background-color: var(--card-bg-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: var(--main-text-color);
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow-color);
         }
         
-        /* Utility for Dark Mode Switch Text */
-        .dark-mode-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
+        /* --- MODIFIED CSS --- */
+        .game-card img {
+            width: 100%;
+            height: auto; /* Let height be automatic */
+            aspect-ratio: 460 / 215; /* Enforce 460x215 aspect ratio */
+            object-fit: cover; /* Ensures image fills the space */
+            display: block;
         }
+        /* --- REMOVED .game-card-title CSS --- */
+
     </style>
 </head>
 <body id="appBody">
 
 <div class="header">
-    <div class="logo">GAMEHUB</div>
+    <a href="hub_home.php" class="logo">GAMEHUB</a>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
-<!-- Side Menu (Re-using hub_home.php structure) -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
-
     <div class="menu-divider"></div>
     
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
@@ -284,112 +220,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
 </div>
 
 <div class="content-container">
-    <h1 class="hello-title">HELLO <?php echo strtoupper($username); ?></h1>
-    
-    <div class="wave-line"></div>
 
-    <form method="POST">
-        <h2 style="text-align: center; width: 100%;">CHOOSE GAME CATEGORY</h2>
+    <h1 class="greeting">HELLO <?php echo strtoupper($username); ?></h1>
 
-        <div class="selector-grid">
-            
-            <div class="category-selector">
-                <?php 
-                $count = count($categories);
-                $half = ceil($count / 2);
-                
-                // Display categories in two columns
-                echo '<div class="category-group">';
-                for ($i = 0; $i < $count; $i++) {
-                    $category_value = htmlspecialchars($categories[$i]);
-                    
-                    // Use the map to get the display name, defaulting to the capitalized value if not found
-                    $category_display = htmlspecialchars($category_map[$category_value] ?? strtoupper(str_replace('_', ' ', $categories[$i])));
-                    
-                    if ($i == $half) {
-                        echo '</div><div class="category-group">';
-                    }
-                    
-                    echo '<label>';
-                    echo "<input type='radio' name='selected_category' value='{$category_value}' required>";
-                    echo $category_display;
-                    echo '</label>';
-                }
-                echo '</div>';
+    <div class="wave-divider">
+        <svg viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 0 5 C 25 10, 75 0, 100 5" />
+        </svg>
+    </div>
+
+    <h2 class="category-title">CHOOSE GAME CATEGORY</h2>
+
+    <div class="category-filters" id="categoryFilters">
+        <button class="filter-btn active" data-category="all">All</button>
+        <?php foreach ($categories as $category): ?>
+            <button class="filter-btn" data-category="<?php echo htmlspecialchars($category); ?>">
+                <?php echo htmlspecialchars(strtoupper($category)); ?>
+            </button>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="game-grid" id="gameGrid">
+        <?php if (!empty($games)): ?>
+            <?php foreach ($games as $game): ?>
+                <?php
+                // Use fallback placeholder if cover_path is missing
+                $cover_path = !empty($game['cover_path']) ? $game['cover_path'] : $fallback_cover;
                 ?>
-            </div>
+                <a href="hub_game_detail.php?game_id=<?php echo $game['game_id']; ?>" 
+                   class="game-card" 
+                   data-category="<?php echo htmlspecialchars($game['game_category']); ?>">
+                    
+                    <img src="../<?php echo htmlspecialchars($cover_path); ?>" alt="<?php echo htmlspecialchars($game['game_name']); ?> Cover">
+                    
+                    </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No games have been added to the hub yet.</p>
+        <?php endif; ?>
+    </div>
 
-            <div class="image-slideshow">
-                <?php foreach ($random_images as $index => $path): ?>
-                    <!-- Use the correct path prefix: ../ from the root -->
-                    <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                        <img src="../<?php echo htmlspecialchars($path); ?>" alt="Game Gallery Image">
-                    </div>
-                <?php endforeach; ?>
-                
-                <button type="button" class="slider-control prev" onclick="changeSlide(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button type="button" class="slider-control next" onclick="changeSlide(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-                
-                <!-- Slide Indicators (Optional, but good UX) -->
-                <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: white; z-index: 10;">
-                    <?php for ($i = 0; $i < count($random_images); $i++): ?>
-                        <span class="dot" data-index="<?php echo $i; ?>" style="display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; margin: 0 3px; cursor: pointer;"></span>
-                    <?php endfor; ?>
-                </div>
-            </div>
-            
-        </div>
-        <button type="submit" class="next-button">NEXT</button>
-    </form>
 </div>
 
 <script>
-    // --- Slide Show Logic ---
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const totalSlides = slides.length;
-
-    function showSlide(n) {
-        // Wrap around logic
-        if (n >= totalSlides) {
-            currentSlide = 0;
-        } else if (n < 0) {
-            currentSlide = totalSlides - 1;
-        } else {
-            currentSlide = n;
-        }
-
-        // Hide all slides and remove active class
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.style.background = 'rgba(255, 255, 255, 0.5)');
-
-        // Show the new slide and activate the dot
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].style.background = 'white';
-    }
-
-    function changeSlide(n) {
-        showSlide(currentSlide + n);
-    }
-    
-    // Initialize first slide and indicators
-    if (totalSlides > 0) {
-        showSlide(0);
-    }
-
-
-    // --- Dark Mode Logic (Re-used from hub_home.php) ---
-
+    // --- 1. Side Menu Toggle Logic (from hub_home.php) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
+    // --- 2. Dark Mode Logic (from hub_home.php) ---
     const body = document.getElementById('appBody');
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
@@ -397,31 +277,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
     function applyDarkMode(isDark) {
         if (isDark) {
             body.classList.add('dark-mode');
-            darkModeText.textContent = 'Switch Light Mode';
+            if(darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
             body.classList.remove('dark-mode');
-            darkModeText.textContent = 'Switch Dark Mode';
+            if(darkModeText) darkModeText.textContent = 'Switch Dark Mode';
         }
     }
 
     function toggleDarkMode() {
         const isDark = body.classList.contains('dark-mode');
-        
-        // Toggle the state
         applyDarkMode(!isDark);
-
-        // Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
     // Load saved preference when the script runs
     (function loadDarkModePreference() {
         const savedMode = localStorage.getItem(localStorageKey);
-        
-        // Use true if explicitly set to 'dark', otherwise default to light
-        const isDark = savedMode === 'dark'; 
-        applyDarkMode(isDark);
+        applyDarkMode(savedMode === 'dark');
     })();
+
+
+    // --- 3. NEW: Category Filtering Logic ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterContainer = document.getElementById('categoryFilters');
+        const gameCards = document.querySelectorAll('#gameGrid .game-card');
+
+        if (filterContainer) {
+            filterContainer.addEventListener('click', function(e) {
+                // Only act if a filter button was clicked
+                if (!e.target.classList.contains('filter-btn')) {
+                    return;
+                }
+
+                // Get the category to filter by
+                const selectedCategory = e.target.getAttribute('data-category');
+
+                // Update active button state
+                filterContainer.querySelector('.filter-btn.active').classList.remove('active');
+                e.target.classList.add('active');
+
+                // Show/Hide game cards
+                gameCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category');
+                    
+                    if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+                        card.style.display = 'block'; // Show card
+                    } else {
+                        card.style.display = 'none';  // Hide card
+                    }
+                });
+            });
+        }
+    });
 </script>
 
 </body>

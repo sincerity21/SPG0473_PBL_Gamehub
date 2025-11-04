@@ -1,9 +1,8 @@
 <?php
 session_start();
-// UPDATED: Path changed from ../../ to ../
+// Path is ../
 require '../hub_conn.php'; 
 
-// UPDATED: Path changed from ../../ to ../
 if (!isset($_SESSION['username'])) {
     header('Location: ../hub_login.php');
     exit();
@@ -12,7 +11,6 @@ if (!isset($_SESSION['username'])) {
 $current_category_value = isset($_GET['cat']) ? strtolower(trim($_GET['cat'])) : '';
 
 if (empty($current_category_value)) {
-    // UPDATED: Path changed from ../ to same-level
     header('Location: hub_home_category.php');
     exit();
 }
@@ -25,23 +23,37 @@ $category_map = [
 ];
 $current_category_name = $category_map[$current_category_value] ?? strtoupper(str_replace('_', ' ', $current_category_value));
 
-// Fetch games for the category (assuming selectGamesByCategory is available)
+// --- NEW PHP LOGIC: Get 1 image from (up to) the first 3 games ---
+
+// 1. Get all games for the category (to display in the list)
 $games = selectGamesByCategory($current_category_value);
 
-// Determine initial game and fetch its images
-$initial_game_id = !empty($games) ? $games[0]['game_id'] : null;
-$initial_game_images_data = [];
-if ($initial_game_id) {
-    // Uses the existing function that returns associative arrays (with 'img_path')
-    $initial_game_images_data = selectGameGalleryImages($initial_game_id);
+// 2. Create a new array to hold the 3 slideshow images
+$slideshow_images_data = [];
+$fallback_path = 'uploads/placeholder.png'; // Define the placeholder
+
+// 3. Get only the first 3 games for the slideshow
+$games_for_slideshow = array_slice($games, 0, 3);
+
+// 4. Loop through only those 3 (or fewer) games
+foreach ($games_for_slideshow as $game) {
+    // Get all images for this specific game
+    $game_images = selectGameGalleryImages($game['game_id']);
+    
+    if (empty($game_images)) {
+        // If no images, use the placeholder
+        $slideshow_images_data[] = ['img_path' => $fallback_path];
+    } else {
+        // If images exist, add only the FIRST one
+        $slideshow_images_data[] = $game_images[0]; 
+    }
 }
 
-// Fallback image path if no gallery images are found
-$fallback_path = 'uploads/placeholder.png'; // Make sure this placeholder exists!
-if (empty($initial_game_images_data)) {
-    // If no images, use the placeholder path
-    $initial_game_images_data[] = ['img_path' => $fallback_path]; 
+// 5. Fallback if the category has NO games at all
+if (empty($games)) {
+    $slideshow_images_data[] = ['img_path' => $fallback_path]; 
 }
+// --- END OF NEW PHP LOGIC ---
 
 // Get the username for the header
 $username = htmlspecialchars($_SESSION['username']); 
@@ -56,7 +68,7 @@ $username = htmlspecialchars($_SESSION['username']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* --- CSS Variables for Theming --- (Copied for consistency) */
+        /* --- CSS Variables for Theming --- */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --accent-color: #3498db; 
             --secondary-text-color: #7f8c8d; --card-bg-color: white; --shadow-color: rgba(0, 0, 0, 0.05);
@@ -85,10 +97,9 @@ $username = htmlspecialchars($_SESSION['username']);
         /* Content Layout */
         .content-container { max-width: 1200px; margin: 40px auto; padding: 20px; background-color: var(--card-bg-color); border-radius: 10px; box-shadow: 0 4px 15px var(--shadow-color); }
         
-        /* --- New Layout for Games List and Slideshow --- */
         .games-display-grid {
             display: grid;
-            grid-template-columns: 1fr 1.5fr; /* Games list on left, slideshow on right */
+            grid-template-columns: 1fr 1.5fr; 
             gap: 40px;
             margin-top: 30px;
         }
@@ -101,7 +112,7 @@ $username = htmlspecialchars($_SESSION['username']);
             display: inline-block;
         }
 
-        /* Game List Styles */
+        /* --- UPDATED: Game List Styles --- */
         .game-list ul {
             list-style: none;
             padding: 0;
@@ -110,11 +121,11 @@ $username = htmlspecialchars($_SESSION['username']);
         .game-list li {
             font-size: 1.1em;
             padding: 8px 0;
-            cursor: pointer;
             color: var(--main-text-color);
             transition: color 0.2s, font-weight 0.2s;
             display: flex;
             align-items: center;
+            /* REMOVED: cursor: pointer; */
         }
         .game-list li::before {
             content: "\25CB"; /* Circle bullet point */
@@ -125,17 +136,14 @@ $username = htmlspecialchars($_SESSION['username']);
             font-size: 0.8em;
             line-height: 1;
         }
-        .game-list li:hover,
-        .game-list li.active {
+        .game-list li:hover {
             color: var(--accent-color);
             font-weight: bold;
         }
+        /* REMOVED: .game-list li.active selector */
 
 
-        /*
-         * --- Image Slideshow (Carousel) STYLES ---
-         * (Matched to hub_home_category.php)
-        */
+        /* Image Slideshow (Carousel) Styles */
         .image-slideshow {
             position: relative;
             height: 350px; 
@@ -170,7 +178,6 @@ $username = htmlspecialchars($_SESSION['username']);
             display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: background 0.3s;
         }
         .dot.active { background: white; }
-        /* --- End of Style Updates --- */
 
         .back-link { display: inline-block; margin-bottom: 20px; color: var(--accent-color); text-decoration: none; font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
@@ -189,16 +196,12 @@ $username = htmlspecialchars($_SESSION['username']);
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     <a href="../hub_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
-
     <div class="menu-divider"></div>
-    
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
-
     <div class="menu-divider"></div>
-
     <a href="../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
@@ -219,8 +222,7 @@ $username = htmlspecialchars($_SESSION['username']);
             <?php if (!empty($games)): ?>
                 <ul>
                     <?php foreach ($games as $game): ?>
-                        <li data-game-id="<?php echo htmlspecialchars($game['game_id']); ?>"
-                            class="<?php echo ($game['game_id'] == $initial_game_id) ? 'active' : ''; ?>">
+                        <li>
                             <?php echo htmlspecialchars($game['game_name']); ?>
                         </li>
                     <?php endforeach; ?>
@@ -232,8 +234,8 @@ $username = htmlspecialchars($_SESSION['username']);
 
         <div class="image-slideshow">
             <div id="slideshow-content">
-                <?php if (!empty($initial_game_images_data)): ?>
-                    <?php foreach ($initial_game_images_data as $index => $image_data): ?>
+                <?php if (!empty($slideshow_images_data)): ?>
+                    <?php foreach ($slideshow_images_data as $index => $image_data): ?>
                         <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
                             <img src="../<?php echo htmlspecialchars($image_data['img_path']); ?>" alt="Game Screenshot">
                         </div>
@@ -243,7 +245,7 @@ $username = htmlspecialchars($_SESSION['username']);
                 <?php endif; ?>
             </div>
             
-            <?php if (count($initial_game_images_data) > 1): // Only show controls if there's more than one image ?>
+            <?php if (count($slideshow_images_data) > 1): ?>
                 <button type="button" class="slider-control prev" onclick="changeSlide(-1)">
                     <i class="fas fa-chevron-left"></i>
                 </button>
@@ -251,7 +253,7 @@ $username = htmlspecialchars($_SESSION['username']);
                     <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="slide-indicators" id="slide-indicators">
-                    <?php for ($i = 0; $i < count($initial_game_images_data); $i++): ?>
+                    <?php for ($i = 0; $i < count($slideshow_images_data); $i++): ?>
                         <span class="dot <?php echo $i === 0 ? 'active' : ''; ?>" data-index="<?php echo $i; ?>"></span>
                     <?php endfor; ?>
                 </div>
@@ -261,7 +263,7 @@ $username = htmlspecialchars($_SESSION['username']);
 </div>
 
 <script>
-    // --- Dark Mode and Menu Logic (Kept the same) ---
+    // --- Dark Mode and Menu Logic (Unchanged) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
@@ -294,38 +296,32 @@ $username = htmlspecialchars($_SESSION['username']);
     })();
 
 
-    // --- Slideshow & Auto-Slide Logic ---
+    // --- Slideshow & Auto-Slide Logic (Unchanged) ---
+    // This script now simply controls the static 3-image slideshow
     let currentSlide = 0;
     let slides = []; 
     let dots = [];   
     let totalSlides = 0;
     const slideshowElement = document.querySelector('.image-slideshow');
     
-    // Define the auto-slide interval (e.g., 5000 milliseconds = 5 seconds)
     const AUTO_SLIDE_INTERVAL = 5000; 
-    let slideTimer = null; // Variable to hold the timer ID
+    let slideTimer = null; 
 
-    // Function to start the auto-slide timer
     function startAutoSlide() {
-        // Clear any existing timer first
         stopAutoSlide(); 
-        
-        // Start a new interval that calls changeSlide(1) every X milliseconds
         slideTimer = setInterval(() => {
-            if (totalSlides > 1) { // Only auto-slide if there's more than one image
+            if (totalSlides > 1) { 
                 changeSlide(1);
             }
         }, AUTO_SLIDE_INTERVAL);
     }
     
-    // Function to stop the auto-slide timer
     function stopAutoSlide() {
         if (slideTimer !== null) {
             clearInterval(slideTimer);
             slideTimer = null;
         }
     }
-
 
     function initializeSlideshow() {
         slides = document.querySelectorAll('#slideshow-content .slide');
@@ -337,7 +333,6 @@ $username = htmlspecialchars($_SESSION['username']);
             showSlide(0);
         }
 
-        // Start auto-sliding if there are multiple images
         if (totalSlides > 1) {
             startAutoSlide();
         } else {
@@ -359,116 +354,23 @@ $username = htmlspecialchars($_SESSION['username']);
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
 
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
+        if (slides[currentSlide]) {
+            slides[currentSlide].classList.add('active');
+        }
+        if (dots[currentSlide]) {
+            dots[currentSlide].classList.add('active');
+        }
     }
 
     function changeSlide(n) {
-        // When the user manually changes the slide, restart the timer
         showSlide(currentSlide + n);
         startAutoSlide(); 
     }
     
     document.addEventListener('DOMContentLoaded', initializeSlideshow);
 
-
-    // --- Game List Click Handler ---
-    document.querySelectorAll('.game-list li').forEach(item => {
-        item.addEventListener('click', function() {
-            const gameId = this.dataset.gameId;
-            updateGameDisplay(gameId);
-            
-            // Stop the timer temporarily during AJAX load
-            stopAutoSlide(); 
-
-            // Update active state for game list items
-            document.querySelectorAll('.game-list li').forEach(li => li.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
-    // Function to fetch game images via AJAX and update the slideshow
-    async function updateGameDisplay(gameId) {
-        // ... (The rest of your AJAX and DOM manipulation code remains the same) ...
-        try {
-            // UPDATED: fetch path changed from ../../ to ../
-            const response = await fetch(`../hub_fetch_game_images.php?game_id=${gameId}`);
-            const data = await response.json();
-
-            const slideshowContent = document.getElementById('slideshow-content');
-            let slideIndicators = document.getElementById('slide-indicators');
-
-            slideshowContent.innerHTML = ''; // Clear existing images
-            
-            if (!slideIndicators) {
-                slideIndicators = document.createElement('div');
-                slideIndicators.id = 'slide-indicators';
-                slideIndicators.className = 'slide-indicators';
-                slideshowElement.appendChild(slideIndicators);
-            } else {
-                slideIndicators.innerHTML = ''; 
-            }
-
-            if (data.images && data.images.length > 0) {
-                data.images.forEach((image_data, index) => {
-                    const slideDiv = document.createElement('div');
-                    slideDiv.className = `slide ${index === 0 ? 'active' : ''}`;
-                    const img = document.createElement('img');
-                    // UPDATED: Image src path changed from ../../ to ../
-                    img.src = `../${image_data.img_path}`; 
-                    img.alt = 'Game Screenshot';
-                    slideDiv.appendChild(img);
-                    slideshowContent.appendChild(slideDiv);
-
-                    const dotSpan = document.createElement('span');
-                    dotSpan.className = `dot ${index === 0 ? 'active' : ''}`;
-                    dotSpan.dataset.index = index;
-                    slideIndicators.appendChild(dotSpan);
-                });
-
-                // Re-initialize slideshow for new content
-                initializeSlideshow(); // This now automatically starts the timer if totalSlides > 1
-
-                // Show/hide slider controls and indicators
-                const hasMultipleImages = data.images.length > 1;
-                const controls = document.querySelectorAll('.slider-control');
-                
-                if (hasMultipleImages) {
-                    // Create controls if they don't exist
-                    ['prev', 'next'].forEach(dir => {
-                        let button = document.querySelector(`.slider-control.${dir}`);
-                        if (!button) {
-                            button = document.createElement('button');
-                            button.type = 'button';
-                            button.className = `slider-control ${dir}`;
-                            button.innerHTML = `<i class="fas fa-chevron-${dir === 'prev' ? 'left' : 'right'}"></i>`;
-                            // Link to changeSlide(n) which restarts the timer
-                            button.onclick = () => changeSlide(dir === 'prev' ? -1 : 1);
-                            slideshowElement.appendChild(button);
-                        }
-                    });
-                    slideIndicators.style.display = 'flex';
-                } else {
-                    // Remove controls and hide indicators
-                    controls.forEach(btn => btn.remove());
-                    slideIndicators.style.display = 'none';
-                }
-
-            } else {
-                slideshowContent.innerHTML = `<p style="color: var(--secondary-text-color); padding: 20px;">No images available for this game.</p>`;
-                document.querySelectorAll('.slider-control').forEach(btn => btn.remove());
-                if (slideIndicators) slideIndicators.style.display = 'none';
-                stopAutoSlide(); // Ensure timer stops if no images
-            }
-
-        } catch (error) {
-            console.error('Error fetching game images:', error);
-            const slideshowContent = document.getElementById('slideshow-content');
-            slideshowContent.innerHTML = '<p style="color: red;">Error loading images.</p>';
-            document.querySelectorAll('.slider-control').forEach(btn => btn.remove());
-            stopAutoSlide(); // Ensure timer stops on error
-        }
-    }
+    // --- All AJAX and click-handling JS has been removed ---
+    
 </script>
 </body>
 </html>

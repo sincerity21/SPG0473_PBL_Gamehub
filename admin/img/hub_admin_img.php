@@ -16,8 +16,9 @@ $games = selectAllGames();
 
 // 3. Fetch gallery images if a game_id is provided
 $gallery_images = [];
-$cover_images = []; // <-- NEW: Initialize cover images array
+$cover_images = []; // <-- Initialize cover images array
 $current_game = null;
+$cover_button_text = "➕ Add New Cover"; // <-- NEW: Default button text
 
 if ($game_id) {
     // Get the main game data
@@ -28,11 +29,15 @@ if ($game_id) {
         $gallery_images = selectGameGalleryImages($game_id);
         
         // --- NEW: Fetch Cover Images ---
-        // ASSUMPTION: You have created a function selectGameCovers($game_id) in hub_conn.php
-        // This function should return images from your new 'game_cover' table.
-        // e.g., "SELECT * FROM game_cover WHERE game_id = ?"
         if (function_exists('selectGameCovers')) {
             $cover_images = selectGameCovers($game_id);
+            
+            // --- NEW: Set button text based on whether a cover exists ---
+            if (!empty($cover_images)) {
+                $cover_button_text = "➕ Replace Game Cover";
+            }
+            // --- END NEW ---
+
         } else {
             // Fallback if the function doesn't exist yet
             $cover_images = []; 
@@ -113,8 +118,8 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
         <!-- --- NEW: GAME COVER SECTION --- -->
         <h2>Game Cover</h2>
         
-        <!-- Link to a new file you will need to create -->
-        <a href="hub_admin_cover_add.php?game_id=<?php echo $game_id; ?>" class="add-link" style="background-color: #9b59b6;">➕ Add New Cover</a>
+        <!-- UPDATED: Button text is now dynamic -->
+        <a href="hub_admin_cover_add.php?game_id=<?php echo $game_id; ?>" class="add-link" style="background-color: #9b59b6;"><?php echo $cover_button_text; ?></a>
 
         <?php if (function_exists('selectGameCovers')): ?>
             <?php if (!empty($cover_images)): ?>
@@ -133,6 +138,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
                 <?php endforeach; ?>
                 </div>
             <?php else: ?>
+                <!-- This message is now shown when no covers exist -->
                 <p>No cover images found for this game. Click 'Add New Cover' to upload one.</p>
             <?php endif; ?>
         <?php else: ?>
@@ -227,3 +233,4 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
 </div>
 </body>
 </html>
+

@@ -16,7 +16,9 @@ $games = selectAllGames();
 
 // 3. Fetch gallery images if a game_id is provided
 $gallery_images = [];
+$cover_images = []; // <-- NEW: Initialize cover images array
 $current_game = null;
+
 if ($game_id) {
     // Get the main game data
     $current_game = selectGameByID($game_id);
@@ -24,6 +26,19 @@ if ($game_id) {
     if ($current_game) {
         // Get the gallery images for this game
         $gallery_images = selectGameGalleryImages($game_id);
+        
+        // --- NEW: Fetch Cover Images ---
+        // ASSUMPTION: You have created a function selectGameCovers($game_id) in hub_conn.php
+        // This function should return images from your new 'game_cover' table.
+        // e.g., "SELECT * FROM game_cover WHERE game_id = ?"
+        if (function_exists('selectGameCovers')) {
+            $cover_images = selectGameCovers($game_id);
+        } else {
+            // Fallback if the function doesn't exist yet
+            $cover_images = []; 
+        }
+        // --- END NEW ---
+        
     } else {
         // Handle case where game_id is invalid
         $game_id = null; 
@@ -31,7 +46,7 @@ if ($game_id) {
 }
 
 // Determine the page title and instructions
-$page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($current_game['game_name']) : "Games Gallery (Select a Game)";
+$page_title = $current_game ? "Image Management for: " . htmlspecialchars($current_game['game_name']) : "Games Gallery (Select a Game)";
 
 ?>
 <!DOCTYPE html>
@@ -49,6 +64,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
         .navbar a.active { background-color: #1abc9c; } /* Highlight the current tab */
         .content { padding: 30px; max-width: 1200px; margin: 0 auto; }
         h1 { color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+        h2 { color: #2c3e50; margin-top: 30px; } /* Added margin-top for spacing */
         table { width: 100%; border-collapse: collapse; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: white; margin-top: 20px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; } 
         th { background-color: #3498db; color: white; font-weight: 600; text-transform: uppercase; }
@@ -66,6 +82,14 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
         .gallery-image-card img { max-width: 100%; height: auto; display: block; margin-bottom: 10px; }
         .gallery-image-card p { margin: 5px 0; font-size: 0.9em; }
         .current-game-info { background-color: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        
+        /* --- NEW: Style for the separator --- */
+        .section-divider {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border: 0;
+            border-top: 2px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -81,13 +105,50 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
     <?php if ($game_id && $current_game): ?>
     
         <div class="current-game-info">
-            Managing Gallery for: <strong><?php echo htmlspecialchars($current_game['game_name']); ?></strong> (ID: <?php echo $game_id; ?>) | 
+            Managing Images for: <strong><?php echo htmlspecialchars($current_game['game_name']); ?></strong> (ID: <?php echo $game_id; ?>) | 
             <a href="../games/hub_admin_games.php">← Back to Game List</a>
         </div>
         
-        <a href="hub_admin_img_add.php?game_id=<?php echo $game_id; ?>" class="add-link">➕ Add New Pictures to Gallery</a>
+        
+        <!-- --- NEW: GAME COVER SECTION --- -->
+        <h2>Game Cover</h2>
+        
+        <!-- Link to a new file you will need to create -->
+        <a href="hub_admin_cover_add.php?game_id=<?php echo $game_id; ?>" class="add-link" style="background-color: #9b59b6;">➕ Add New Cover</a>
 
+        <?php if (function_exists('selectGameCovers')): ?>
+            <?php if (!empty($cover_images)): ?>
+                <div class="gallery-image-container">
+                <?php foreach ($cover_images as $image): ?>
+                    <div class="gallery-image-card">
+                        <img 
+                            src="../../<?php echo htmlspecialchars($image['cover_path']); ?>" 
+                            alt="Game Cover ID <?php echo $image['game_cover_id']; ?>"
+                        >
+                        <p>
+                            <!-- Link to a new file you will need to create -->
+                            <a href="hub_admin_cover_delete.php?id=<?php echo $image['game_cover_id']; ?>&game_id=<?php echo $game_id; ?>" onclick="return confirm('Are you sure you want to delete this cover image?');">Delete</a>
+                        </p>
+                    </div>
+                <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p>No cover images found for this game. Click 'Add New Cover' to upload one.</p>
+            <?php endif; ?>
+        <?php else: ?>
+            <p style="color: red; font-weight: bold; background-color: #fdd; padding: 10px; border-radius: 4px;">
+                Error: The function 'selectGameCovers' is not defined in hub_conn.php. Please add it to manage covers.
+            </p>
+        <?php endif; ?>
+        
+        <hr class="section-divider">
+        <!-- --- END: GAME COVER SECTION --- -->
+
+
+        <!-- --- EXISTING GALLERY IMAGES SECTION --- -->
         <h2>Gallery Images</h2>
+        
+        <a href="hub_admin_img_add.php?game_id=<?php echo $game_id; ?>" class="add-link">➕ Add New Pictures to Gallery</a>
 
         <?php if (!empty($gallery_images)): ?>
             <div class="gallery-image-container">
@@ -114,7 +175,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
                     </a>
                 </p>
                 <p>
-                    <a href="hub_admin_img_delete.php?id=<?php echo $image['game_img_id']; ?>" onclick="return confirm('Are you sure you want to delete this gallery image?');">Delete</a>
+                    <a href="hub_admin_img_delete.php?id=<?php echo $image['game_img_id']; ?>&game_id=<?php echo $game_id; ?>" onclick="return confirm('Are you sure you want to delete this gallery image?');">Delete</a>
                 </p>
             </div>
         <?php endforeach; ?>
@@ -122,10 +183,11 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
         <?php else: ?>
             <p>No gallery images found for this game. Click 'Add New Pictures' to upload some!</p>
         <?php endif; ?>
+        <!-- --- END: EXISTING GALLERY IMAGES SECTION --- -->
 
     <?php else: ?>
     
-        <h2>Select a Game to Manage its Gallery</h2>
+        <h2>Select a Game to Manage its Images</h2>
         
         <?php if (!empty($games)): ?>
             <table>
@@ -150,7 +212,7 @@ $page_title = $current_game ? "Gallery Management for: " . htmlspecialchars($cur
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="hub_admin_img.php?game_id=<?php echo htmlspecialchars($game['game_id']); ?>">Manage Gallery (Add/View Pictures)</a>
+                            <a href="hub_admin_img.php?game_id=<?php echo htmlspecialchars($game['game_id']); ?>">Manage Images (Cover & Gallery)</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

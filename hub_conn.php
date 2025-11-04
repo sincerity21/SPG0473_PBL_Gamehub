@@ -493,6 +493,124 @@ function selectGamesByCategory($category_value){
     return $games;
 }
 
+// --- NEW FUNCTIONS FOR GAME COVER ---
+
+/**
+ * Selects all cover images for a given game ID.
+ * (Even if logic is 1-to-1, returning an array is safer for foreach loops)
+ *
+ * @param int $game_id The ID of the game.
+ * @return array An array of cover image records.
+ */
+function selectGameCovers($game_id){
+    global $conn;
+    
+    $sql = "SELECT * FROM game_cover WHERE game_id = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        error_log("Prepare failed in selectGameCovers: " . $conn->error);
+        return [];
+    }
+
+    $stmt->bind_param("i", $game_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $images = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    
+    return $images;
+}
+
+/**
+ * Adds a new game cover or updates the existing one.
+ * Enforces a one-to-one relationship by checking for an existing game_id.
+ *
+ * @param int $game_id The ID of the game.
+ * @param string $cover_path The new file path for the cover.
+ * @return bool True on success, false on failure.
+ */
+function addOrUpdateGameCover($game_id, $cover_path) {
+    global $conn;
+
+    // 1. Check if a cover already exists for this game_id
+    $sql_check = "SELECT game_cover_id FROM game_cover WHERE game_id = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    if ($stmt_check === false) {
+        error_log("Prepare failed (check) in addOrUpdateGameCover: " . $conn->error);
+        return false;
+    }
+    
+    $stmt_check->bind_param("i", $game_id);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+    $existing_cover = $result_check->fetch_assoc();
+    $stmt_check->close();
+
+    if ($existing_cover) {
+        // 2. UPDATE if it exists
+        $sql = "UPDATE game_cover SET cover_path = ? WHERE game_id = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            error_log("Prepare failed (update) in addOrUpdateGameCover: " . $conn->error);
+            return false;
+        }
+        $stmt->bind_param("si", $cover_path, $game_id);
+    } else {
+        // 3. INSERT if it does not exist
+        $sql = "INSERT INTO game_cover (game_id, cover_path) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            error_log("Prepare failed (insert) in addOrUpdateGameCover: " . $conn->error);
+            return false;
+        }
+        $stmt->bind_param("is", $game_id, $cover_path);
+    }
+    
+    $result = $stmt->execute();
+    $stmt->close();
+    
+    return $result;
+}
+
+/**
+ * Deletes a single game cover record and returns its data for file deletion.
+ *
+ * @param int $cover_id The primary key (game_cover_id) of the cover record.
+ * @return array|false The cover data (cover_path, game_id) on success, or false on failure.
+ */
+function deleteGameCover($cover_id) {
+    global $conn;
+
+    // 1. Retrieve the file path and game_id first
+    $sql_select = "SELECT cover_path, game_id FROM game_cover WHERE game_cover_id = ?";
+    $stmt_select = $conn->prepare($sql_select);
+    $stmt_select->bind_param("i", $cover_id);
+    $stmt_select->execute();
+    $result = $stmt_select->get_result();
+    $image_data = $result->fetch_assoc();
+    $stmt_select->close();
+
+    if (!$image_data) {
+        return false; // Record not found
+    }
+    
+    // 2. Delete the record from the database
+    $sql_delete = "DELETE FROM game_cover WHERE game_cover_id = ?";
+    $stmt_delete = $conn->prepare($sql_delete);
+    $stmt_delete->bind_param("i", $cover_id);
+    $success = $stmt_delete->execute();
+    $stmt_delete->close();
+
+    if ($success) {
+        // Return the path data so the calling script can physically delete the file
+        return $image_data;
+    }
+    
+    return false;
+}
+
+
 
 /**
  * Retrieves the user's ID and current security answer (sec_answer) by username.

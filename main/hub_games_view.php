@@ -1,7 +1,9 @@
 <?php
 session_start();
+// UPDATED: Path changed from ../../ to ../
 require '../hub_conn.php'; 
 
+// UPDATED: Path changed from ../../ to ../
 if (!isset($_SESSION['username'])) {
     header('Location: ../hub_login.php');
     exit();
@@ -10,6 +12,7 @@ if (!isset($_SESSION['username'])) {
 $current_category_value = isset($_GET['cat']) ? strtolower(trim($_GET['cat'])) : '';
 
 if (empty($current_category_value)) {
+    // UPDATED: Path changed from ../ to same-level
     header('Location: hub_home_category.php');
     exit();
 }
@@ -129,17 +132,17 @@ $username = htmlspecialchars($_SESSION['username']);
         }
 
 
-        /* Image Slideshow (Carousel) */
+        /*
+         * --- Image Slideshow (Carousel) STYLES ---
+         * (Matched to hub_home_category.php)
+        */
         .image-slideshow {
             position: relative;
-            height: 400px;
+            height: 350px; 
             overflow: hidden;
             border: 2px solid var(--secondary-text-color);
             border-radius: 8px;
             background-color: var(--bg-color);
-            display: flex; 
-            justify-content: center;
-            align-items: center;
         }
         .slide {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -148,11 +151,15 @@ $username = htmlspecialchars($_SESSION['username']);
         }
         .slide.active { opacity: 1; }
         .slide img {
-            width: 100%; height: 100%; object-fit: contain; background-color: black;
+            width: 100%; height: 100%; 
+            object-fit: cover; 
         }
         .slider-control {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.4); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; font-size: 1.5em; line-height: 1;
+        }
+        .slider-control:hover {
+            background: rgba(0, 0, 0, 0.6);
         }
         .prev { left: 0; border-radius: 0 5px 5px 0; }
         .next { right: 0; border-radius: 5px 0 0 5px; }
@@ -163,6 +170,7 @@ $username = htmlspecialchars($_SESSION['username']);
             display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: background 0.3s;
         }
         .dot.active { background: white; }
+        /* --- End of Style Updates --- */
 
         .back-link { display: inline-block; margin-bottom: 20px; color: var(--accent-color); text-decoration: none; font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
@@ -180,6 +188,7 @@ $username = htmlspecialchars($_SESSION['username']);
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="../hub_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
 
     <div class="menu-divider"></div>
     
@@ -382,6 +391,7 @@ $username = htmlspecialchars($_SESSION['username']);
     async function updateGameDisplay(gameId) {
         // ... (The rest of your AJAX and DOM manipulation code remains the same) ...
         try {
+            // UPDATED: fetch path changed from ../../ to ../
             const response = await fetch(`../hub_fetch_game_images.php?game_id=${gameId}`);
             const data = await response.json();
 
@@ -404,6 +414,7 @@ $username = htmlspecialchars($_SESSION['username']);
                     const slideDiv = document.createElement('div');
                     slideDiv.className = `slide ${index === 0 ? 'active' : ''}`;
                     const img = document.createElement('img');
+                    // UPDATED: Image src path changed from ../../ to ../
                     img.src = `../${image_data.img_path}`; 
                     img.alt = 'Game Screenshot';
                     slideDiv.appendChild(img);

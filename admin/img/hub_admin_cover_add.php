@@ -31,6 +31,16 @@ $message_type = '';
 // This handles a SINGLE file upload, not an array
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['cover_image'])) {
     
+    // --- NEW: Get old cover path for deletion ---
+    $old_cover_path = null;
+    if (function_exists('selectGameCovers')) {
+        $covers = selectGameCovers($game_id);
+        if (!empty($covers)) {
+            $old_cover_path = $covers[0]['cover_path'];
+        }
+    }
+    // --- END NEW ---
+
     $upload_dir = 'uploads/covers/'; // Use a new directory for covers
     $upload_success = false;
     $db_path = '';
@@ -64,6 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['cover_image'])) {
             // This will replace the old cover path if one exists
             if (addOrUpdateGameCover($game_id, $db_path)) {
                 $upload_success = true;
+                
+                // --- NEW: Delete old file if it exists ---
+                if ($old_cover_path) {
+                    $old_file_server_path = __DIR__ . '/../../' . $old_cover_path;
+                    if (file_exists($old_file_server_path)) {
+                        @unlink($old_file_server_path); // Use @ to suppress errors if file not found
+                    }
+                }
+                // --- END NEW ---
+
             } else {
                 // Clean up file if database insertion fails
                 unlink($dest_path); 
@@ -150,3 +170,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['cover_image'])) {
     </div>
 </body>
 </html>
+

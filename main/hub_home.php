@@ -1,14 +1,5 @@
 <?php
 // session_start(); // Removed - No login required
-
-// Ensure the user is logged in, otherwise redirect them to the login page
-// Removed authentication check
-// if (!isset($_SESSION['username'])) {
-//    header('Location: ../hub_login.php');
-//    exit();
-// }
-
-// $username = htmlspecialchars($_SESSION['username']); // Removed - No user
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +20,7 @@
             --shadow-color: rgba(0, 0, 0, 0.05);
             --wave-opacity: 0.15;
             --welcome-title-color: #2c3e50;
+            --login-color: #2ecc71; /* Green for login */
         }
 
         /* Dark Mode Override */
@@ -41,6 +33,7 @@
             --shadow-color: rgba(0, 0, 0, 0.4);
             --wave-opacity: 0.05;
             --welcome-title-color: #ecf0f1;
+            --login-color: #27ae60; /* Darker green */
         }
 
 
@@ -122,11 +115,20 @@
         .side-menu a.active:hover { 
             background-color: #2980b9; 
         }
+        /* --- NEW: Login Link Style --- */
+        .side-menu a.login-link {
+            color: var(--login-color) !important;
+            font-weight: bold;
+        }
+        .side-menu a.login-link:hover {
+            background-color: var(--bg-color);
+            color: #2ecc71 !important;
+        }
+        /* --- END NEW --- */
         .menu-divider {
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
         }
-        /* Removed .logout-link styles as it's no longer present */
         .icon {
             margin-right: 10px;
             width: 20px;
@@ -157,13 +159,13 @@
             margin-bottom: 40px;
         }
 
-        /* Login Button (Modified from .start-button) */
-        .login-button {
+        /* MODIFIED: Continue Button (from .login-button) */
+        .continue-button {
             padding: 15px 40px;
-            background: #2ecc71; /* Green for login */
+            background: #e74c3c; /* Red color (like 'START' button) */
             color: white;
             text-decoration: none;
-            border: 2px solid #27ae60;
+            border: 2px solid #c0392b;
             border-radius: 6px;
             font-size: 1.2em;
             font-weight: bold;
@@ -171,8 +173,8 @@
             transition: all 0.2s ease-in-out;
             margin-top: 50px;
         }
-        .login-button:hover {
-            background: #27ae60;
+        .continue-button:hover {
+            background: #c0392b;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
             transform: translateY(-2px);
         }
@@ -240,6 +242,10 @@
 
     <div class="menu-divider"></div>
     
+    <a href="../hub_login.php" class="login-link"><span class="icon"><i class="fas fa-sign-in-alt"></i></span>Login</a>
+    
+    <div class="menu-divider"></div>
+    
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
         <span id="darkModeText">Switch Dark Mode</span>
@@ -253,7 +259,7 @@
         This is the GameHub, where you can rate your favourite games.
     </p>
 
-    <a href="../hub_login.php" class="login-button">LOGIN</a>
+    <a href="hub_home_category.php" class="continue-button">CONTINUE</a>
 
     <div class="wave-container">
         <div class="wave"></div>

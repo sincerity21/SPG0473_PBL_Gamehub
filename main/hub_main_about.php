@@ -21,6 +21,7 @@
             --welcome-title-color: #2c3e50;
             --card-info-bg: #f39c12; /* Orange from sketch */
             --card-info-text: #333;
+            --login-color: #2ecc71; /* Green for login */
         }
         body.dark-mode {
             --bg-color: #121212; 
@@ -33,6 +34,7 @@
             --welcome-title-color: #ecf0f1;
             --card-info-bg: #e67e22; /* Slightly darker orange for dark mode */
             --card-info-text: #fff;
+            --login-color: #27ae60; /* Darker green */
         }
 
         /* --- 2. Base & Menu Styles (from hub_home.php) --- */
@@ -48,6 +50,16 @@
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
+        /* --- NEW: Login Link Style --- */
+        .side-menu a.login-link {
+            color: var(--login-color) !important;
+            font-weight: bold;
+        }
+        .side-menu a.login-link:hover {
+            background-color: var(--bg-color);
+            color: #2ecc71 !important;
+        }
+        /* --- END NEW --- */
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
@@ -166,6 +178,11 @@
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     <a href="hub_main_about.php" class="active"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    
+    <div class="menu-divider"></div>
+
+    <a href="../hub_login.php" class="login-link"><span class="icon"><i class="fas fa-sign-in-alt"></i></span>Login</a>
+
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>

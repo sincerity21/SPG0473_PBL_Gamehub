@@ -114,8 +114,6 @@ $games = selectAllGames();
     <title>Game Listing - Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* All CSS from hub_admin_user.php (including modal styles) goes here */
-        /* ... (omitted for brevity, but copy/paste all styles from hub_admin_user.php) ... */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -171,6 +169,23 @@ $games = selectAllGames();
             color: white; font-size: 1.1em; transition: color 0.3s;
         }
         .dark-mode-switch:hover { color: #1abc9c; }
+        
+        /* --- NEW: Search Bar Styles --- */
+        .search-container {
+            margin-bottom: 20px;
+        }
+        #gameSearchInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg-color);
+            color: var(--main-text-color);
+            border-radius: 4px;
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        /* --- END NEW --- */
+
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); z-index: 2000; display: none;
@@ -237,13 +252,16 @@ $games = selectAllGames();
     <div class="content">
         <h1>Game Listing</h1>
 
+        <div class="search-container">
+            <input type="text" id="gameSearchInput" placeholder="Search for games by name or description...">
+        </div>
         <a href="hub_admin_games.php?action=add" class="add-link">➕ Add New Game</a>
         
         <?php if ($error): ?>
             <div class="modal-container error" style="display:block; max-width: 1140px; box-sizing: border-box;"><?php echo $error; ?></div>
         <?php endif; ?>
     
-        <table>
+        <table id="gameTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -255,7 +273,7 @@ $games = selectAllGames();
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="gameTableBody">
             <?php foreach ($games as $game): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($game['game_id']); ?></td>
@@ -294,10 +312,10 @@ $games = selectAllGames();
     ?>
 
     <script>
-        // ... (dark mode JS as before) ...
         const body = document.getElementById('appBody');
         const darkModeIcon = document.getElementById('darkModeIcon');
         const darkModeKey = 'adminGamehubDarkMode';
+        
         function applyDarkMode(isDark) {
             if (isDark) {
                 body.classList.add('dark-mode');
@@ -307,16 +325,18 @@ $games = selectAllGames();
                 if (darkModeIcon) darkModeIcon.classList.replace('fa-sun', 'fa-moon');
             }
         }
+        
         function toggleDarkMode() {
             const isDark = body.classList.contains('dark-mode');
             applyDarkMode(!isDark);
             localStorage.setItem(darkModeKey, !isDark ? 'dark' : 'light');
         }
+        
         (function loadDarkModePreference() {
             applyDarkMode(localStorage.getItem(darkModeKey) === 'dark');
         })();
 
-        // --- NEW: Modal JavaScript ---
+        // --- Modal JavaScript ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -325,7 +345,6 @@ $games = selectAllGames();
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            // Update URL to remove params
             window.history.pushState({}, '', 'hub_admin_games.php');
         }
         
@@ -335,6 +354,32 @@ $games = selectAllGames();
         <?php elseif ($game_to_edit): ?>
             openModal('editGameModal');
         <?php endif; ?>
+
+        // --- NEW: Search Bar Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('gameSearchInput');
+            const tableBody = document.getElementById('gameTableBody');
+            const tableRows = tableBody.getElementsByTagName('tr');
+
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const searchTerm = searchInput.value.toLowerCase();
+
+                    for (let i = 0; i < tableRows.length; i++) {
+                        const row = tableRows[i];
+                        // Search in Name (index 2) and Description (index 3)
+                        const gameName = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
+                        const gameDesc = row.cells[3] ? row.cells[3].textContent.toLowerCase() : '';
+                        
+                        if (gameName.includes(searchTerm) || gameDesc.includes(searchTerm)) {
+                            row.style.display = ""; // Show row
+                        } else {
+                            row.style.display = "none"; // Hide row
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>

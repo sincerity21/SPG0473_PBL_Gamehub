@@ -494,6 +494,15 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             opacity: 0.7;
         }
     </style>
+
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -590,14 +599,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 ?>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
 
     // --- Standard Menu & Dark Mode JS ---
     document.getElementById('menuToggle').addEventListener('click', function() {

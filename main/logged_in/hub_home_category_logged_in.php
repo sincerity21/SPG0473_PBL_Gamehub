@@ -195,6 +195,15 @@ $fallback_cover = 'uploads/placeholder.png';
         /* --- REMOVED .game-card-title CSS --- */
 
     </style>
+
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -271,14 +280,7 @@ $fallback_cover = 'uploads/placeholder.png';
 </div>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
 
     // --- 1. Side Menu Toggle Logic (from hub_home_logged_in.php) ---
     document.getElementById('menuToggle').addEventListener('click', function() {

@@ -160,6 +160,15 @@ $username = htmlspecialchars($_SESSION['username']);
         }
 
     </style>
+
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -247,14 +256,7 @@ $username = htmlspecialchars($_SESSION['username']);
 </div>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
         
     // --- Standard Menu & Dark Mode JS ---
     document.getElementById('menuToggle').addEventListener('click', function() {

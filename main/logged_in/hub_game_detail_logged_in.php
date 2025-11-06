@@ -220,6 +220,15 @@ if (empty($gallery_images)) {
         .back-link:hover { text-decoration: underline; }
 
     </style>
+
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -317,14 +326,7 @@ if (empty($gallery_images)) {
 </div>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
 
     // --- Side Menu ---
     document.getElementById('menuToggle').addEventListener('click', function() {

@@ -504,6 +504,15 @@ $fallback_cover = 'uploads/placeholder.png';
             opacity: 0.7;
         }
     </style>
+
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -574,14 +583,7 @@ $fallback_cover = 'uploads/placeholder.png';
 ?>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
 
     // --- 1. Side Menu Toggle Logic ---
     document.getElementById('menuToggle').addEventListener('click', function() {

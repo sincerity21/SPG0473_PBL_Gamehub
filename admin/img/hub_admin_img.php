@@ -224,6 +224,15 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
             margin-bottom: 15px; text-align: center; font-weight: bold;
         }
     </style>
+
+    <script>
+    (function() {
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        if (localStorage.getItem(localStorageKey) === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
+</script>
 </head>
 <body id="appBody">
     <div class="navbar">
@@ -350,46 +359,30 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     ?>
 
     <script>
-        // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+        
 
         // --- Updated Dark Mode Logic ---
-        const darkModeText = document.getElementById('darkModeText');
-        const localStorageKey = 'gamehubDarkMode';
-        const htmlElement = document.documentElement; // Target the <html> tag
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const htmlElement = document.documentElement;
 
-        // This function now applies the class to <html> AND updates the button text
         function applyDarkMode(isDark) {
             if (isDark) {
                 htmlElement.classList.add('dark-mode');
-                if (darkModeText) darkModeText.textContent = 'Switch Light Mode';
+                if (darkModeIcon) darkModeIcon.classList.replace('fa-moon', 'fa-sun');
             } else {
                 htmlElement.classList.remove('dark-mode');
-                if (darkModeText) darkModeText.textContent = 'Switch Dark Mode';
+                if (darkModeIcon) darkModeIcon.classList.replace('fa-sun', 'fa-moon');
             }
         }
 
-        // This function toggles the mode
         function toggleDarkMode() {
-            // Check the class on the <html> tag
             const isDark = htmlElement.classList.contains('dark-mode');
-
-            // Toggle the state
             applyDarkMode(!isDark);
-
-            // Save preference to local storage
             localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
         }
 
-        // This function runs on page load to set the *button text* correctly.
-        // The class itself was already set by the script in the <head>.
-        (function loadButtonText() {
+        (function loadIconState() {
             const isDark = htmlElement.classList.contains('dark-mode');
             applyDarkMode(isDark);
         })();

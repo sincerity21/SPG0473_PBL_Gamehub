@@ -103,7 +103,6 @@ if ($_POST) {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
             session_destroy();
-            // *** FIXED BUG HERE ***: Assign to $reset_error, not $forgot_step1_error
             $reset_error = "Security authorization lost. Please start over.";
         } else {
             $user_id = $_SESSION['temp_user_id'];
@@ -136,12 +135,7 @@ if ($_POST) {
     }
 }
 
-// --- NEW LOGIC BLOCK (Moved from hub_forgotpassword2.php) ---
-// Define variables for Modal 2 (Security Question)
-// This runs *after* the POST block, so if Step 1 was just completed,
-// the session variables will be set, and these variables will be populated
-// *before* hub_forgotpassword2.php is included.
-
+// --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
@@ -184,10 +178,10 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-// --- END OF NEW LOGIC BLOCK ---
+// --- END OF LOGIC BLOCK ---
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -209,7 +203,9 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             --border-color: #ccc; /* Added for dark mode forms */
         }
 
-        /* Dark Mode Override */
+        /* * --- CHANGE 2: CSS SELECTOR ---
+         * All 'body.dark-mode' selectors are changed to 'html.dark-mode body'
+         */
         html.dark-mode body {
             --bg-color: #121212;
             --main-text-color: #f4f4f4;
@@ -237,6 +233,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             transition: background-color 0.3s, color 0.3s; /* Smooth transition */
         }
 
+        /* ... (rest of CSS is unchanged) ... */
+        
         /* Header (Top Bar) */
         .header {
             background-color: var(--card-bg-color); /* Uses variable */
@@ -302,7 +300,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         .side-menu a.active:hover { 
             background-color: #2980b9; 
         }
-        /* --- NEW: Login Link Style --- */
         .side-menu a.login-link {
             color: var(--login-color) !important;
             font-weight: bold;
@@ -311,7 +308,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             background-color: var(--bg-color);
             color: #2ecc71 !important;
         }
-        /* --- END NEW --- */
         .menu-divider {
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
@@ -321,9 +317,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             width: 20px;
             text-align: center;
         }
-
-
-        /* Main Content Area */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -345,8 +338,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             color: var(--secondary-text-color); /* Uses variable */
             margin-bottom: 40px;
         }
-
-        /* MODIFIED: Continue Button (from .login-button) */
         .continue-button {
             padding: 15px 40px;
             background: #e74c3c; /* Red color (like 'START' button) */
@@ -365,8 +356,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
             transform: translateY(-2px);
         }
-
-        /* Wave Separator (Visual effect from sketch) */
         .wave-container {
             position: absolute;
             bottom: 0;
@@ -399,7 +388,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             50% { transform: translate(-25%, 5%); }
             100% { transform: translate(0, 0); }
         }
-        /* Dark Mode Styling (Toggle placeholder styling updated) */
         .dark-mode-label {
             display: flex;
             justify-content: space-between;
@@ -410,7 +398,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             font-size: 1.2em;
         }
         
-        /* --- Modal Styles --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -449,7 +436,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             color: var(--secondary-text-color);
         }
 
-        /* --- Form Styles (from login/register) --- */
         .modal-container h2 {
             color: var(--welcome-title-color);
             text-align: center;
@@ -506,7 +492,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             text-align: center;
             font-weight: bold;
         }
-        /* NEW Success class */
         .modal-container .success { 
             background-color: #d4edda; 
             color: #155724; 
@@ -557,10 +542,17 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         }
 
     </style>
-</head>
-<body id="appBody">
 
-<div class="header">
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    </head>
+<body id="appBody"> <div class="header">
     <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
@@ -610,26 +602,16 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 ?>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
-
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- Updated Dark Mode Logic ---
+    // --- CHANGE 3: UPDATED DARK MODE SCRIPT ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; // Target the <html> tag
 
-    // This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -640,26 +622,21 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         }
     }
 
-    // This function toggles the mode
     function toggleDarkMode() {
-        // Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
-
-        // Toggle the state
         applyDarkMode(!isDark);
-
-        // Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // This function runs on page load to set the *button text* correctly.
-    // The class itself was already set by the script in the <head>.
+    // ThisIIFE now just sets the button text
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
+    // --- END OF CHANGE 3 ---
 
-    // --- NEW Modal JavaScript ---
+
+    // --- Modal JavaScript ---
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';

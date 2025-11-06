@@ -542,6 +542,15 @@ if (empty($gallery_images)) {
             opacity: 0.7;
         }
     </style>
+    
+    <script>
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
 </head>
 <body id="appBody">
 
@@ -636,14 +645,7 @@ if (empty($gallery_images)) {
 ?>
 
 <script>
-    // This script runs BEFORE the page body renders
-        (function() {
-            const localStorageKey = 'gamehubDarkMode'; 
-            if (localStorage.getItem(localStorageKey) === 'dark') {
-                // Apply the class to the <html> tag
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
+    
 
     // --- 1. Side Menu & Dark Mode (Standard) ---
     document.getElementById('menuToggle').addEventListener('click', function() {

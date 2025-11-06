@@ -41,7 +41,11 @@
                 <label for="game_trailerLink">Trailer (Link):</label>
                 <input type="text" id="game_trailerLink" name="game_trailerLink" required>
             </div>
-            
+
+            <div class="form-group">
+                <label for="game_Link">Game Link (URL):</label>
+                <input type="text" id="game_Link" name="game_Link" placeholder="e.g., https://store.steampowered.com/..." required>
+            </div>
             <button type="submit" class="btn">Add Game</button>
         </form>
     </div>

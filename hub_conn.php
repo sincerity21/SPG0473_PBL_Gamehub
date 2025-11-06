@@ -136,16 +136,16 @@ function deleteByID($id){
     return $result;
 }
 
-function addNewGame($game_category, $game_name, $game_desc, $game_img, $game_trailerLink){
+function addNewGame($game_category, $game_name, $game_desc, $game_img, $game_trailerLink, $game_Link){
     global $conn;
     
-    // The SQL now includes the 'game_img' column
-    $sql = "INSERT INTO games (game_category, game_name, game_desc, game_img, game_trailerLink) 
-            VALUES (?, ?, ?, ?, ?)";
+    // The SQL now includes the 'game_Link' column
+    $sql = "INSERT INTO games (game_category, game_name, game_desc, game_img, game_trailerLink, game_Link) 
+            VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     
-    // Bind 5 parameters ('s' for each string)
-    $stmt->bind_param("sssss", $game_category, $game_name, $game_desc, $game_img, $game_trailerLink);
+    // Bind 6 parameters ('s' for each string)
+    $stmt->bind_param("ssssss", $game_category, $game_name, $game_desc, $game_img, $game_trailerLink, $game_Link);
     
     $result = $stmt->execute();
     $stmt->close();
@@ -172,7 +172,7 @@ function selectGameByID($id){
     return $game;
 }
 
-function updateGameByID($id, $name, $category, $desc, $img, $trailerLink){
+function updateGameByID($id, $name, $category, $desc, $img, $trailerLink, $game_Link){
     global $conn;
     
     $sql = "UPDATE games SET 
@@ -180,12 +180,14 @@ function updateGameByID($id, $name, $category, $desc, $img, $trailerLink){
             game_category = ?, 
             game_desc = ?, 
             game_img = ?, 
-            game_trailerLink = ? 
+            game_trailerLink = ?,
+            game_Link = ? 
             WHERE game_id = ?";
             
     $stmt = $conn->prepare($sql);
     
-    $stmt->bind_param("sssssi", $name, $category, $desc, $img, $trailerLink, $id);
+    // Bind 7 parameters
+    $stmt->bind_param("ssssssi", $name, $category, $desc, $img, $trailerLink, $game_Link, $id);
     
     $result = $stmt->execute();
     $stmt->close();

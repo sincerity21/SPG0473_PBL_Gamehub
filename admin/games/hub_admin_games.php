@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $game_name = $_POST['game_name'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
+        $game_Link = $_POST['game_Link']; // <-- ADDED
         $game_img_filename = ''; // Default to empty string
 
         if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
@@ -39,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         if (!$error) {
-            $result = addNewGame($game_category, $game_name, $game_desc, $game_img_filename, $game_trailerLink);
+            // MODIFIED function call
+            $result = addNewGame($game_category, $game_name, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
             if ($result) {
                 header('Location: hub_admin_games.php?status=added');
                 exit();
@@ -56,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $game_category = $_POST['game_category'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
+        $game_Link = $_POST['game_Link']; // <-- ADDED
 
         // Get current game data to find old image path
         $game = selectGameByID($id);
@@ -83,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update database if no upload error
             if (!$error) {
-                $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_img_filename, $game_trailerLink);
+                // MODIFIED function call
+                $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
                 if ($result) {
                     header('Location: hub_admin_games.php?status=updated'); 
                     exit();
@@ -114,6 +118,7 @@ $games = selectAllGames();
     <title>Game Listing - Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ... (All CSS rules from file) ... */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -169,8 +174,6 @@ $games = selectAllGames();
             color: white; font-size: 1.1em; transition: color 0.3s;
         }
         .dark-mode-switch:hover { color: #1abc9c; }
-        
-        /* --- NEW: Search Bar Styles --- */
         .search-container {
             margin-bottom: 20px;
         }
@@ -184,8 +187,6 @@ $games = selectAllGames();
             box-sizing: border-box; 
             font-size: 16px;
         }
-        /* --- END NEW --- */
-
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); z-index: 2000; display: none;
@@ -264,6 +265,7 @@ $games = selectAllGames();
         <div class="search-container">
             <input type="text" id="gameSearchInput" placeholder="Search for games by name or description...">
         </div>
+        
         <a href="hub_admin_games.php?action=add" class="add-link">➕ Add New Game</a>
         
         <?php if ($error): ?>
@@ -279,7 +281,7 @@ $games = selectAllGames();
                     <th>Description</th>
                     <th>Image</th>
                     <th>Trailer Link</th>
-                    <th>Action</th>
+                    <th>Game Link</th> <th>Action</th>
                 </tr>
             </thead>
             <tbody id="gameTableBody">
@@ -301,6 +303,8 @@ $games = selectAllGames();
                         <?php endif; ?>
                     </td>
                     <td><a href="<?php echo htmlspecialchars($game['game_trailerLink']); ?>" target="_blank">Watch Trailer</a></td>
+                    
+                    <td><a href="<?php echo htmlspecialchars($game['game_Link']); ?>" target="_blank">Go to Game</a></td>
                     <td>
                         <a href="../img/hub_admin_img.php?game_id=<?php echo htmlspecialchars($game['game_id']); ?>">🖼️ Gallery</a> |
                         <a href="hub_admin_games.php?id=<?php echo htmlspecialchars($game['game_id']); ?>">Edit</a> |
@@ -321,9 +325,7 @@ $games = selectAllGames();
     ?>
 
     <script>
-        
-
-        /// --- Updated Admin Dark Mode Logic ---
+        // --- Updated Dark Mode Logic ---
         const darkModeIcon = document.getElementById('darkModeIcon');
         const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         const htmlElement = document.documentElement;
@@ -354,21 +356,18 @@ $games = selectAllGames();
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
         }
-
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
             window.history.pushState({}, '', 'hub_admin_games.php');
         }
-        
-        // Auto-open modal based on URL params
         <?php if (isset($_GET['action']) && $_GET['action'] == 'add'): ?>
             openModal('addGameModal');
         <?php elseif ($game_to_edit): ?>
             openModal('editGameModal');
         <?php endif; ?>
 
-        // --- NEW: Search Bar Logic ---
+        // --- Search Bar Logic ---
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('gameSearchInput');
             const tableBody = document.getElementById('gameTableBody');

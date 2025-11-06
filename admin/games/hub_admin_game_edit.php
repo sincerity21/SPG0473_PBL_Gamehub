@@ -52,6 +52,10 @@
                 <input type="text" id="game_trailerLink" name="game_trailerLink" value="<?php echo htmlspecialchars($game_to_edit['game_trailerLink']); ?>" required>
             </div>
 
+            <div class="form-group">
+                <label for="game_Link">Game Link (URL):</label>
+                <input type="text" id="game_Link" name="game_Link" value="<?php echo htmlspecialchars($game_to_edit['game_Link']); ?>" required>
+            </div>
             <input type="submit" value="Update Game" class="btn">
         </form>
     </div>

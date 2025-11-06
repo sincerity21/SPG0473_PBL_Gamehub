@@ -1,6 +1,65 @@
 <?php
-// No session required
+session_start();
 require '../hub_conn.php'; 
+include '../modal_login.php';
+include '../modal_register.php';
+
+$login_error = '';
+$register_error = '';
+
+if ($_POST) {
+    // Check which action is being performed
+    $action = $_POST['action'] ?? '';
+
+    // --- LOGIN LOGIC ---
+    if ($action === 'login') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        $result = loginUser($username, $password);
+
+        if($result){
+            $_SESSION['user_id'] = $result['user_id'];
+            $_SESSION['username'] = $result['user_username'];
+            $_SESSION['email'] = $result['user_email'];
+
+            if (isset($result['is_admin']) && $result['is_admin'] == 1) {
+                $_SESSION['is_admin'] = true;
+                header("Location: ../admin/user/hub_admin_user.php"); 
+            } else {
+                $_SESSION['is_admin'] = false;
+                header("Location: logged_in/hub_home_logged_in.php");
+            }
+            exit(); 
+        } else {
+            $login_error = "Login Unsuccessful. Check your username and password.";
+        }
+    }
+
+    // --- REGISTER LOGIC ---
+    if ($action === 'register') {
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $server = $_POST['server'];
+        $prompt = $_POST['prompt'];
+        $answer = $_POST['answer'];
+
+        if (empty($username) || empty($email) || empty($password) || empty($answer)) {
+            $register_error = "You must fill in all fields.";
+        } else {
+            $success = registerUser($username, $email, $password, $server, $prompt, $answer);
+            
+            if ($success) {
+                // On success, redirect to the login page (or show the login modal)
+                header('Location: ../hub_login.php?status=registered'); // Simple redirect
+                exit();
+            } else {
+                $register_error = "Registration failed. Username or email may already be in use.";
+            }
+        }
+    }
+}
 
 // --- 1. Get and Validate Game ID ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
@@ -209,7 +268,161 @@ if (empty($gallery_images)) {
             font-weight: 600;
         }
         .back-link:hover { text-decoration: underline; }
-
+        /* Dark Mode Styling (Toggle placeholder styling updated) */
+        .dark-mode-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        .dark-mode-label .icon {
+            font-size: 1.2em;
+        }
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Width of register modal */
+            
+            /* Dark Mode styles for modal content */
+            color: #333; 
+        }
+        body.dark-mode .modal-container {
+            background-color: var(--card-bg-color);
+            color: var(--main-text-color);
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        body.dark-mode .modal-close {
+            color: var(--secondary-text-color);
+        }
+        /* --- Form Styles (from login/register) --- */
+        .modal-container h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        body.dark-mode .modal-container h2 {
+            color: var(--welcome-title-color);
+            border-color: var(--accent-color);
+        }
+        .modal-container .form-group { 
+            margin-bottom: 20px; 
+        }
+        .modal-container label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            color: #555;
+        }
+        body.dark-mode .modal-container label {
+            color: var(--secondary-text-color);
+        }
+        .modal-container input[type="text"],
+        .modal-container input[type="email"],
+        .modal-container input[type="password"],
+        .modal-container select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+            
+            /* Dark mode form inputs */
+            background-color: white;
+            color: #333;
+        }
+        body.dark-mode .modal-container input[type="text"],
+        body.dark-mode .modal-container input[type="email"],
+        body.dark-mode .modal-container input[type="password"],
+        body.dark-mode .modal-container select {
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+            border-color: var(--border-color);
+        }
+        .modal-container .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db; 
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .modal-container .btn:hover {
+            background-color: #2980b9;
+        }
+        .modal-container .error {
+            background-color: #fdd; 
+            color: #c00; 
+            padding: 10px; 
+            border: 1px solid #f99;
+            border-radius: 4px;
+            margin-bottom: 15px; 
+            text-align: center;
+            font-weight: bold;
+        }
+        .modal-container .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .modal-container .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-container .register-link a:hover {
+            text-decoration: underline;
+        }
+        .modal-container .forgot-link {
+            text-align: right;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .modal-container .forgot-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        body.dark-mode .modal-container .register-link a,
+        body.dark-mode .modal-container .forgot-link a {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body id="appBody">
@@ -228,7 +441,7 @@ if (empty($gallery_images)) {
     
     <div class="menu-divider"></div>
 
-    <a href="../hub_login.php" class="login-link"><span class="icon"><i class="fas fa-sign-in-alt"></i></span>Login</a>
+    <a href="#" class="login-link" onclick="openModal('loginModal')"><span class="icon"><i class="fas fa-sign-in-alt"></i></span>Login</a>
     
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
@@ -288,7 +501,7 @@ if (empty($gallery_images)) {
                 <i class="fab fa-youtube"></i> Watch the Trailer (on YouTube)
             </a>
 
-            <a href="../hub_login.php" class="next-link">
+            <a href="#" class="next-link" onclick="openModal('loginModal')">
                 LOGIN TO CONTINUE
             </a>
         </div>
@@ -375,6 +588,29 @@ if (empty($gallery_images)) {
             star.addEventListener('click', loginRedirect);
         });
     }
+
+    // --- NEW Modal JavaScript ---
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+    
+    function switchToModal(fromModalId, toModalId) {
+        closeModal(fromModalId);
+        openModal(toModalId);
+    }
+    
+    // Auto-open modal if there was a PHP error
+    <?php if (!empty($login_error)): ?>
+        openModal('loginModal');
+    <?php endif; ?>
+    
+    <?php if (!empty($register_error)): ?>
+        openModal('registerModal');
+    <?php endif; ?>
 </script>
 
 </body>

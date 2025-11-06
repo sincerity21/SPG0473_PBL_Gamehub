@@ -22,7 +22,7 @@
             </div>
             
             <div class="forgot-link">
-                <a href="hub_forgotpassword.php">Forget password?</a>
+                <a href="../hub_forgotpassword.php">Forget password?</a>
             </div>
             
             <button type="submit" class="btn">Login</button>

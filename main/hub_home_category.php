@@ -566,8 +566,8 @@ $fallback_cover = 'uploads/placeholder.png';
 
 <?php
     // --- MODIFIED BLOCK: Include all modals ---
-    include '../modal_login.php';
-    include '../modal_register.php';
+    include '../hub_login.php';
+    include '../hub_register.php';
     include '../hub_forgotpassword.php'; // Step 1
     include '../hub_forgotpassword2.php'; // Step 2
     include '../hub_resetpassword.php'; // Step 3

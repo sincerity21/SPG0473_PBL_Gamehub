@@ -165,7 +165,7 @@ $users = selectAllUsers();
 </div>
 
 <div class="content">
-    <h1>Welcome, <?php echo htmlspecialchars($username); ?> (Admin)!</h1>
+    <h1>Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
 
     <h2>User Listing (Administrative View)</h2>
 

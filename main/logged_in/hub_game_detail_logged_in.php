@@ -1,16 +1,16 @@
 <?php
 session_start();
-require '../hub_conn.php'; 
+require '../../hub_conn.php'; 
 
 // --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
 // --- 2. Get and Validate Game ID ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    header('Location: hub_home_category.php'); // Redirect if no valid game ID
+    header('Location: hub_home_category_logged_in.php'); // Redirect if no valid game ID
     exit();
 }
 
@@ -25,7 +25,7 @@ $game = selectGameByID($game_id);
 
 if (!$game) {
     // If game not found, redirect back
-    header('Location: hub_home_category.php');
+    header('Location: hub_home_category_logged_in.php');
     exit();
 }
 
@@ -72,7 +72,7 @@ if (empty($gallery_images)) {
             --border-color: #444; --welcome-title-color: #ecf0f1;
         }
 
-        /* --- 2. Base & Menu Styles (from hub_home_category.php) --- */
+        /* --- 2. Base & Menu Styles (from hub_home_category_logged_in.php) --- */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--main-text-color); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
         .header { background-color: var(--card-bg-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px var(--shadow-color); position: sticky; top: 0; z-index: 1001; }
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
@@ -232,7 +232,7 @@ if (empty($gallery_images)) {
 
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category_logged_in.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
@@ -243,7 +243,7 @@ if (empty($gallery_images)) {
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
     <div class="menu-divider"></div>
-    <a href="../hub_logout.php" class="logout-link">
+    <a href="../../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
     </a>
@@ -259,7 +259,7 @@ if (empty($gallery_images)) {
         </svg>
     </div>
     
-    <a href="hub_home_category.php" class="back-link">
+    <a href="hub_home_category_logged_in.php" class="back-link">
         <i class="fas fa-chevron-left"></i> Back to Library
     </a>
 
@@ -269,7 +269,7 @@ if (empty($gallery_images)) {
             <div id="slideshow-content">
                 <?php foreach ($gallery_images as $index => $image): ?>
                     <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                        <img src="../<?php echo htmlspecialchars($image['img_path']); ?>" alt="Game Screenshot">
+                        <img src="../../<?php echo htmlspecialchars($image['img_path']); ?>" alt="Game Screenshot">
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -384,7 +384,7 @@ if (empty($gallery_images)) {
     // Generic function to send feedback updates
     async function sendFeedback(gameId, feedbackData) {
         try {
-            const response = await fetch('../hub_update_feedback.php', {
+            const response = await fetch('../../hub_update_feedback.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

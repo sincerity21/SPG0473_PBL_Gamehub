@@ -11,7 +11,7 @@ if (!isset($_SESSION['username'])) {
 $current_category_value = isset($_GET['cat']) ? strtolower(trim($_GET['cat'])) : '';
 
 if (empty($current_category_value)) {
-    header('Location: hub_home_category.php');
+    header('Location: hub_home_category_logged_in.php');
     exit();
 }
 
@@ -194,7 +194,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category_logged_in.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     <a href="../hub_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
@@ -209,7 +209,7 @@ $username = htmlspecialchars($_SESSION['username']);
 </div>
 
 <div class="content-container">
-    <a href="hub_home_category.php" class="back-link">
+    <a href="hub_home_category_logged_in.php" class="back-link">
         <i class="fas fa-chevron-left"></i> Back to Categories
     </a>
 

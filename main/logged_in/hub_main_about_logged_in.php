@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../hub_conn.php'; 
+require '../../hub_conn.php'; 
 
 // --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 $username = htmlspecialchars($_SESSION['username']);
@@ -172,7 +172,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category_logged_in.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about_logged_in.php" class="active"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
     <div class="menu-divider"></div>
@@ -181,7 +181,7 @@ $username = htmlspecialchars($_SESSION['username']);
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
     <div class="menu-divider"></div>
-    <a href="../hub_logout.php" class="logout-link">
+    <a href="../../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
     </a>
@@ -200,7 +200,7 @@ $username = htmlspecialchars($_SESSION['username']);
         
         <div class="team-card">
             <div class="card-image">
-                <img src="../uploads/members/iman.jpg" alt="Team Member 1 Photo">
+                <img src="../../uploads/members/iman.jpg" alt="Team Member 1 Photo">
             </div>
             <div class="card-info">
                 <h3>IRELAND BOI</h3>
@@ -216,7 +216,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
         <div class="team-card">
             <div class="card-image">
-                <img src="../uploads/members/anwar.jpg" alt="Team Member 2 Photo">
+                <img src="../../uploads/members/anwar.jpg" alt="Team Member 2 Photo">
             </div>
             <div class="card-info">
                 <h3>ANUAT</h3>
@@ -232,7 +232,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
         <div class="team-card">
             <div class="card-image">
-                <img src="../uploads/members/fawwaz.jpg" alt="Team Member 3 Photo">
+                <img src="../../uploads/members/fawwaz.jpg" alt="Team Member 3 Photo">
             </div>
             <div class="card-info">
                 <h3>FAWWAZ</h3>

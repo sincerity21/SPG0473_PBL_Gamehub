@@ -3,7 +3,7 @@ session_start();
 
 // Ensure the user is logged in, otherwise redirect them to the login page
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
@@ -241,7 +241,7 @@ $username = htmlspecialchars($_SESSION['username']);
 <!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php" class="active"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
+    <a href="hub_home_category_logged_in.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     
     <!-- === ADDED LINKS === -->
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
@@ -258,7 +258,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
     <div class="menu-divider"></div>
 
-    <a href="../hub_logout.php" class="logout-link">
+    <a href="../../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
     </a>
@@ -271,7 +271,7 @@ $username = htmlspecialchars($_SESSION['username']);
     </p>
 
     <!-- START button (you'll link this to the main game view page next) -->
-    <a href="hub_home_category.php" class="start-button">START</a>
+    <a href="hub_home_category_logged_in.php" class="start-button">START</a>
 
     <!-- Blue Wave Background Effect -->
     <div class="wave-container">

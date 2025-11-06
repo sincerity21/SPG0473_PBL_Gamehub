@@ -1,10 +1,10 @@
 <?php
 session_start();
-require '../hub_conn.php'; // Assuming hub_conn is one level up
+require '../../hub_conn.php'; // Assuming hub_conn is one level up
 
 // Ensure the user is logged in
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../../hub_login.php');
     exit();
 }
 
@@ -207,7 +207,7 @@ $fallback_cover = 'uploads/placeholder.png';
 
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category_logged_in.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
@@ -221,7 +221,7 @@ $fallback_cover = 'uploads/placeholder.png';
 
     <div class="menu-divider"></div>
 
-    <a href="../hub_logout.php" class="logout-link">
+    <a href="../../hub_logout.php" class="logout-link">
         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
         Logout
     </a>
@@ -255,11 +255,11 @@ $fallback_cover = 'uploads/placeholder.png';
                 // Use fallback placeholder if cover_path is missing
                 $cover_path = !empty($game['cover_path']) ? $game['cover_path'] : $fallback_cover;
                 ?>
-                <a href="hub_game_detail.php?game_id=<?php echo $game['game_id']; ?>" 
+                <a href="hub_game_detail_logged_in.php?game_id=<?php echo $game['game_id']; ?>" 
                    class="game-card" 
                    data-category="<?php echo htmlspecialchars($game['game_category']); ?>">
                     
-                    <img src="../<?php echo htmlspecialchars($cover_path); ?>" alt="<?php echo htmlspecialchars($game['game_name']); ?> Cover">
+                    <img src="../../<?php echo htmlspecialchars($cover_path); ?>" alt="<?php echo htmlspecialchars($game['game_name']); ?> Cover">
                     
                     </a>
             <?php endforeach; ?>

@@ -728,6 +728,58 @@ function upsertGameFavourite($user_id, $game_id, $favorite) {
 }
 
 /**
+ * Inserts or updates a user's survey feedback for a specific game.
+ *
+ * @param int $user_id The user's ID.
+ * @param int $game_id The game's ID.
+ * @param string $frequency The frequency value (e.g., 'frequency_0').
+ * @param string $open_feedback The open-ended text feedback.
+ * @return bool True on success, false on failure.
+ */
+function upsertGameFeedback($user_id, $game_id, $frequency, $open_feedback) {
+    global $conn;
+    $sql = "INSERT INTO feedback_game (user_id, game_id, feedback_game_frequency, feedback_game_open)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                feedback_game_frequency = VALUES(feedback_game_frequency), 
+                feedback_game_open = VALUES(feedback_game_open)";
+    
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        error_log("Prepare failed in upsertGameFeedback: " . $conn->error); 
+        return false;
+    }
+    $stmt->bind_param("iiss", $user_id, $game_id, $frequency, $open_feedback);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/**
+ * Selects the existing survey feedback for a specific user and game.
+ *
+ * @param int $user_id The ID of the user.
+ * @param int $game_id The ID of the game.
+ * @return array|null The feedback record or null if not found.
+ */
+function selectUserSurveyFeedback($user_id, $game_id){
+    global $conn;
+    
+    $sql = "SELECT feedback_game_frequency, feedback_game_open 
+            FROM feedback_game 
+            WHERE user_id = ? AND game_id = ?";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $game_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $feedback = $result->fetch_assoc();
+    $stmt->close();
+    
+    return $feedback; // Returns the row, or null if no feedback exists
+}
+
+/**
  * Retrieves the user's ID and current security answer (sec_answer) by username.
  * This function is used by the admin tool to check/update old plain text answers.
  * @param mysqli $conn The MySQLi database connection object.

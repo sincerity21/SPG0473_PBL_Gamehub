@@ -164,7 +164,7 @@
 
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="INSERT_LATER.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
+    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     <a href="hub_main_about.php" class="active"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">

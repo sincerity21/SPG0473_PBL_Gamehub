@@ -115,6 +115,13 @@ $username = htmlspecialchars($_SESSION['username']);
             background-color: var(--bg-color);
             color: var(--accent-color);
         }
+        .side-menu a.active { 
+            background-color: var(--accent-color); 
+            color: white; font-weight: bold; 
+        }
+        .side-menu a.active:hover { 
+            background-color: #2980b9; 
+        }
         .menu-divider {
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
@@ -233,7 +240,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
 <!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
-    <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="hub_home_logged_in.php" class="active"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     
     <!-- === ADDED LINKS === -->

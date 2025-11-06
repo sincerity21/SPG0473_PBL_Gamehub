@@ -81,6 +81,10 @@ if (empty($gallery_images)) {
         .side-menu.open { transform: translateX(0); }
         .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
+        /* --- ADDED .active class styles --- */
+        .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
+        .side-menu a.active:hover { background-color: #2980b9; }
+        /* --- END ADDED --- */
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
@@ -220,21 +224,18 @@ if (empty($gallery_images)) {
 <body id="appBody">
 
 <div class="header">
-    <a href="hub_home_logged_in.php" class="logo">GAMEHUB</a>
+    <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
-<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
+    <a href="hub_home_category.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     
-    <!-- === ADDED LINKS === -->
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
-    <!-- === END OF ADDED LINKS === -->
 
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
@@ -264,7 +265,6 @@ if (empty($gallery_images)) {
 
     <div class="game-detail-layout">
         
-        <!-- Left Column: Slideshow -->
         <div class="image-slideshow">
             <div id="slideshow-content">
                 <?php foreach ($gallery_images as $index => $image): ?>
@@ -289,7 +289,6 @@ if (empty($gallery_images)) {
             <?php endif; ?>
         </div>
 
-        <!-- Right Column: Info -->
         <div class="game-info">
             <div class="game-title-header">
                 <h2 class="game-title"><?php echo htmlspecialchars($game['game_name']); ?></h2>
@@ -333,7 +332,7 @@ if (empty($gallery_images)) {
             if(darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
             body.classList.remove('dark-mode');
-            if(darkModeText) darkModeText.textContent = 'Switch Dark Mode';
+            if(darkModeText) darkModeText.textContent = 'Switch Light Mode';
         }
     }
     function toggleDarkMode() {

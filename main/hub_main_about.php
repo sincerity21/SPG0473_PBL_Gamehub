@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - GameHub</title>
-    <!-- Using Font Awesome 6 for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
@@ -163,9 +162,9 @@
 </div>
 
 
-<!-- Side Menu (Reduced Logged-out Version) -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="INSERT_LATER.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     <a href="hub_main_about.php" class="active"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
@@ -185,7 +184,6 @@
 
     <div class="team-grid">
         
-        <!-- Team Member 1 -->
         <div class="team-card">
             <div class="card-image">
                 <img src="../uploads/members/iman.jpg" alt="Team Member 1 Photo">
@@ -202,7 +200,6 @@
             </div>
         </div>
 
-        <!-- Team Member 2 -->
         <div class="team-card">
             <div class="card-image">
                 <img src="../uploads/members/anwar.jpg" alt="Team Member 2 Photo">
@@ -219,7 +216,6 @@
             </div>
         </div>
 
-        <!-- Team Member 3 (No socials) -->
         <div class="team-card">
             <div class="card-image">
                 <img src="../uploads/members/fawwaz.jpg" alt="Team Member 3 Photo">
@@ -229,8 +225,7 @@
                 <p>BACK-END,
                 DATABASE</p>
                 <div class="social-links">
-                    <!-- No links as requested -->
-                </div>
+                    </div>
             </div>
         </div>
 
@@ -268,4 +263,3 @@
 
 </body>
 </html>
-

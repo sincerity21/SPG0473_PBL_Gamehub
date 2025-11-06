@@ -116,8 +116,12 @@
             background-color: var(--bg-color);
             color: var(--accent-color);
         }
-        .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
-        .side-menu a.active:hover { background-color: #2980b9; }
+        .side-menu a.active { 
+            background-color: var(--accent-color); 
+            color: white; font-weight: bold; }
+        .side-menu a.active:hover { 
+            background-color: #2980b9; 
+        }
         .menu-divider {
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
@@ -228,24 +232,18 @@
     </button>
 </div>
 
-<!-- Side Menu (Modified for "before login" state) -->
 <div class="side-menu" id="sideMenu">
     
-    <!-- === REMOVED Home === -->
-    
-    <!-- === UPDATED About Link === -->
     <a href="hub_home.php" class="active"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="INSERT_LATER.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     <a href="hub_main_about.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
 
     <div class="menu-divider"></div>
     
-    <!-- Switch Dark Mode Button -->
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
-
-    <!-- === REMOVED Logout === -->
     
 </div>
 
@@ -255,10 +253,8 @@
         This is the GameHub, where you can rate your favourite games.
     </p>
 
-    <!-- Changed to LOGIN button -->
     <a href="../hub_login.php" class="login-button">LOGIN</a>
 
-    <!-- Blue Wave Background Effect -->
     <div class="wave-container">
         <div class="wave"></div>
         <div class="wave"></div>
@@ -311,4 +307,3 @@
 
 </body>
 </html>
-

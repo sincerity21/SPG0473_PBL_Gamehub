@@ -8,6 +8,7 @@ $forgot_step1_error = '';
 $forgot_step2_error = '';
 $reset_error = '';
 $reset_success = '';
+$login_register_success = '';
 
 if ($_POST) {
     // Check which action is being performed
@@ -48,8 +49,7 @@ if ($_POST) {
         } else {
             $success = registerUser($username, $email, $password, $server, $prompt, $answer);
             if ($success) {
-                header('Location: ../hub_login.php?status=registered'); // Simple redirect
-                exit();
+                $login_register_success = "Registration successful! You can now log in.";
             } else {
                 $register_error = "Registration failed. Username or email may already be in use.";
             }
@@ -663,6 +663,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>
         openModal('registerModal');
+    <?php elseif (!empty($login_register_success)): ?> 
+        openModal('loginModal');
     <?php elseif (!empty($forgot_step1_error)): ?>
         openModal('forgotPasswordModal');
     <?php elseif (!empty($forgot_step2_error)): ?>

@@ -5,6 +5,7 @@ require '../hub_conn.php';
 
 $login_error = '';
 $register_error = '';
+$login_register_success = '';
 
 if ($_POST) {
     // Check which action is being performed
@@ -51,8 +52,7 @@ if ($_POST) {
             $success = registerUser($username, $email, $password, $server, $prompt, $answer);
             
             if ($success) {
-                header('Location: ../hub_login.php?status=registered'); 
-                exit();
+                $login_register_success = "Registration successful! You can now log in.";
             } else {
                 $register_error = "Registration failed. Username or email may already be in use.";
             }
@@ -598,6 +598,8 @@ if (empty($gallery_images)) {
     
     <?php if (!empty($register_error)): ?>
         openModal('registerModal');
+    <?php elseif (!empty($login_register_success)): ?> 
+        openModal('loginModal');
     <?php endif; ?>
 
     // --- Favorite (Heart) Logic ---

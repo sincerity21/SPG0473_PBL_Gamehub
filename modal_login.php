@@ -4,6 +4,9 @@
         
         <h2>Login to Game Hub</h2>
         
+        <?php if (!empty($login_register_success)): ?>
+            <div class="success"><?php echo $login_register_success; ?></div>
+        <?php endif; ?>
         <?php if (!empty($login_error)): ?>
             <div class="error"><?php echo $login_error; ?></div>
         <?php endif; ?>

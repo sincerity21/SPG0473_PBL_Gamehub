@@ -1,8 +1,7 @@
 <?php
 session_start();
 require '../hub_conn.php'; 
-include '../modal_login.php';
-include '../modal_register.php';
+// MODALS ARE REMOVED FROM HERE
 
 // Fetch data for the page
 $categories = selectAllGameCategories();
@@ -31,7 +30,8 @@ if ($_POST) {
                 header("Location: ../admin/user/hub_admin_user.php"); 
             } else {
                 $_SESSION['is_admin'] = false;
-                header("Location: logged_in/hub_home_logged_in.php");
+                // Redirect to the LOGGED IN category page
+                header("Location: logged_in/hub_home_category_logged_in.php"); 
             }
             exit(); 
         } else {
@@ -54,8 +54,7 @@ if ($_POST) {
             $success = registerUser($username, $email, $password, $server, $prompt, $answer);
             
             if ($success) {
-                // On success, redirect to the login page (or show the login modal)
-                header('Location: ../hub_login.php?status=registered'); // Simple redirect
+                header('Location: ../hub_login.php?status=registered'); 
                 exit();
             } else {
                 $register_error = "Registration failed. Username or email may already be in use.";
@@ -444,6 +443,11 @@ $fallback_cover = 'uploads/placeholder.png';
     </div>
 
 </div>
+
+<?php
+    include '../modal_login.php';
+    include '../modal_register.php';
+?>
 
 <script>
     // --- 1. Side Menu Toggle Logic ---

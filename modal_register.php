@@ -8,7 +8,7 @@
             <div class="error"><?php echo $register_error; ?></div>
         <?php endif; ?>
         
-        <form method="POST" action="hub_home.php">
+        <form method="POST" action="">
             <input type="hidden" name="action" value="register">
 
             <div class="form-group">

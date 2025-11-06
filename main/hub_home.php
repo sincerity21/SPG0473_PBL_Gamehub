@@ -1,8 +1,7 @@
 <?php
 session_start();
 require '../hub_conn.php'; // Path to hub_conn.php from /main/ folder
-include '../modal_login.php';
-include '../modal_register.php';
+// MODALS ARE REMOVED FROM HERE
 
 $login_error = '';
 $register_error = '';
@@ -470,6 +469,11 @@ if ($_POST) {
         <div class="wave"></div>
     </div>
 </div>
+
+<?php
+    include '../modal_login.php';
+    include '../modal_register.php';
+?>
 
 <script>
     document.getElementById('menuToggle').addEventListener('click', function() {

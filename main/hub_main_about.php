@@ -1,8 +1,7 @@
 <?php
 session_start();
 require '../hub_conn.php'; // Path to hub_conn.php from /main/ folder
-include '../modal_login.php';
-include '../modal_register.php';
+// MODALS ARE REMOVED FROM HERE
 
 $login_error = '';
 $register_error = '';
@@ -51,8 +50,7 @@ if ($_POST) {
             $success = registerUser($username, $email, $password, $server, $prompt, $answer);
             
             if ($success) {
-                // On success, redirect to the login page (or show the login modal)
-                header('Location: ../hub_login.php?status=registered'); // Simple redirect
+                header('Location: ../hub_login.php?status=registered'); 
                 exit();
             } else {
                 $register_error = "Registration failed. Username or email may already be in use.";
@@ -462,6 +460,11 @@ if ($_POST) {
 
     </div>
 </div>
+
+<?php
+    include '../modal_login.php';
+    include '../modal_register.php';
+?>
 
 <script>
     // --- Standard Menu & Dark Mode JS ---

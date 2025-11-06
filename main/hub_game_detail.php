@@ -1,8 +1,7 @@
 <?php
 session_start();
 require '../hub_conn.php'; 
-include '../modal_login.php';
-include '../modal_register.php';
+// MODALS ARE REMOVED FROM HERE
 
 $login_error = '';
 $register_error = '';
@@ -28,7 +27,8 @@ if ($_POST) {
                 header("Location: ../admin/user/hub_admin_user.php"); 
             } else {
                 $_SESSION['is_admin'] = false;
-                header("Location: logged_in/hub_home_logged_in.php");
+                // Redirect to the LOGGED IN detail page for this game
+                header("Location: logged_in/hub_game_detail_logged_in.php?game_id=" . $_GET['game_id']);
             }
             exit(); 
         } else {
@@ -51,8 +51,7 @@ if ($_POST) {
             $success = registerUser($username, $email, $password, $server, $prompt, $answer);
             
             if ($success) {
-                // On success, redirect to the login page (or show the login modal)
-                header('Location: ../hub_login.php?status=registered'); // Simple redirect
+                header('Location: ../hub_login.php?status=registered'); 
                 exit();
             } else {
                 $register_error = "Registration failed. Username or email may already be in use.";
@@ -508,6 +507,11 @@ if (empty($gallery_images)) {
     </div>
 </div>
 
+<?php
+    include '../modal_login.php';
+    include '../modal_register.php';
+?>
+
 <script>
     // --- 1. Side Menu & Dark Mode (Standard) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
@@ -571,24 +575,8 @@ if (empty($gallery_images)) {
     });
 
 
-    // --- 3. NEW: Logged-out Feedback Redirect ---
-    const loginRedirect = () => {
-        window.location.href = '../hub_login.php';
-    };
-
-    const favoriteIcon = document.getElementById('favoriteIcon');
-    if (favoriteIcon) {
-        favoriteIcon.addEventListener('click', loginRedirect);
-    }
-
-    const starRatingContainer = document.getElementById('starRating');
-    if (starRatingContainer) {
-        const stars = starRatingContainer.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.addEventListener('click', loginRedirect);
-        });
-    }
-
+    // --- 3. UPDATED: Logged-out Feedback Click ---
+    
     // --- NEW Modal JavaScript ---
     function openModal(modalId) {
         document.getElementById(modalId).style.display = 'flex';
@@ -611,6 +599,25 @@ if (empty($gallery_images)) {
     <?php if (!empty($register_error)): ?>
         openModal('registerModal');
     <?php endif; ?>
+
+    // --- Favorite (Heart) Logic ---
+    const favoriteIcon = document.getElementById('favoriteIcon');
+    if (favoriteIcon) {
+        favoriteIcon.addEventListener('click', function() {
+            openModal('loginModal'); // Open login modal on click
+        });
+    }
+
+    // --- Star Rating Logic ---
+    const starRatingContainer = document.getElementById('starRating');
+    if (starRatingContainer) {
+        const stars = starRatingContainer.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                openModal('loginModal'); // Open login modal on click
+            });
+        });
+    }
 </script>
 
 </body>

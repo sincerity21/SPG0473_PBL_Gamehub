@@ -8,7 +8,7 @@
             <div class="error"><?php echo $login_error; ?></div>
         <?php endif; ?>
         
-        <form method="POST" action="hub_home.php">
+        <form method="POST" action="">
             <input type="hidden" name="action" value="login">
             
             <div class="form-group">

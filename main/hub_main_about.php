@@ -1,13 +1,5 @@
 <?php
-session_start();
-require '../hub_conn.php'; 
-
-// --- 1. Authentication & Authorization ---
-if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
-    header('Location: ../hub_login.php');
-    exit();
-}
-$username = htmlspecialchars($_SESSION['username']);
+// No session required for this public page
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +42,7 @@ $username = htmlspecialchars($_SESSION['username']);
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
         
-        /* --- 3. Side Menu (Full Logged-in Version) --- */
+        /* --- 3. Side Menu (Reduced Logged-out Version) --- */
         .side-menu { position: fixed; top: 60px; right: 0; width: 220px; background-color: var(--card-bg-color); box-shadow: -4px 4px 8px var(--shadow-color); border-radius: 8px 0 8px 8px; padding: 10px 0; z-index: 1000; transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         .side-menu.open { transform: translateX(0); }
         .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
@@ -58,7 +50,6 @@ $username = htmlspecialchars($_SESSION['username']);
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
-        .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
         
@@ -165,28 +156,22 @@ $username = htmlspecialchars($_SESSION['username']);
 <body id="appBody">
 
 <div class="header">
-    <a href="hub_home.php" class="logo">GAMEHUB</a>
+    <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
-<!-- Side Menu (Full Logged-in Version) -->
+
+<!-- Side Menu (Reduced Logged-out Version) -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
-    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
-    <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about.php" class="active"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
     <div class="menu-divider"></div>
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
-    <div class="menu-divider"></div>
-    <a href="../hub_logout.php" class="logout-link">
-        <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-        Logout
-    </a>
 </div>
 
 <div class="content-container">
@@ -283,3 +268,4 @@ $username = htmlspecialchars($_SESSION['username']);
 
 </body>
 </html>
+

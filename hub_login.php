@@ -27,8 +27,8 @@ if ($_POST) {
         } else {
             // Standard User
             $_SESSION['is_admin'] = false;
-            // Redirect standard users to hub_home.php
-            header("Location: main/hub_home.php");
+            // Redirect standard users to hub_home_logged_in.php
+            header("Location: main/hub_home_logged_in.php");
         }
         exit(); 
     }

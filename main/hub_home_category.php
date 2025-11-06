@@ -25,7 +25,7 @@ $fallback_cover = 'uploads/placeholder.png';
     <title>GameHub - Library</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming (from hub_home.php) --- */
+        /* --- 1. CSS Variables for Theming (from hub_home_logged_in.php) --- */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -48,7 +48,7 @@ $fallback_cover = 'uploads/placeholder.png';
             --welcome-title-color: #ecf0f1;
         }
 
-        /* --- 2. Base Styles (from hub_home.php) --- */
+        /* --- 2. Base Styles (from hub_home_logged_in.php) --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -73,7 +73,7 @@ $fallback_cover = 'uploads/placeholder.png';
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
 
-        /* --- 3. Side Menu (from hub_home.php) --- */
+        /* --- 3. Side Menu (from hub_home_logged_in.php) --- */
         .side-menu {
             position: fixed; top: 60px; right: 0; width: 220px;
             background-color: var(--card-bg-color);
@@ -195,19 +195,19 @@ $fallback_cover = 'uploads/placeholder.png';
 <body id="appBody">
 
 <div class="header">
-    <a href="hub_home.php" class="logo">GAMEHUB</a>
+    <a href="hub_home_logged_in.php" class="logo">GAMEHUB</a>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
 <div class="side-menu" id="sideMenu">
-    <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
     
     <!-- === ADDED LINKS === -->
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
-    <a href="hub_main_about.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
     <!-- === END OF ADDED LINKS === -->
 
     <div class="menu-divider"></div>
@@ -269,13 +269,13 @@ $fallback_cover = 'uploads/placeholder.png';
 </div>
 
 <script>
-    // --- 1. Side Menu Toggle Logic (from hub_home.php) ---
+    // --- 1. Side Menu Toggle Logic (from hub_home_logged_in.php) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- 2. Dark Mode Logic (from hub_home.php) ---
+    // --- 2. Dark Mode Logic (from hub_home_logged_in.php) ---
     const body = document.getElementById('appBody');
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';

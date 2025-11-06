@@ -12,7 +12,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
 
 // 2. Authorization Check (Must be an Admin to delete users)
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-    header('Location: ../hub_home.php'); 
+    header('Location: ../hub_home_logged_in.php'); 
     exit();
 }
 

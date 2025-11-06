@@ -1,14 +1,13 @@
 <?php
-// session_start(); // Removed - No login required
+session_start();
 
 // Ensure the user is logged in, otherwise redirect them to the login page
-// Removed authentication check
-// if (!isset($_SESSION['username'])) {
-//    header('Location: ../hub_login.php');
-//    exit();
-// }
+if (!isset($_SESSION['username'])) {
+    header('Location: ../hub_login.php');
+    exit();
+}
 
-// $username = htmlspecialchars($_SESSION['username']); // Removed - No user
+$username = htmlspecialchars($_SESSION['username']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,7 +119,13 @@
             border-top: 1px solid var(--secondary-text-color);
             margin: 5px 0;
         }
-        /* Removed .logout-link styles as it's no longer present */
+        .logout-link {
+            color: #e74c3c !important; /* Red for Logout (kept static) */
+            font-weight: bold;
+        }
+        .logout-link:hover {
+            background-color: #4e2925; /* Darker hover for dark mode consistency */
+        }
         .icon {
             margin-right: 10px;
             width: 20px;
@@ -151,13 +156,13 @@
             margin-bottom: 40px;
         }
 
-        /* Login Button (Modified from .start-button) */
-        .login-button {
+        /* Start Button (Red Accented) */
+        .start-button {
             padding: 15px 40px;
-            background: #2ecc71; /* Green for login */
+            background: #e74c3c;
             color: white;
             text-decoration: none;
-            border: 2px solid #27ae60;
+            border: 2px solid #c0392b;
             border-radius: 6px;
             font-size: 1.2em;
             font-weight: bold;
@@ -165,8 +170,8 @@
             transition: all 0.2s ease-in-out;
             margin-top: 50px;
         }
-        .login-button:hover {
-            background: #27ae60;
+        .start-button:hover {
+            background: #c0392b;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
             transform: translateY(-2px);
         }
@@ -226,13 +231,15 @@
     </button>
 </div>
 
-<!-- Side Menu (Modified for "before login" state) -->
+<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
+    <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
     
-    <!-- === REMOVED Home === -->
-    
-    <!-- === UPDATED About Link === -->
-    <a href="hub_main_about_before.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    <!-- === ADDED LINKS === -->
+    <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
+    <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
+    <!-- === END OF ADDED LINKS === -->
 
     <div class="menu-divider"></div>
     
@@ -242,18 +249,22 @@
         <span id="darkModeText">Switch Dark Mode</span>
     </div>
 
-    <!-- === REMOVED Logout === -->
-    
+    <div class="menu-divider"></div>
+
+    <a href="../hub_logout.php" class="logout-link">
+        <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+        Logout
+    </a>
 </div>
 
 <div class="main-content">
-    <h1 class="welcome-title">WELCOME</h1>
+    <h1 class="welcome-title">WELCOME <?php echo strtoupper($username); ?></h1>
     <p class="welcome-subtitle">
         This is the GameHub, where you can rate your favourite games.
     </p>
 
-    <!-- Changed to LOGIN button -->
-    <a href="../hub_login.php" class="login-button">LOGIN</a>
+    <!-- START button (you'll link this to the main game view page next) -->
+    <a href="hub_home_category.php" class="start-button">START</a>
 
     <!-- Blue Wave Background Effect -->
     <div class="wave-container">
@@ -308,4 +319,3 @@
 
 </body>
 </html>
-

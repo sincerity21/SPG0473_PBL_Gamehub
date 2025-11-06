@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
     <title>GameHub - Choose Category</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- Dark Mode Variables (Copied from hub_home.php for consistency) --- */
+        /* --- Dark Mode Variables (Copied from hub_home_logged_in.php for consistency) --- */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -263,9 +263,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
     </button>
 </div>
 
-<!-- Side Menu (Re-using hub_home.php structure) -->
+<!-- Side Menu (Re-using hub_home_logged_in.php structure) -->
 <div class="side-menu" id="sideMenu">
-    <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
+    <a href="hub_home_logged_in.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
 
     <div class="menu-divider"></div>
@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_category']))
     }
 
 
-    // --- Dark Mode Logic (Re-used from hub_home.php) ---
+    // --- Dark Mode Logic (Re-used from hub_home_logged_in.php) ---
 
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');

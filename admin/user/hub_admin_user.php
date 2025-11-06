@@ -12,7 +12,7 @@ if (!isset($_SESSION['username'])) {
 // We check if the 'is_admin' session variable is NOT set OR if it is set but NOT true (i.e., not an admin).
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     // Redirect non-admin users to the regular user home page
-    header('Location: ../../main/hub_home.php'); 
+    header('Location: ../../main/hub_home_logged_in.php'); 
     exit();
 }
 

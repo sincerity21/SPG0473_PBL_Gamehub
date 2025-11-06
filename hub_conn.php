@@ -831,6 +831,142 @@ function selectUserSiteFeedback($user_id){
 }
 
 /**
+ * Selects ALL games and joins them with a SPECIFIC user's ratings and favorites.
+ *
+ * @param int $user_id The ID of the user.
+ * @return array An array of all games, with user-specific data.
+ */
+function selectUserInteractedGames($user_id){
+    global $conn;
+    
+    // Selects all game info, and joins the user's specific rating and favourite status
+    $sql = "SELECT 
+                g.game_id, 
+                g.game_name, 
+                g.game_category,
+                g.game_Link,
+                gc.cover_path,
+                COALESCE(r.rating_game, 0) AS user_rating,
+                COALESCE(f.favourite_game, 0) AS user_favourite
+            FROM 
+                games g
+            LEFT JOIN 
+                game_cover gc ON g.game_id = gc.game_id
+            LEFT JOIN 
+                rating r ON g.game_id = r.game_id AND r.user_id = ?
+            LEFT JOIN 
+                favourites f ON g.game_id = f.game_id AND f.user_id = ?
+            ORDER BY
+                g.game_name ASC"; // Default sort
+                
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        error_log("Prepare failed in selectUserInteractedGames: " . $conn->error);
+        return [];
+    }
+    
+    // Bind the user_id to both JOIN conditions
+    $stmt->bind_param("ii", $user_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $games = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    
+    return $games;
+}
+
+/**
+ * Updates a user's username after verifying their password.
+ *
+ * @param int $user_id The user's ID.
+ * @param string $new_username The desired new username.
+ * @param string $current_password The user's current password (for verification).
+ * @return string "success" on success, or an error message string on failure.
+ */
+function updateUsername($user_id, $new_username, $current_password) {
+    global $conn;
+
+    // 1. Check if new username is already taken
+    $sql_check = "SELECT user_id FROM users WHERE user_username = ? AND user_id != ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("si", $new_username, $user_id);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+    if ($result_check->num_rows > 0) {
+        $stmt_check->close();
+        return "Username already taken. Please choose another.";
+    }
+    $stmt_check->close();
+
+    // 2. Verify current password
+    $sql_user = "SELECT user_password FROM users WHERE user_id = ?";
+    $stmt_user = $conn->prepare($sql_user);
+    $stmt_user->bind_param("i", $user_id);
+    $stmt_user->execute();
+    $result_user = $stmt_user->get_result();
+    $user = $result_user->fetch_assoc();
+    $stmt_user->close();
+
+    if ($user && password_verify($current_password, $user['user_password'])) {
+        // 3. Password is correct, update username
+        $sql_update = "UPDATE users SET user_username = ? WHERE user_id = ?";
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bind_param("si", $new_username, $user_id);
+        
+        if ($stmt_update->execute()) {
+            $_SESSION['username'] = $new_username; // Update session variable
+            $stmt_update->close();
+            return "success";
+        } else {
+            $stmt_update->close();
+            return "Database error. Could not update username.";
+        }
+    } else {
+        return "Incorrect current password.";
+    }
+}
+
+/**
+ * Updates a user's password after verifying their current one.
+ *
+ * @param int $user_id The user's ID.
+ * @param string $current_password The user's current password.
+ * @param string $new_password The desired new password.
+ * @return string "success" on success, or an error message string on failure.
+ */
+function updateUserPasswordSecurely($user_id, $current_password, $new_password) {
+    global $conn;
+
+    // 1. Verify current password
+    $sql_user = "SELECT user_password FROM users WHERE user_id = ?";
+    $stmt_user = $conn->prepare($sql_user);
+    $stmt_user->bind_param("i", $user_id);
+    $stmt_user->execute();
+    $result_user = $stmt_user->get_result();
+    $user = $result_user->fetch_assoc();
+    $stmt_user->close();
+
+    if ($user && password_verify($current_password, $user['user_password'])) {
+        // 2. Password is correct, hash and update new password
+        $new_hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        
+        $sql_update = "UPDATE users SET user_password = ? WHERE user_id = ?";
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bind_param("si", $new_hashed_password, $user_id);
+        
+        if ($stmt_update->execute()) {
+            $stmt_update->close();
+            return "success";
+        } else {
+            $stmt_update->close();
+            return "Database error. Could not update password.";
+        }
+    } else {
+        return "Incorrect current password.";
+    }
+}
+
+/**
  * Retrieves the user's ID and current security answer (sec_answer) by username.
  * This function is used by the admin tool to check/update old plain text answers.
  * @param mysqli $conn The MySQLi database connection object.

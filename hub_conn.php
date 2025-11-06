@@ -780,6 +780,57 @@ function selectUserSurveyFeedback($user_id, $game_id){
 }
 
 /**
+ * Inserts or updates a user's site feedback.
+ * Assumes a UNIQUE key on user_id in the feedback_site table.
+ *
+ * @param int $user_id The user's ID.
+ * @param string $satisfaction The satisfaction value (e.g., 'satisfaction_0').
+ * @param string $open_feedback The open-ended text feedback.
+ * @return bool True on success, false on failure.
+ */
+function upsertSiteFeedback($user_id, $satisfaction, $open_feedback) {
+    global $conn;
+    $sql = "INSERT INTO feedback_site (user_id, feedback_site_satisfaction, feedback_site_open)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                feedback_site_satisfaction = VALUES(feedback_site_satisfaction), 
+                feedback_site_open = VALUES(feedback_site_open)";
+    
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        error_log("Prepare failed in upsertSiteFeedback: " . $conn->error); 
+        return false;
+    }
+    $stmt->bind_param("iss", $user_id, $satisfaction, $open_feedback);
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+/**
+ * Selects the existing site feedback for a specific user.
+ *
+ * @param int $user_id The ID of the user.
+ * @return array|null The feedback record or null if not found.
+ */
+function selectUserSiteFeedback($user_id){
+    global $conn;
+    
+    $sql = "SELECT feedback_site_satisfaction, feedback_site_open 
+            FROM feedback_site 
+            WHERE user_id = ?";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $feedback = $result->fetch_assoc();
+    $stmt->close();
+    
+    return $feedback; // Returns the row, or null if no feedback exists
+}
+
+/**
  * Retrieves the user's ID and current security answer (sec_answer) by username.
  * This function is used by the admin tool to check/update old plain text answers.
  * @param mysqli $conn The MySQLi database connection object.

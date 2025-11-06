@@ -8,9 +8,10 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     exit();
 }
 
-// --- 2. Get and Validate Game ID ---
+// --- 2. Get and Validate Game ID (from previous page) ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    header('Location: ../logged_in/hub_home_category_logged_in.php'); // Redirect if no valid game ID
+    // If game_id is lost, redirect to home
+    header('Location: ../logged_in/hub_home_logged_in.php'); 
     exit();
 }
 
@@ -18,29 +19,28 @@ $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 
-// --- 3. Fetch Game Data ---
+// --- 3. Fetch Game Data (for the modal's "Go to Game" button) ---
 $game = selectGameByID($game_id);
 if (!$game) {
-    header('Location: ../logged_in/hub_home_category_logged_in.php');
-    exit();
+    // If game is invalid, just set a fallback link
+    $game_link = '../logged_in/hub_home_category_logged_in.php'; 
+} else {
+    $game_link = $game['game_Link'];
 }
 
 $message = '';
 $message_type = '';
+$survey_finished = false;
 
 // --- 4. Handle Form Submission ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $frequency = $_POST['frequency'] ?? '';
-    $open_feedback = $_POST['open_feedback'] ?? '';
+    $satisfaction = $_POST['satisfaction'] ?? '';
+    $open_feedback = $_POST['site_feedback'] ?? '';
 
-    if (!empty($frequency) && !empty($open_feedback)) {
-        if (upsertGameFeedback($user_id, $game_id, $frequency, $open_feedback)) {
-            
-            // --- MODIFICATION: Redirect to site survey page on success ---
-            // We must pass the game_id so the "Go to Game" button works
-            header('Location: hub_survey_site.php?game_id=' . $game_id);
-            exit();
-
+    if (!empty($satisfaction) && !empty($open_feedback)) {
+        if (upsertSiteFeedback($user_id, $satisfaction, $open_feedback)) {
+            // SUCCESS! Set flag to open modal
+            $survey_finished = true;
         } else {
             $message = 'There was an error saving your feedback. Please try again.';
             $message_type = 'error';
@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // --- 5. Fetch Existing Feedback to pre-fill form ---
-$existing_feedback = selectUserSurveyFeedback($user_id, $game_id);
-$current_frequency = $existing_feedback['feedback_game_frequency'] ?? '';
-$current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
+$existing_feedback = selectUserSiteFeedback($user_id);
+$current_satisfaction = $existing_feedback['feedback_site_satisfaction'] ?? '';
+$current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -62,7 +62,7 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback for <?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
+    <title>Site Feedback - GameHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
@@ -177,7 +177,7 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
         }
         textarea {
             width: 100%;
-            min-height: 120px;
+            min-height: 150px;
             padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
@@ -202,11 +202,10 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
             margin-right: 10px;
             accent-color: var(--accent-color);
         }
-
         .btn {
             width: 100%;
             padding: 12px;
-            background-color: #8e44ad; /* Purple 'Next' color */
+            background-color: #2ecc71; /* Green for 'Submit' */
             color: white;
             border: none;
             border-radius: 4px;
@@ -216,7 +215,7 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
             margin-top: 10px;
         }
         .btn:hover {
-            background-color: #9b59b6;
+            background-color: #27ae60;
         }
         
         .back-link {
@@ -235,17 +234,75 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
             font-weight: bold; 
             text-align: center;
         }
-        .success { 
-            background-color: var(--success-bg); 
-            color: var(--success-text); 
-            border: 1px solid var(--success-border); 
-        }
         .error { 
             background-color: var(--error-bg); 
             color: var(--error-text); 
             border: 1px solid var(--error-border); 
         }
 
+        /* --- 5. Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-container {
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            width: 100%;
+            max-width: 500px; 
+            margin: 20px;
+            text-align: center;
+        }
+        .modal-container h2 {
+            color: var(--welcome-title-color);
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+        .modal-container p {
+            font-size: 1.1em;
+            color: var(--secondary-text-color);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .modal-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            border: 2px solid var(--accent-color);
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .modal-btn.secondary {
+            background-color: var(--card-bg-color);
+            color: var(--accent-color);
+        }
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .modal-btn.secondary:hover {
+            background-color: var(--bg-color);
+        }
     </style>
 
     <!-- === DARK MODE FIX SCRIPT === -->
@@ -287,11 +344,11 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
 
 <div class="content-container">
 
-    <a href="../logged_in/hub_game_detail_logged_in.php?game_id=<?php echo $game_id; ?>" class="back-link">
-        <i class="fas fa-chevron-left"></i> Back to Game Detail
+    <a href="hub_survey_game.php?game_id=<?php echo $game_id; ?>" class="back-link">
+        <i class="fas fa-chevron-left"></i> Back to Game Survey
     </a>
 
-    <h2>Feedback for: <?php echo htmlspecialchars($game['game_name']); ?></h2>
+    <h2>Site Feedback</h2>
 
     <?php if ($message): ?>
         <div class="message <?php echo $message_type; ?>">
@@ -299,39 +356,48 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
         </div>
     <?php endif; ?>
 
-    <form method="POST">
+    <form method="POST" action="hub_survey_site.php?game_id=<?php echo $game_id; ?>">
         <div class="form-group">
-            <label>How often do you play this game?</label>
+            <label>How satisfied are you with the site?</label>
             <div class="radio-group">
                 <label class="radio-label">
-                    <input type="radio" name="frequency" value="frequency_0" <?php echo ($current_frequency == 'frequency_0') ? 'checked' : ''; ?> required>
-                    Daily
+                    <input type="radio" name="satisfaction" value="satisfaction_4" <?php echo ($current_satisfaction == 'satisfaction_4') ? 'checked' : ''; ?> required>
+                    Fully Satisfied
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="frequency" value="frequency_1" <?php echo ($current_frequency == 'frequency_1') ? 'checked' : ''; ?>>
-                    Once a Week
+                    <input type="radio" name="satisfaction" value="satisfaction_3" <?php echo ($current_satisfaction == 'satisfaction_3') ? 'checked' : ''; ?>>
+                    Satisfied
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="frequency" value="frequency_2" <?php echo ($current_frequency == 'frequency_2') ? 'checked' : ''; ?>>
-                    Once a Month
+                    <input type="radio" name="satisfaction" value="satisfaction_2" <?php echo ($current_satisfaction == 'satisfaction_2') ? 'checked' : ''; ?>>
+                    Neutral
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="frequency" value="frequency_3" <?php echo ($current_frequency == 'frequency_3') ? 'checked' : ''; ?>>
-                    Less than once a Month
+                    <input type="radio" name="satisfaction" value="satisfaction_1" <?php echo ($current_satisfaction == 'satisfaction_1') ? 'checked' : ''; ?>>
+                    Dissatisfied
+                </label>
+                 <label class="radio-label">
+                    <input type="radio" name="satisfaction" value="satisfaction_0" <?php echo ($current_satisfaction == 'satisfaction_0') ? 'checked' : ''; ?>>
+                    Totally Dissatisfied
                 </label>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="open_feedback">What do you think about this game?</label>
-            <textarea id="open_feedback" name="open_feedback" placeholder="Share your thoughts..." required><?php echo htmlspecialchars($current_open_feedback); ?></textarea>
+            <label for="site_feedback">How can we make this site better?</label>
+            <textarea id="site_feedback" name="site_feedback" placeholder="Share your thoughts on site design, features, or any bugs you found..."><?php echo htmlspecialchars($current_open_feedback); ?></textarea>
         </div>
 
-        <!-- === MODIFIED BUTTON === -->
-        <button type="submit" class="btn">Next</button>
+        <button type="submit" class="btn">Submit Feedback</button>
     </form>
 
 </div>
+
+<?php
+    // Include the new modal file
+    // We pass the $game_link variable to it
+    include 'hub_survey_finished.php';
+?>
 
 <script>
     // --- 1. Side Menu Toggle Logic ---
@@ -365,6 +431,22 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
+    
+    // --- 3. Modal Control Logic ---
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'none';
+    }
+    
+    // Auto-open modal if PHP has set the survey_finished flag
+    <?php if ($survey_finished): ?>
+        openModal('surveyFinishedModal');
+    <?php endif; ?>
 </script>
 
 </body>

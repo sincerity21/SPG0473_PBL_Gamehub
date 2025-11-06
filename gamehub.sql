@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2025 at 09:16 PM
+-- Generation Time: Nov 06, 2025 at 11:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -401,7 +401,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_email`, `user_password`, `user_server`, `sec_prompt`, `sec_answer`, `is_admin`) VALUES
 (1, 'admin', 'sincerity2103@gmail.com', '$2y$10$PagVgbv92r5BqIe/3hm6GuAlP0/9.iKhCKx3nnjh6BzibtN0kM2Fy', 'seas', 'prompt_1', '$2y$10$rgN6yG/mXBVk/zFdo6BCW.NvHBrcwlaueYZ5SMVKfgfhn3OtvaV/K', 1),
-(3, 'max beingstepen', 'anwar@gmail.com', '$2y$10$On6/STdXLGCK4ebl13p5cOn8mln97SLF42gYPYqkTRlRBoGlPoHt2', 'east', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
+(3, 'max_beingstepen', 'anwar@gmail.com', '$2y$10$eXolrW74Tgl1JXBhbgjuje/RTaoF.DCYoA4WhJVqQJPSQMArT2hPC', 'east', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
 (6, 'irelandboi69', 'irelandboi@gmail.com', '$2y$10$n8Og4Z.8JJLohNqlpFdsS.vPUY0SmELlS7QQompVxRebv0uF4PK1a', 'east', 'prompt_4', '$2y$10$gWjf8y5rOBu.NCnWvF0mJOT1.nl3kXQw/vS8TQZvBg2lqpbxzQ3QS', 0),
 (23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'seas', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1),
 (25, 'testing12345', 'testing12345@gmail.com', '$2y$10$qexK0JMfN6UDR.VmhoCHquw/s360X1YNi0Am6JmYhkdimRpE6s7I2', 'seas', 'prompt_5', '$2y$10$pWEVjFgaT6EBdWEYYX0oGuzy2OgbuUens5z6l7JyE7C.hztBEaDJe', 0);

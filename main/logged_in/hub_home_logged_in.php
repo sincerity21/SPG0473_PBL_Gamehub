@@ -31,7 +31,7 @@ $username = htmlspecialchars($_SESSION['username']);
         }
 
         /* Dark Mode Override */
-        body.dark-mode {
+        html.dark-mode body {
             --bg-color: #121212;
             --main-text-color: #f4f4f4;
             --accent-color: #4dc2f9; /* Lighter blue for visibility */
@@ -281,30 +281,41 @@ $username = htmlspecialchars($_SESSION['username']);
 </div>
 
 <script>
+    // This script runs BEFORE the page body renders
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                // Apply the class to the <html> tag
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- Dark Mode Logic ---
-
-    const body = document.getElementById('appBody');
+    // --- Updated Dark Mode Logic ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
+    const htmlElement = document.documentElement; // Target the <html> tag
 
+    // This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
-            body.classList.add('dark-mode');
+            htmlElement.classList.add('dark-mode');
             if (darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
-            body.classList.remove('dark-mode');
+            htmlElement.classList.remove('dark-mode');
             if (darkModeText) darkModeText.textContent = 'Switch Dark Mode';
         }
     }
 
+    // This function toggles the mode
     function toggleDarkMode() {
-        const isDark = body.classList.contains('dark-mode');
-        
+        // Check the class on the <html> tag
+        const isDark = htmlElement.classList.contains('dark-mode');
+
         // Toggle the state
         applyDarkMode(!isDark);
 
@@ -312,15 +323,11 @@ $username = htmlspecialchars($_SESSION['username']);
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // Load saved preference when the script runs
-    (function loadDarkModePreference() {
-        const savedMode = localStorage.getItem(localStorageKey);
-        
-        if (savedMode === 'dark') {
-            applyDarkMode(true);
-        } else {
-            applyDarkMode(false);
-        }
+    // This function runs on page load to set the *button text* correctly.
+    // The class itself was already set by the script in the <head>.
+    (function loadButtonText() {
+        const isDark = htmlElement.classList.contains('dark-mode');
+        applyDarkMode(isDark);
     })();
 </script>
 

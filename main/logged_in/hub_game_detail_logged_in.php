@@ -66,7 +66,7 @@ if (empty($gallery_images)) {
             --star-color: #f39c12;
             --heart-color: #e74c3c;
         }
-        body.dark-mode {
+        html.dark-mode body {
             --bg-color: #121212; --main-text-color: #f4f4f4; --accent-color: #4dc2f9;
             --secondary-text-color: #95a5a6; --card-bg-color: #1e1e1e; --shadow-color: rgba(0, 0, 0, 0.4);
             --border-color: #444; --welcome-title-color: #ecf0f1;
@@ -317,31 +317,53 @@ if (empty($gallery_images)) {
 </div>
 
 <script>
-    // --- 1. Side Menu & Dark Mode (Standard) ---
+    // This script runs BEFORE the page body renders
+        (function() {
+            const localStorageKey = 'gamehubDarkMode'; 
+            if (localStorage.getItem(localStorageKey) === 'dark') {
+                // Apply the class to the <html> tag
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
+    // --- Side Menu ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    const body = document.getElementById('appBody');
+    // --- Updated Dark Mode Logic ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
+    const htmlElement = document.documentElement; // Target the <html> tag
 
+    // This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
-            body.classList.add('dark-mode');
-            if(darkModeText) darkModeText.textContent = 'Switch Light Mode';
+            htmlElement.classList.add('dark-mode');
+            if (darkModeText) darkModeText.textContent = 'Switch Light Mode';
         } else {
-            body.classList.remove('dark-mode');
-            if(darkModeText) darkModeText.textContent = 'Switch Light Mode';
+            htmlElement.classList.remove('dark-mode');
+            if (darkModeText) darkModeText.textContent = 'Switch Dark Mode';
         }
     }
+
+    // This function toggles the mode
     function toggleDarkMode() {
-        const isDark = body.classList.contains('dark-mode');
+        // Check the class on the <html> tag
+        const isDark = htmlElement.classList.contains('dark-mode');
+
+        // Toggle the state
         applyDarkMode(!isDark);
+
+        // Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
-    (function loadDarkModePreference() {
-        applyDarkMode(localStorage.getItem(localStorageKey) === 'dark');
+
+    // This function runs on page load to set the *button text* correctly.
+    // The class itself was already set by the script in the <head>.
+    (function loadButtonText() {
+        const isDark = htmlElement.classList.contains('dark-mode');
+        applyDarkMode(isDark);
     })();
 
     // --- 2. Slideshow Logic (from hub_games_view.php) ---

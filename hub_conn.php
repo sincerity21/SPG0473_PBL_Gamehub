@@ -11,6 +11,7 @@ if ($conn->connect_error){
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 function registerUser($username, $email, $password, $server, $prompt, $answer){
     global $conn;
     
@@ -205,12 +206,6 @@ function deleteGameByID($id){
     return $result;
 }
 
-/**
- * Finds a user by username and retrieves their ID, security question, and HASHED answer.
- * @param mysqli $conn The MySQLi database connection object.
- * @param string $username The username to search for.
- * @return array|false Returns user data (ID, question, answer HASH) or false if not found.
- */
 function getUserResetData($conn, $username) {
     // We are now fetching the HASHED answer from the database.
     $sql = "SELECT user_id, sec_prompt, sec_answer 
@@ -251,13 +246,6 @@ function getUserResetData($conn, $username) {
     return false;
 }
 
-/**
- * Updates a user's password hash in the database securely using their ID.
- * @param mysqli $conn The MySQLi database connection object.
- * @param int $user_id The ID of the user whose password is to be reset.
- * @param string $hashed_password The new, securely hashed password.
- * @return bool True on success, false on failure.
- */
 function updateUserPassword($conn, $user_id, $hashed_password) {
     // Note: The password MUST already be hashed before calling this function.
     $sql = "UPDATE users SET user_password = ? WHERE user_id = ?";
@@ -284,14 +272,6 @@ function updateUserPassword($conn, $user_id, $hashed_password) {
     return $result;
 }
 
-/**
- * Adds a new image path to the 'game_images' gallery table.
- * (Updated to use img_path and img_order)
- * * @param int $game_id The ID of the game this image belongs to.
- * @param string $image_path The file path of the image.
- * @param int $sort_order The order in which the image should appear.
- * @return bool True on success, false on failure.
- */
 function addGameGalleryImage($game_id, $image_path, $sort_order = 0){
     global $conn;
     
@@ -309,12 +289,6 @@ function addGameGalleryImage($game_id, $image_path, $sort_order = 0){
     return $result;
 }
 
-/**
- * Retrieves all gallery images for a specific game ID, ordered by img_order.
- * (Updated to use img_path, game_img_id, and img_order)
- * * @param int $game_id The ID of the game to retrieve images for.
- * @return array An array of image records, or an empty array on failure/no images.
- */
 function selectGameGalleryImages($game_id){
     global $conn;
     
@@ -336,12 +310,6 @@ function selectGameGalleryImages($game_id){
     return $images;
 }
 
-/**
- * Changes the img_order value for a specific gallery image.
- * @param int $image_id The primary key (game_img_id) of the image record.
- * @param int $change_amount The amount to add to the current img_order (e.g., 1 or -1).
- * @return bool True on success, false on failure.
- */
 function updateImageSortOrder($image_id, $change_amount) {
     global $conn;
     
@@ -364,11 +332,6 @@ function updateImageSortOrder($image_id, $change_amount) {
     return $result;
 }
 
-/**
- * Deletes a single gallery image record and returns the file path for physical deletion.
- * @param int $image_id The primary key (game_img_id) of the image record.
- * @return string|false The file path string (e.g., 'uploads/gallery/...') on success, or false on failure.
- */
 function deleteGalleryImageByID($image_id) {
     global $conn;
 
@@ -400,10 +363,6 @@ function deleteGalleryImageByID($image_id) {
     return false;
 }
 
-/**
- * Retrieves all unique game categories from the games table.
- * @return array A list of unique category strings, or an empty array.
- */
 function selectAllGameCategories(){
     global $conn;
     // DISTINCT ensures only unique categories are returned
@@ -419,91 +378,6 @@ function selectAllGameCategories(){
     return $categories;
 }
 
-/**
- * Retrieves a list of random image paths from the game_images table, 
- * ensuring only ONE image is selected per category.
- * @param int $limit The maximum number of images/categories to return.
- * @return array An array of image path strings.
- */
-function selectRandomGalleryImages($limit = 9){
-    global $conn;
-    
-    // FIX: MariaDB-compatible query to get ONE random image for each category.
-    // This uses the INNER JOIN technique to select a random image ID for each game,
-    // then groups by category, and finally randomizes the categories chosen.
-    $sql = "
-        SELECT gi.img_path
-        FROM game_images gi
-        INNER JOIN games g ON gi.game_id = g.game_id
-        INNER JOIN (
-            -- Subquery to force a random game_img_id for each category
-            SELECT
-                g3.game_category,
-                (SELECT gi3.game_img_id
-                 FROM game_images gi3
-                 INNER JOIN games g4 ON gi3.game_id = g4.game_id
-                 WHERE g4.game_category = g3.game_category
-                 ORDER BY RAND()
-                 LIMIT 1
-                ) AS random_img_id
-            FROM games g3
-            GROUP BY g3.game_category
-            ORDER BY RAND()
-            LIMIT ?
-        ) AS RandomCategories ON gi.game_img_id = RandomCategories.random_img_id
-    ";
-    
-    $stmt = $conn->prepare($sql);
-    
-    if ($stmt === false) {
-        error_log("Prepare failed in selectRandomGalleryImages: " . $conn->error);
-        return [];
-    }
-
-    $stmt->bind_param("i", $limit);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $images = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    $paths = array_column($images, 'img_path');
-    return $paths;
-}
-
-/**
- * Retrieves all games belonging to a specific category.
- * @param string $category_value The unique category string (e.g., 'rpg').
- * @return array An array of game records, or an empty array on failure/no games.
- */
-function selectGamesByCategory($category_value){
-    global $conn;
-    
-    $sql = "SELECT * FROM games WHERE game_category = ?";
-    $stmt = $conn->prepare($sql);
-    
-    if ($stmt === false) {
-        error_log("Prepare failed in selectGamesByCategory: " . $conn->error);
-        return [];
-    }
-
-    $stmt->bind_param("s", $category_value);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $games = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    
-    return $games;
-}
-
-// --- NEW FUNCTIONS FOR GAME COVER ---
-
-/**
- * Selects all cover images for a given game ID.
- * (Even if logic is 1-to-1, returning an array is safer for foreach loops)
- *
- * @param int $game_id The ID of the game.
- * @return array An array of cover image records.
- */
 function selectGameCovers($game_id){
     global $conn;
     
@@ -524,14 +398,6 @@ function selectGameCovers($game_id){
     return $images;
 }
 
-/**
- * Adds a new game cover or updates the existing one.
- * Enforces a one-to-one relationship by checking for an existing game_id.
- *
- * @param int $game_id The ID of the game.
- * @param string $cover_path The new file path for the cover.
- * @return bool True on success, false on failure.
- */
 function addOrUpdateGameCover($game_id, $cover_path) {
     global $conn;
 
@@ -575,12 +441,6 @@ function addOrUpdateGameCover($game_id, $cover_path) {
     return $result;
 }
 
-/**
- * Deletes a single game cover record and returns its data for file deletion.
- *
- * @param int $cover_id The primary key (game_cover_id) of the cover record.
- * @return array|false The cover data (cover_path, game_id) on success, or false on failure.
- */
 function deleteGameCover($cover_id) {
     global $conn;
 
@@ -612,11 +472,6 @@ function deleteGameCover($cover_id) {
     return false;
 }
 
-/**
- * Selects all games, joining with their respective cover image path.
- * Uses a LEFT JOIN to include games that may not have a cover.
- * @return array An array of all game records with cover_path.
- */
 function selectAllGamesWithCovers(){
     global $conn;
     
@@ -643,13 +498,6 @@ function selectAllGamesWithCovers(){
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-/**
- * Selects the existing feedback (rating and favorite) for a specific user and game
- * by querying the new 'rating' and 'favourites' tables.
- * @param int $user_id The ID of the user.
- * @param int $game_id The ID of the game.
- * @return array A combined array: ['game_rating' => 0, 'favorite_game' => 0]
- */
 function selectUserGameFeedback($user_id, $game_id){
     global $conn;
     $feedback = ['game_rating' => 0, 'favorite_game' => 0]; // Default values
@@ -679,14 +527,6 @@ function selectUserGameFeedback($user_id, $game_id){
     return $feedback; // Return the combined array
 }
 
-/**
- * Inserts or updates a user's star rating for a game in the 'rating' table.
- *
- * @param int $user_id The user's ID.
- * @param int $game_id The game's ID.
- * @param int $rating The star rating (1-5).
- * @return bool True on success, false on failure.
- */
 function upsertGameRating($user_id, $game_id, $rating) {
     global $conn;
     $sql = "INSERT INTO rating (user_id, game_id, rating_game)
@@ -703,14 +543,6 @@ function upsertGameRating($user_id, $game_id, $rating) {
     return $result;
 }
 
-/**
- * Inserts or updates a user's favorite status for a game in the 'favourites' table.
- *
- * @param int $user_id The user's ID.
- * @param int $game_id The game's ID.
- * @param int $favorite The favorite status (0 or 1).
- * @return bool True on success, false on failure.
- */
 function upsertGameFavourite($user_id, $game_id, $favorite) {
     global $conn;
     $sql = "INSERT INTO favourites (user_id, game_id, favourite_game)
@@ -727,15 +559,6 @@ function upsertGameFavourite($user_id, $game_id, $favorite) {
     return $result;
 }
 
-/**
- * Inserts or updates a user's survey feedback for a specific game.
- *
- * @param int $user_id The user's ID.
- * @param int $game_id The game's ID.
- * @param string $frequency The frequency value (e.g., 'frequency_0').
- * @param string $open_feedback The open-ended text feedback.
- * @return bool True on success, false on failure.
- */
 function upsertGameFeedback($user_id, $game_id, $frequency, $open_feedback) {
     global $conn;
     $sql = "INSERT INTO feedback_game (user_id, game_id, feedback_game_frequency, feedback_game_open)
@@ -755,13 +578,6 @@ function upsertGameFeedback($user_id, $game_id, $frequency, $open_feedback) {
     return $result;
 }
 
-/**
- * Selects the existing survey feedback for a specific user and game.
- *
- * @param int $user_id The ID of the user.
- * @param int $game_id The ID of the game.
- * @return array|null The feedback record or null if not found.
- */
 function selectUserSurveyFeedback($user_id, $game_id){
     global $conn;
     
@@ -779,15 +595,6 @@ function selectUserSurveyFeedback($user_id, $game_id){
     return $feedback; // Returns the row, or null if no feedback exists
 }
 
-/**
- * Inserts or updates a user's site feedback.
- * Assumes a UNIQUE key on user_id in the feedback_site table.
- *
- * @param int $user_id The user's ID.
- * @param string $satisfaction The satisfaction value (e.g., 'satisfaction_0').
- * @param string $open_feedback The open-ended text feedback.
- * @return bool True on success, false on failure.
- */
 function upsertSiteFeedback($user_id, $satisfaction, $open_feedback) {
     global $conn;
     $sql = "INSERT INTO feedback_site (user_id, feedback_site_satisfaction, feedback_site_open)
@@ -807,12 +614,6 @@ function upsertSiteFeedback($user_id, $satisfaction, $open_feedback) {
     return $result;
 }
 
-/**
- * Selects the existing site feedback for a specific user.
- *
- * @param int $user_id The ID of the user.
- * @return array|null The feedback record or null if not found.
- */
 function selectUserSiteFeedback($user_id){
     global $conn;
     
@@ -830,12 +631,6 @@ function selectUserSiteFeedback($user_id){
     return $feedback; // Returns the row, or null if no feedback exists
 }
 
-/**
- * Selects ONLY games a user has interacted with (rated, favourited, or surveyed).
- *
- * @param int $user_id The ID of the user.
- * @return array An array of interacted games, with user-specific data.
- */
 function selectUserInteractedGames($user_id){
     global $conn;
     
@@ -890,14 +685,6 @@ function selectUserInteractedGames($user_id){
     return $games;
 }
 
-/**
- * Updates a user's username after verifying their password.
- *
- * @param int $user_id The user's ID.
- * @param string $new_username The desired new username.
- * @param string $current_password The user's current password (for verification).
- * @return string "success" on success, or an error message string on failure.
- */
 function updateUsername($user_id, $new_username, $current_password) {
     global $conn;
 
@@ -941,14 +728,6 @@ function updateUsername($user_id, $new_username, $current_password) {
     }
 }
 
-/**
- * Updates a user's password after verifying their current one.
- *
- * @param int $user_id The user's ID.
- * @param string $current_password The user's current password.
- * @param string $new_password The desired new password.
- * @return string "success" on success, or an error message string on failure.
- */
 function updateUserPasswordSecurely($user_id, $current_password, $new_password) {
     global $conn;
 
@@ -981,14 +760,9 @@ function updateUserPasswordSecurely($user_id, $current_password, $new_password) 
     }
 }
 
-/**
- * Retrieves the user's ID and current security answer (sec_answer) by username.
- * This function is used by the admin tool to check/update old plain text answers.
- * @param mysqli $conn The MySQLi database connection object.
- * @param string $username The username to search for.
- * @return array|false Returns user data (ID and sec_answer) or false if not found.
- */
-/**function getSecurityAnswerForHashing($conn, $username) {
+
+/**Get user's security question, used temporarily to update old accounts with non-hashed security answers (hub_hashsecanswer.php). 
+function getSecurityAnswerForHashing($conn, $username) {
     $sql = "SELECT user_id, sec_answer FROM users WHERE user_username = ?";
     
     if ($conn === null) {
@@ -1013,14 +787,8 @@ function updateUserPasswordSecurely($user_id, $current_password, $new_password) 
     return $user;
 } */
 
-/**
- * Updates the user's security answer with a new hash.
- * @param mysqli $conn The MySQLi database connection object.
- * @param int $user_id The ID of the user to update.
- * @param string $hashed_answer The newly generated hashed security answer.
- * @return bool True on success, false on failure.
- */
-/**function updateHashedSecurityAnswer($conn, $user_id, $hashed_answer) {
+/**Updates security answer (either same one or new inputted one) into a hashed format (hub_hashsecanswer.php). 
+function updateHashedSecurityAnswer($conn, $user_id, $hashed_answer) {
     $sql = "UPDATE users SET sec_answer = ? WHERE user_id = ?";
     
     if ($conn === null) {
@@ -1041,6 +809,69 @@ function updateUserPasswordSecurely($user_id, $current_password, $new_password) 
     $stmt->close();
     
     return $result;
+} */
+
+/**function selectRandomGalleryImages($limit = 9){
+    global $conn;
+    
+    $sql = "
+        SELECT gi.img_path
+        FROM game_images gi
+        INNER JOIN games g ON gi.game_id = g.game_id
+        INNER JOIN (
+            -- Subquery to force a random game_img_id for each category
+            SELECT
+                g3.game_category,
+                (SELECT gi3.game_img_id
+                 FROM game_images gi3
+                 INNER JOIN games g4 ON gi3.game_id = g4.game_id
+                 WHERE g4.game_category = g3.game_category
+                 ORDER BY RAND()
+                 LIMIT 1
+                ) AS random_img_id
+            FROM games g3
+            GROUP BY g3.game_category
+            ORDER BY RAND()
+            LIMIT ?
+        ) AS RandomCategories ON gi.game_img_id = RandomCategories.random_img_id
+    ";
+    
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        error_log("Prepare failed in selectRandomGalleryImages: " . $conn->error);
+        return [];
+    }
+
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $images = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    $paths = array_column($images, 'img_path');
+    return $paths;
+} */
+
+
+/**function selectGamesByCategory($category_value){
+    global $conn;
+    
+    $sql = "SELECT * FROM games WHERE game_category = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        error_log("Prepare failed in selectGamesByCategory: " . $conn->error);
+        return [];
+    }
+
+    $stmt->bind_param("s", $category_value);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $games = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    
+    return $games;
 } */
 
 ?>

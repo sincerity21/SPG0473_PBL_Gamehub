@@ -831,15 +831,21 @@ function selectUserSiteFeedback($user_id){
 }
 
 /**
- * Selects ALL games and joins them with a SPECIFIC user's ratings and favorites.
+ * Selects ONLY games a user has interacted with (rated, favourited, or surveyed).
  *
  * @param int $user_id The ID of the user.
- * @return array An array of all games, with user-specific data.
+ * @return array An array of interacted games, with user-specific data.
  */
 function selectUserInteractedGames($user_id){
     global $conn;
     
-    // Selects all game info, and joins the user's specific rating and favourite status
+    // Selects game info, cover path, and user's rating/favourite/survey status
+    //
+    // MODIFIED QUERY:
+    // - Added LEFT JOIN for feedback_game (fg)
+    // - Added a WHERE clause to only include games where an interaction exists
+    // - Added GROUP BY to prevent duplicate games if a user has multiple interactions
+    // - Added a user_surveyed flag
     $sql = "SELECT 
                 g.game_id, 
                 g.game_name, 
@@ -847,7 +853,8 @@ function selectUserInteractedGames($user_id){
                 g.game_Link,
                 gc.cover_path,
                 COALESCE(r.rating_game, 0) AS user_rating,
-                COALESCE(f.favourite_game, 0) AS user_favourite
+                COALESCE(f.favourite_game, 0) AS user_favourite,
+                (fg.feedback_game_id IS NOT NULL) AS user_surveyed
             FROM 
                 games g
             LEFT JOIN 
@@ -856,8 +863,16 @@ function selectUserInteractedGames($user_id){
                 rating r ON g.game_id = r.game_id AND r.user_id = ?
             LEFT JOIN 
                 favourites f ON g.game_id = f.game_id AND f.user_id = ?
+            LEFT JOIN
+                feedback_game fg ON g.game_id = fg.game_id AND fg.user_id = ?
+            WHERE
+                r.user_id IS NOT NULL 
+                OR f.user_id IS NOT NULL 
+                OR fg.user_id IS NOT NULL
+            GROUP BY
+                g.game_id
             ORDER BY
-                g.game_name ASC"; // Default sort
+                g.game_name ASC";
                 
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
@@ -865,8 +880,8 @@ function selectUserInteractedGames($user_id){
         return [];
     }
     
-    // Bind the user_id to both JOIN conditions
-    $stmt->bind_param("ii", $user_id, $user_id);
+    // Bind the user_id to all three JOIN conditions
+    $stmt->bind_param("iii", $user_id, $user_id, $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $games = $result->fetch_all(MYSQLI_ASSOC);

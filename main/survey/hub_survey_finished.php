@@ -1,8 +1,3 @@
-<!-- 
-This file is a modal template. 
-It is included by 'hub_survey_site.php'.
-It requires the $game_link variable to be set by the parent page.
--->
 <div id="surveyFinishedModal" class="modal-overlay">
     <div class="modal-container">
         <!-- We don't have a close button, user must choose an action -->

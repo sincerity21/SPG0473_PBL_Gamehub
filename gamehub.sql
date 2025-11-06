@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 11:22 PM
+-- Generation Time: Nov 06, 2025 at 09:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,8 @@ CREATE TABLE `favourites` (
 INSERT INTO `favourites` (`favourite_id`, `favourite_game`, `game_id`, `user_id`) VALUES
 (1, 1, 7, 3),
 (4, 1, 38, 3),
-(5, 1, 14, 3);
+(5, 1, 14, 3),
+(6, 1, 29, 3);
 
 -- --------------------------------------------------------
 
@@ -51,10 +52,20 @@ INSERT INTO `favourites` (`favourite_id`, `favourite_game`, `game_id`, `user_id`
 
 CREATE TABLE `feedback_game` (
   `feedback_game_id` int(11) NOT NULL,
-  `feedback_game` text NOT NULL,
+  `feedback_game_frequency` varchar(255) DEFAULT NULL,
+  `feedback_game_open` text NOT NULL,
   `game_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feedback_game`
+--
+
+INSERT INTO `feedback_game` (`feedback_game_id`, `feedback_game_frequency`, `feedback_game_open`, `game_id`, `user_id`) VALUES
+(4, 'frequency_0', 'Incredibly fun. A breath of fresh air (ironically) compared to 2042. The game, in a way, feels similar to older Battlefield titles like BF4 and BF3, in a good way. It has some QoL here and there, and unfortunately some bugs, but I believe they\'ll be fixed soon. \r\n\r\nThe best part about this game, is that I can feel the passion the devs put into this title. After 2042\'s...disastrous launch, this game had an incredibly smooth launch, and is possibly the most optimized triple-A title of 2025, which is impressive, even more so for EA.\r\n\r\n\r\nNonetheless, if you like Battlefield, you need to try this.', 7, 3),
+(6, 'frequency_0', 'Quite a bad launch for the game, and yet, as years gone by, the game kept receiving updates, that optimized it a bit more, fixed more bugs, and people realized under all the mess, is such a beautiful, highly-detailed world, with a great RPG story and captivating characters. \r\n\r\nI honestly prefer this over GTAV. It just feels...more immersive. Play this game, you need to.', 14, 3),
+(7, 'frequency_0', 'I\'ve never thought driving trucks can be fun, yet here we are. A surprisingly fun game about driving, well, trucks, in a miniaturized, scaled-down Europe, that still feels massive on its own, excluding various map mods one can download for the game. \r\n\r\nLive out your trucker dreams.', 29, 3);
 
 -- --------------------------------------------------------
 
@@ -64,9 +75,17 @@ CREATE TABLE `feedback_game` (
 
 CREATE TABLE `feedback_site` (
   `feedback_site_id` int(11) NOT NULL,
-  `feedback_site` text NOT NULL,
+  `feedback_site_satisfaction` varchar(255) DEFAULT NULL,
+  `feedback_site_open` text NOT NULL,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feedback_site`
+--
+
+INSERT INTO `feedback_site` (`feedback_site_id`, `feedback_site_satisfaction`, `feedback_site_open`, `user_id`) VALUES
+(1, 'satisfaction_3', 'Maybe decorate it a bit more? Functionality-wise, it\'s impressive, but the background is quite bland. ', 3);
 
 -- --------------------------------------------------------
 
@@ -80,41 +99,42 @@ CREATE TABLE `games` (
   `game_name` varchar(255) NOT NULL,
   `game_desc` varchar(10000) DEFAULT NULL,
   `game_img` varchar(1024) DEFAULT NULL,
-  `game_trailerLink` varchar(512) DEFAULT NULL
+  `game_trailerLink` varchar(512) DEFAULT NULL,
+  `game_Link` varchar(512) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `games`
 --
 
-INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game_img`, `game_trailerLink`) VALUES
-(7, 'fps', 'Battlefield 6', 'A return to form. After EA\'s worst Battlefield title in BF2042 released a few years ago during COVID, they\'ve made the latest Battlefield to be one of the safest Battlefields, barely any innovation in-terms of gameplay. And players love it.', 'uploads/images/game_img_690a47f9bb7277.63178711.jpg', 'https://www.youtube.com/watch?v=wFGEMfyAQtI'),
-(8, 'fps', 'Counter-Strike 2', 'The legendary Counter-Strike: Global Offensive, now upgraded into a new engine. With better visuals that not only makes for a more detailed game, but also changed some gameplay fundamentals for the better. The biggest e-Sports in the world.', 'uploads/images/game_img_6903cc52d0c2d8.82770197.jpg', 'https://www.youtube.com/watch?v=c80dVYcL69E'),
-(9, 'fps', 'Valorant', 'Riot\'s FPS answer for Valve\'s CS2. Combining gunplay elements from Counter-Strike, hero / character elements present in hero shooters, and map knowledge, allowing for a more strategic gunplay. A surprise hit for the people, and it\'s still going strong.', 'uploads/images/game_img_6903cd278a3aa6.99306922.jpg', 'https://www.youtube.com/watch?v=lWr6dhTcu-E'),
-(12, 'rpg', 'The Elder Scrolls V: Skyrim', 'Skyrim, the fifth installment in the legendary Elder Scrolls series. The biggest game Bethesda has ever made, they re-released it two to three times. Also features an incredibly active modding community, possibly only second to Minecraft\'s modding community.\r\nIf you can only choose one RPG to play, it\'s this one.', 'uploads/images/game_img_6903d2077e8661.77472310.png', 'https://www.youtube.com/watch?v=JSRtYpNRoN0'),
-(13, 'rpg', 'ELDEN RING', 'Another entry in the \"Souls\" genre, by FromSoftware themselves. The most beginner-friendly \"Souls\" game, though that doesn\'t mean the game is any easier than other \"Souls\" titles. Features world-building written by George R. R. Martin. If you\'re new into the \"Souls\" genre, this is the game for you.', 'uploads/images/game_img_6903d2c47a1a77.34827150.jpg', 'https://www.youtube.com/watch?v=E3Huy2cdih0'),
-(14, 'rpg', 'Cyberpunk 2077', 'The most anticipated games of the 2020s, only for it to release in a buggy state that renders the game unplayable. Fast-forward to now, through constant updates and fixes, the game has more than redeemed itself. With an incredibly detailed world and charming characters, one of which played by a certain Keanu Reeves. Welcome To Night City.', 'uploads/images/game_img_6903d36a481187.22550180.jpg', 'https://www.youtube.com/watch?v=lJiCOFwoyMA'),
-(17, 'moba', 'Dota 2', 'The biggest MOBA game in the world, the second biggest e-Sports behind Counter-Strike 2. Dota 2 is complex, having a steep learning curve that may turn off new players. And yet, it\'s one of the most rewarding game there is. ', 'uploads/images/game_img_69046f7a41e7b5.00230625.jpg', 'https://www.youtube.com/watch?v=-cSFPIwMEq4'),
-(18, 'moba', 'Mobile Legends: Bang Bang', 'A fast-paced MOBA, developed specifically for mobile devices. It follows the general MOBA blueprint; teams of five, push down the three lanes, destroy the enemy\'s opposing turrets and eliminate their base. Being a mobile game, it\'s incredibly accessible, making it the biggest mobile e-Sports game.', 'uploads/images/game_img_690470564fc6f3.71791790.jpg', 'https://www.youtube.com/watch?v=cftqT7au9gk'),
-(19, 'moba', 'Brawl Stars', 'Another fast-paced MOBA developed for mobile, with a more vibrant creative direction compared to Mobile Legends. It features a quick 3v3 battle and a solo or duo Battle Royale mode. It emphasizes rapid-fire action and strategic team coordination, making it easy to pick up, but hard to master.', 'uploads/images/game_img_6904714ba71fb1.30964272.webp', 'https://www.youtube.com/watch?v=Fik4Rp6S1Bs'),
-(22, 'puzzle', 'Portal', 'You play as Chell, a test subject in the Aperture Science Lab, where you\'re tasked with solving puzzles, involving escaping rooms, using a Portal gun. A legendary game that redefined the concept of portals in general.', 'uploads/images/game_img_69047c07c08de9.76248477.jpg', 'https://www.youtube.com/watch?v=TluRVBhmf8w'),
-(23, 'puzzle', 'The Talos Principle', 'You play as an unnamed robot as you traverse a strange, yet beautiful world filled with ancient ruins and advanced technology. Guided by a voice known as Elohim, you are tasked with solving complex environmental puzzles.\r\n', 'uploads/images/game_img_69050ffbaaaa07.56713655.jpg', 'https://www.youtube.com/watch?v=Vu9QFBWb7WQ'),
-(24, 'puzzle', 'The Witness', 'An open-world puzzle game, set in a dazzling, bright, densely packed island. Unlike other puzzle games, the game does not provide instructions, instead relying on environmental cues and keen observation by the player to solve the ever-evolving puzzles.', 'uploads/images/game_img_690510be9da306.30675164.jpg', 'https://www.youtube.com/watch?v=ul7kNFD6noU'),
-(25, 'sport', 'eFootball', 'A free-to-play football title, a rebrand of Konami\'s long-standing Pro Evolution Soccer (PES) series. It features two primary modes: Authentic Teams, where you compete against other players using real teams, and Dream Team, where players can build their Dream Team and compete against other players\' Dream Teams.', 'uploads/images/game_img_690511a5cb8657.38880090.jpg', 'https://www.youtube.com/watch?v=BdyXsZMPjWo'),
-(26, 'sport', 'EA Sports FC', 'A rebrand of EA Sports\' long-standing FiFA series. A football game, similar in concept to older titles, each year bringing visual improvements. ', 'uploads/images/game_img_69051220ac8ed6.71695339.jpg', 'https://www.youtube.com/watch?v=TSi0iJYSQ24&vl=en'),
-(27, 'sport', 'Football Manager 26', 'Another entry in the long-standing Football Manager series, you play as the coach as you manage your football team. Developed in Unity, the first in the series, the title features brand new user interface overhaul and improved details. It also introduces Women\'s Football, the first in its series.', 'uploads/images/game_img_69051338f00fc0.17805927.jpg', 'https://www.youtube.com/watch?v=_cDQi5kwuHQ'),
-(28, 'sim', 'Cities: Skylines', 'Critically-acclaimed title in the city-building genre, where you can build your own city, let it grow, develop it however you like, go through challenges and hurdles that plague a city, or blow it all up, because you can.', 'uploads/images/game_img_69051522c7c120.15159830.jpg', 'https://www.youtube.com/watch?v=0gI2N10QyRA'),
-(29, 'sim', 'Euro Truck Simulator 2', 'Have you ever wanted to drive trucks? Yes? Then this is for you! Drive highly-detailed and fully-simulated trucks in a scaled-down Europe, featuring various European countries, trucks from various truck manufacturers, and take in the sights of what Europe has to offer.', 'uploads/images/game_img_69051776b566c0.50248242.jpg', 'https://www.youtube.com/watch?v=d3GuiADdiEg'),
-(30, 'sim', 'The Sims 4', 'The fourth full entry in the Sims series, where you can make, customize, control your own sim in the world. Meet people, form relationships, get a job, get a hobby, redecorate a house, get married, let your sim drown in an electrocuted pool, the possibilities are endless!', 'uploads/images/game_img_69051884dd9b11.09379960.png', 'https://www.youtube.com/watch?v=GJENRAB4ykA'),
-(31, 'survival', 'Sons of The Forest', 'Serving as a sequel to 2018\'s The Forest, you play as a private military contractor, dispatched into an island to find a billionaire and his family. You must utilize various survival, crafting, gathering skills and defend yourself from mutants and cannibal tribes.', 'uploads/images/game_img_6905199f35be09.96889943.jpg', 'https://www.youtube.com/watch?v=A_E4eCwUEqg'),
-(32, 'survival', 'Project Zomboid', 'A zombie survival RPG, stylized like a pixel art game, played from the top-down. You play as a human, trying to survive in a zombified world. Build bases, gather resources, craft weapons, find other humans to make allies, survive however long you can.', 'uploads/images/game_img_69051ac56e4133.45176083.jpg', 'https://www.youtube.com/watch?v=YhSd39QqQUg'),
-(33, 'survival', 'The Long Dark', 'A first-person, exploration survival game, you are challenged to survive in a freezing, hostile Canadian wilderness in the aftermath of a mysterious global geomagnetic disaster that has knocked out all modern technology. Your threats? Cold, hunger, thirst, and Mother Nature. Good luck. ', 'uploads/images/game_img_69051b9106f5f9.89006106.jpg', 'https://www.youtube.com/watch?v=V5ytwWofaqY'),
-(34, 'fight', 'TEKKEN 8', 'The 8th full title in the long-standing TEKKEN series, the game continues the story surrounding the TEKKEN world, from recurring characters such as Kazuya Mishima and his family, Jun Kazama and Jin Kazama, but also new additions to the series such as Reina and Victor Chevalier. Now updated with brand new animations and visuals.', 'uploads/images/game_img_69051e41c03877.17729290.jpg', 'https://www.youtube.com/watch?v=_MM4clV2qjE'),
-(35, 'fight', 'Mortal Kombat 1', 'Serving as the reboot in the long-standing Mortal Kombat series, the game is violent, with stunning visuals, but still maintained the fast-paced fighting gameplay everyone expects, and of course, fatalities.', 'uploads/images/game_img_69051f3c2da550.36042022.jpeg', 'https://www.youtube.com/watch?v=PL6ZdOXlj6g'),
-(36, 'fight', 'Street Fighter 6', 'The latest entry in the long-standing Street Fighter series, the game features new fighting mechanics that revolutionize the gameplay, alongside brand new modes to appeal to newcomers.\r\n', 'uploads/images/game_img_69051fec556ed3.48763014.jpg', 'https://www.youtube.com/watch?v=4EnsDg6DCTE'),
-(37, 'racing', 'iRacing', 'iRacing, the most realistic racing simulator there is. Compete with other racers in highly-detailed race-tracks around the world, in fully-simulated racing machines from all kinds of motorsports, under proper regulations employed by real motorsports. It can\'t get any more realistic than this.', 'uploads/images/game_img_690522237b2068.57186791.png', 'https://www.youtube.com/watch?v=ecfJGNauAwY'),
-(38, 'racing', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'uploads/images/game_img_690522d95e1c63.09347479.png', 'https://www.youtube.com/watch?v=TDFN-E30jhU'),
-(39, 'racing', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'uploads/images/game_img_690523a41c71b3.07100900.avif', 'https://www.youtube.com/watch?v=oz-O74SmTSQ');
+INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game_img`, `game_trailerLink`, `game_Link`) VALUES
+(7, 'fps', 'Battlefield 6', 'A return to form. After EA\'s worst Battlefield title in BF2042 released a few years ago during COVID, they\'ve made the latest Battlefield to be one of the safest Battlefields, barely any innovation in-terms of gameplay. And players love it.', 'uploads/images/game_img_690a47f9bb7277.63178711.jpg', 'https://www.youtube.com/watch?v=wFGEMfyAQtI', 'https://store.steampowered.com/app/2807960/Battlefield_6/'),
+(8, 'fps', 'Counter-Strike 2', 'The legendary Counter-Strike: Global Offensive, now upgraded into a new engine. With better visuals that not only makes for a more detailed game, but also changed some gameplay fundamentals for the better. The biggest e-Sports in the world.', 'uploads/images/game_img_6903cc52d0c2d8.82770197.jpg', 'https://www.youtube.com/watch?v=c80dVYcL69E', 'https://store.steampowered.com/app/730/CounterStrike_2/'),
+(9, 'fps', 'Valorant', 'Riot\'s FPS answer for Valve\'s CS2. Combining gunplay elements from Counter-Strike, hero / character elements present in hero shooters, and map knowledge, allowing for a more strategic gunplay. A surprise hit for the people, and it\'s still going strong.', 'uploads/images/game_img_6903cd278a3aa6.99306922.jpg', 'https://www.youtube.com/watch?v=lWr6dhTcu-E', 'https://playvalorant.com/en-us/'),
+(12, 'rpg', 'The Elder Scrolls V: Skyrim', 'Skyrim, the fifth installment in the legendary Elder Scrolls series. The biggest game Bethesda has ever made, they re-released it two to three times. Also features an incredibly active modding community, possibly only second to Minecraft\'s modding community.\r\nIf you can only choose one RPG to play, it\'s this one.', 'uploads/images/game_img_6903d2077e8661.77472310.png', 'https://www.youtube.com/watch?v=JSRtYpNRoN0', 'https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/'),
+(13, 'rpg', 'ELDEN RING', 'Another entry in the \"Souls\" genre, by FromSoftware themselves. The most beginner-friendly \"Souls\" game, though that doesn\'t mean the game is any easier than other \"Souls\" titles. Features world-building written by George R. R. Martin. If you\'re new into the \"Souls\" genre, this is the game for you.', 'uploads/images/game_img_6903d2c47a1a77.34827150.jpg', 'https://www.youtube.com/watch?v=E3Huy2cdih0', 'https://store.steampowered.com/app/1245620/ELDEN_RING/'),
+(14, 'rpg', 'Cyberpunk 2077', 'The most anticipated games of the 2020s, only for it to release in a buggy state that renders the game unplayable. Fast-forward to now, through constant updates and fixes, the game has more than redeemed itself. With an incredibly detailed world and charming characters, one of which played by a certain Keanu Reeves. Welcome To Night City.', 'uploads/images/game_img_6903d36a481187.22550180.jpg', 'https://www.youtube.com/watch?v=lJiCOFwoyMA', 'https://store.steampowered.com/app/1091500/Cyberpunk_2077/'),
+(17, 'moba', 'Dota 2', 'The biggest MOBA game in the world, the second biggest e-Sports behind Counter-Strike 2. Dota 2 is complex, having a steep learning curve that may turn off new players. And yet, it\'s one of the most rewarding game there is. ', 'uploads/images/game_img_69046f7a41e7b5.00230625.jpg', 'https://www.youtube.com/watch?v=-cSFPIwMEq4', 'https://store.steampowered.com/app/570/Dota_2/'),
+(18, 'moba', 'Mobile Legends: Bang Bang', 'A fast-paced MOBA, developed specifically for mobile devices. It follows the general MOBA blueprint; teams of five, push down the three lanes, destroy the enemy\'s opposing turrets and eliminate their base. Being a mobile game, it\'s incredibly accessible, making it the biggest mobile e-Sports game.', 'uploads/images/game_img_690470564fc6f3.71791790.jpg', 'https://www.youtube.com/watch?v=cftqT7au9gk', 'https://www.mobilelegends.com/'),
+(19, 'moba', 'Brawl Stars', 'Another fast-paced MOBA developed for mobile, with a more vibrant creative direction compared to Mobile Legends. It features a quick 3v3 battle and a solo or duo Battle Royale mode. It emphasizes rapid-fire action and strategic team coordination, making it easy to pick up, but hard to master.', 'uploads/images/game_img_6904714ba71fb1.30964272.webp', 'https://www.youtube.com/watch?v=Fik4Rp6S1Bs', 'https://supercell.com/en/games/brawlstars/'),
+(22, 'puzzle', 'Portal', 'You play as Chell, a test subject in the Aperture Science Lab, where you\'re tasked with solving puzzles, involving escaping rooms, using a Portal gun. A legendary game that redefined the concept of portals in general.', 'uploads/images/game_img_69047c07c08de9.76248477.jpg', 'https://www.youtube.com/watch?v=TluRVBhmf8w', 'https://store.steampowered.com/app/400/Portal/'),
+(23, 'puzzle', 'The Talos Principle', 'You play as an unnamed robot as you traverse a strange, yet beautiful world filled with ancient ruins and advanced technology. Guided by a voice known as Elohim, you are tasked with solving complex environmental puzzles.\r\n', 'uploads/images/game_img_69050ffbaaaa07.56713655.jpg', 'https://www.youtube.com/watch?v=Vu9QFBWb7WQ', 'https://store.steampowered.com/app/257510/The_Talos_Principle/'),
+(24, 'puzzle', 'The Witness', 'An open-world puzzle game, set in a dazzling, bright, densely packed island. Unlike other puzzle games, the game does not provide instructions, instead relying on environmental cues and keen observation by the player to solve the ever-evolving puzzles.', 'uploads/images/game_img_690510be9da306.30675164.jpg', 'https://www.youtube.com/watch?v=ul7kNFD6noU', 'https://store.steampowered.com/app/210970/The_Witness/'),
+(25, 'sport', 'eFootball', 'A free-to-play football title, a rebrand of Konami\'s long-standing Pro Evolution Soccer (PES) series. It features two primary modes: Authentic Teams, where you compete against other players using real teams, and Dream Team, where players can build their Dream Team and compete against other players\' Dream Teams.', 'uploads/images/game_img_690511a5cb8657.38880090.jpg', 'https://www.youtube.com/watch?v=BdyXsZMPjWo', 'https://store.steampowered.com/app/1665460/eFootball/'),
+(26, 'sport', 'EA Sports FC', 'A rebrand of EA Sports\' long-standing FiFA series. A football game, similar in concept to older titles, each year bringing visual improvements. ', 'uploads/images/game_img_69051220ac8ed6.71695339.jpg', 'https://www.youtube.com/watch?v=TSi0iJYSQ24&vl=en', 'https://store.steampowered.com/app/3405690/EA_SPORTS_FC_26/'),
+(27, 'sport', 'Football Manager 26', 'Another entry in the long-standing Football Manager series, you play as the coach as you manage your football team. Developed in Unity, the first in the series, the title features brand new user interface overhaul and improved details. It also introduces Women\'s Football, the first in its series.', 'uploads/images/game_img_69051338f00fc0.17805927.jpg', 'https://www.youtube.com/watch?v=_cDQi5kwuHQ', 'https://store.steampowered.com/app/3551340/Football_Manager_26/'),
+(28, 'sim', 'Cities: Skylines', 'Critically-acclaimed title in the city-building genre, where you can build your own city, let it grow, develop it however you like, go through challenges and hurdles that plague a city, or blow it all up, because you can.', 'uploads/images/game_img_69051522c7c120.15159830.jpg', 'https://www.youtube.com/watch?v=0gI2N10QyRA', 'https://store.steampowered.com/app/255710/Cities_Skylines/'),
+(29, 'sim', 'Euro Truck Simulator 2', 'Have you ever wanted to drive trucks? Yes? Then this is for you! Drive highly-detailed and fully-simulated trucks in a scaled-down Europe, featuring various European countries, trucks from various truck manufacturers, and take in the sights of what Europe has to offer.', 'uploads/images/game_img_69051776b566c0.50248242.jpg', 'https://www.youtube.com/watch?v=d3GuiADdiEg', 'https://store.steampowered.com/app/227300/Euro_Truck_Simulator_2/'),
+(30, 'sim', 'The Sims 4', 'The fourth full entry in the Sims series, where you can make, customize, control your own sim in the world. Meet people, form relationships, get a job, get a hobby, redecorate a house, get married, let your sim drown in an electrocuted pool, the possibilities are endless!', 'uploads/images/game_img_69051884dd9b11.09379960.png', 'https://www.youtube.com/watch?v=GJENRAB4ykA', 'https://store.steampowered.com/app/1222670/The_Sims_4/'),
+(31, 'survival', 'Sons of The Forest', 'Serving as a sequel to 2018\'s The Forest, you play as a private military contractor, dispatched into an island to find a billionaire and his family. You must utilize various survival, crafting, gathering skills and defend yourself from mutants and cannibal tribes.', 'uploads/images/game_img_6905199f35be09.96889943.jpg', 'https://www.youtube.com/watch?v=A_E4eCwUEqg', 'https://store.steampowered.com/app/1326470/Sons_Of_The_Forest/'),
+(32, 'survival', 'Project Zomboid', 'A zombie survival RPG, stylized like a pixel art game, played from the top-down. You play as a human, trying to survive in a zombified world. Build bases, gather resources, craft weapons, find other humans to make allies, survive however long you can.', 'uploads/images/game_img_69051ac56e4133.45176083.jpg', 'https://www.youtube.com/watch?v=YhSd39QqQUg', 'https://store.steampowered.com/app/108600/Project_Zomboid/'),
+(33, 'survival', 'The Long Dark', 'A first-person, exploration survival game, you are challenged to survive in a freezing, hostile Canadian wilderness in the aftermath of a mysterious global geomagnetic disaster that has knocked out all modern technology. Your threats? Cold, hunger, thirst, and Mother Nature. Good luck. ', 'uploads/images/game_img_69051b9106f5f9.89006106.jpg', 'https://www.youtube.com/watch?v=V5ytwWofaqY', 'https://store.steampowered.com/app/305620/The_Long_Dark/'),
+(34, 'fight', 'TEKKEN 8', 'The 8th full title in the long-standing TEKKEN series, the game continues the story surrounding the TEKKEN world, from recurring characters such as Kazuya Mishima and his family, Jun Kazama and Jin Kazama, but also new additions to the series such as Reina and Victor Chevalier. Now updated with brand new animations and visuals.', 'uploads/images/game_img_69051e41c03877.17729290.jpg', 'https://www.youtube.com/watch?v=_MM4clV2qjE', 'https://store.steampowered.com/app/1778820/TEKKEN_8/'),
+(35, 'fight', 'Mortal Kombat 1', 'Serving as the reboot in the long-standing Mortal Kombat series, the game is violent, with stunning visuals, but still maintained the fast-paced fighting gameplay everyone expects, and of course, fatalities.', 'uploads/images/game_img_69051f3c2da550.36042022.jpeg', 'https://www.youtube.com/watch?v=PL6ZdOXlj6g', 'https://store.steampowered.com/app/1971870/Mortal_Kombat_1/'),
+(36, 'fight', 'Street Fighter 6', 'The latest entry in the long-standing Street Fighter series, the game features new fighting mechanics that revolutionize the gameplay, alongside brand new modes to appeal to newcomers.\r\n', 'uploads/images/game_img_69051fec556ed3.48763014.jpg', 'https://www.youtube.com/watch?v=4EnsDg6DCTE', 'https://store.steampowered.com/app/1364780/Street_Fighter_6/'),
+(37, 'fps', 'iRacing', 'iRacing, the most realistic racing simulator there is. Compete with other racers in highly-detailed race-tracks around the world, in fully-simulated racing machines from all kinds of motorsports, under proper regulations employed by real motorsports. It can\'t get any more realistic than this.', 'uploads/images/game_img_690522237b2068.57186791.png', 'https://www.youtube.com/watch?v=ecfJGNauAwY', 'https://store.steampowered.com/app/266410/iRacing/'),
+(38, 'fps', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'uploads/images/game_img_690522d95e1c63.09347479.png', 'https://www.youtube.com/watch?v=TDFN-E30jhU', 'https://store.steampowered.com/app/244210/Assetto_Corsa/'),
+(39, 'fps', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'uploads/images/game_img_690523a41c71b3.07100900.avif', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/');
 
 -- --------------------------------------------------------
 
@@ -355,7 +375,8 @@ INSERT INTO `rating` (`rating_id`, `rating_game`, `game_id`, `user_id`) VALUES
 (1, 4, 7, 3),
 (5, 5, 38, 3),
 (8, 5, 14, 3),
-(9, 1, 18, 3);
+(9, 1, 18, 3),
+(10, 4, 29, 3);
 
 -- --------------------------------------------------------
 
@@ -380,9 +401,10 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_email`, `user_password`, `user_server`, `sec_prompt`, `sec_answer`, `is_admin`) VALUES
 (1, 'admin', 'sincerity2103@gmail.com', '$2y$10$PagVgbv92r5BqIe/3hm6GuAlP0/9.iKhCKx3nnjh6BzibtN0kM2Fy', 'seas', 'prompt_1', '$2y$10$rgN6yG/mXBVk/zFdo6BCW.NvHBrcwlaueYZ5SMVKfgfhn3OtvaV/K', 1),
-(3, 'max beingstepen', 'anwar@gmail.com', '$2y$10$nKhjEyvNmAEr7WDFaunNFOel/3zeC88SEEY0OuJqFOEJ1NdnKVAf2', 'east', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
+(3, 'max beingstepen', 'anwar@gmail.com', '$2y$10$On6/STdXLGCK4ebl13p5cOn8mln97SLF42gYPYqkTRlRBoGlPoHt2', 'east', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
 (6, 'irelandboi69', 'irelandboi@gmail.com', '$2y$10$n8Og4Z.8JJLohNqlpFdsS.vPUY0SmELlS7QQompVxRebv0uF4PK1a', 'east', 'prompt_4', '$2y$10$gWjf8y5rOBu.NCnWvF0mJOT1.nl3kXQw/vS8TQZvBg2lqpbxzQ3QS', 0),
-(23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'seas', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1);
+(23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'seas', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1),
+(25, 'testing12345', 'testing12345@gmail.com', '$2y$10$qexK0JMfN6UDR.VmhoCHquw/s360X1YNi0Am6JmYhkdimRpE6s7I2', 'seas', 'prompt_5', '$2y$10$pWEVjFgaT6EBdWEYYX0oGuzy2OgbuUens5z6l7JyE7C.hztBEaDJe', 0);
 
 --
 -- Indexes for dumped tables
@@ -401,15 +423,15 @@ ALTER TABLE `favourites`
 --
 ALTER TABLE `feedback_game`
   ADD PRIMARY KEY (`feedback_game_id`),
-  ADD KEY `game_id` (`game_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `user_game_feedback` (`user_id`,`game_id`),
+  ADD KEY `game_id` (`game_id`);
 
 --
 -- Indexes for table `feedback_site`
 --
 ALTER TABLE `feedback_site`
   ADD PRIMARY KEY (`feedback_site_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `user_feedback` (`user_id`);
 
 --
 -- Indexes for table `games`
@@ -456,19 +478,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `favourites`
 --
 ALTER TABLE `favourites`
-  MODIFY `favourite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `favourite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `feedback_game`
 --
 ALTER TABLE `feedback_game`
-  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `feedback_site`
 --
 ALTER TABLE `feedback_site`
-  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `games`
@@ -492,13 +514,13 @@ ALTER TABLE `game_images`
 -- AUTO_INCREMENT for table `rating`
 --
 ALTER TABLE `rating`
-  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables

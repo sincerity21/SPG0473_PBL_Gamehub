@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2025 at 11:19 PM
+-- Generation Time: Nov 07, 2025 at 09:41 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -484,13 +484,13 @@ ALTER TABLE `favourites`
 -- AUTO_INCREMENT for table `feedback_game`
 --
 ALTER TABLE `feedback_game`
-  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `feedback_site`
 --
 ALTER TABLE `feedback_site`
-  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `games`

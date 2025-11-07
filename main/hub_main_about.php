@@ -550,9 +550,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
                 <p>FRONT-END,
                 HTML</p>
                 <div class="social-links">
-                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" target_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
@@ -566,9 +563,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
                 <p>DESIGN,
                 GUI</p>
                 <div class="social-links">
-                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" target_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>

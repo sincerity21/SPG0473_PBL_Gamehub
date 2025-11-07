@@ -216,9 +216,6 @@ $username = htmlspecialchars($_SESSION['username']);
                 <p>FRONT-END,
                 HTML</p>
                 <div class="social-links">
-                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
@@ -232,9 +229,6 @@ $username = htmlspecialchars($_SESSION['username']);
                 <p>DESIGN,
                 GUI</p>
                 <div class="social-links">
-                    <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>

@@ -92,6 +92,9 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             --error-bg: #f8d7da;
             --error-text: #721c24;
             --error-border: #f5c6cb;
+            /* --- NEW: Added star/heart colors --- */
+            --star-color: #f39c12;
+            --heart-color: #e74c3c;
         }
         
         /* --- 2. Dark Mode Fix --- */
@@ -247,6 +250,8 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             color: var(--main-text-color);
             box-shadow: 0 2px 5px var(--shadow-color);
             transition: transform 0.2s, box-shadow 0.2s;
+            /* --- NEW: Add cursor pointer --- */
+            cursor: pointer;
         }
         .game-card:hover {
             transform: translateY(-3px);
@@ -300,9 +305,16 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             width: 100%; max-width: 500px; color: var(--main-text-color); margin: 20px;
         }
         .modal-close {
-            position: absolute; top: 10px; right: 15px; font-size: 28px;
-            font-weight: bold; color: var(--secondary-text-color);
-            background: none; border: none; cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 15px; /* <-- This was changed from 'right' */
+            right: auto; /* <-- This is added to be safe */
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--secondary-text-color);
+            background: none;
+            border: none;
+            cursor: pointer;
         }
         .modal-container h2 {
             color: var(--welcome-title-color); text-align: center; margin-top: 0;
@@ -338,9 +350,115 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             border: 1px solid var(--success-border); 
         }
 
+        /* --- 6. NEW: Game Detail Modal Styles (from hub_game_detail_logged_in.php) --- */
+        .modal-container .game-detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 50/50 split */
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .modal-container .image-slideshow {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            margin-top: 30px; /* <-- ADD THIS LINE */
+        }
+        .modal-container .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
+        .modal-container .slide.active { opacity: 1; }
+        .modal-container .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-container .slider-control { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.4); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; font-size: 1.5em; }
+        .modal-container .slider-control:hover { background: rgba(0, 0, 0, 0.6); }
+        .modal-container .prev { left: 0; border-radius: 0 5px 5px 0; }
+        .modal-container .next { right: 0; border-radius: 5px 0 0 5px; }
+        .modal-container .slide-indicators { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 5px; }
+        .modal-container .dot { display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: background 0.3s; }
+        .modal-container .dot.active { background: white; }
+
+        .modal-container .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .modal-container .game-title-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .modal-container .game-title {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: var(--welcome-title-color);
+            margin: 0;
+            line-height: 1.1;
+        }
+        .modal-container .game-desc {
+            font-size: 1.1em;
+            color: var(--secondary-text-color);
+            line-height: 1.6;
+            max-height: 150px; /* Limit desc height */
+            overflow-y: auto; /* Add scroll if desc is long */
+        }
+
+        .modal-container .favorite-icon {
+            font-size: 2.5em;
+            color: var(--border-color);
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .modal-container .favorite-icon.active {
+            color: var(--heart-color);
+            transform: scale(1.1);
+        }
+
+        .modal-container .star-rating {
+            font-size: 2em;
+            color: var(--star-color);
+        }
+        .modal-container .star-rating .star {
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .modal-container .star-rating .star:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-container .trailer-link, .modal-container .next-link {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .modal-container .trailer-link {
+            background-color: var(--card-bg-color);
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+        }
+        .modal-container .trailer-link:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .modal-container .next-link {
+            background-color: #8e44ad; /* Next button color */
+            color: white;
+            border: 2px solid #8e44ad;
+            margin-top: 10px;
+        }
+        .modal-container .next-link:hover {
+            background-color: #9b59b6;
+        }
+
     </style>
 
-    <!-- === DARK MODE FIX SCRIPT === -->
     <script>
         (function() {
             const localStorageKey = 'gamehubDarkMode'; 
@@ -416,8 +534,8 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
                     <?php
                     $cover_path = !empty($game['cover_path']) ? $game['cover_path'] : $fallback_cover;
                     ?>
-                    <a href="hub_main_profile_game_details.php?game_id=<?php echo $game['game_id']; ?>" 
-                       class="game-card"
+                    <a class="game-card"
+                       onclick="openGameModal(<?php echo $game['game_id']; ?>); return false;"
                        data-name="<?php echo htmlspecialchars($game['game_name']); ?>"
                        data-category="<?php echo htmlspecialchars($game['game_category']); ?>"
                        data-rating="<?php echo htmlspecialchars($game['user_rating']); ?>"
@@ -454,6 +572,8 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
     // --- 6. Include Modals ---
     include 'modal_change_username.php';
     include 'modal_change_password.php';
+    // --- NEW: Include game detail modal template ---
+    include 'hub_main_profile_game_details.php';
 ?>
 
 <script>
@@ -528,7 +648,10 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
                 if (showFavourites) {
                     return game.dataset.favourite == '1';
                 }
-                return true; // Show all
+                // --- MODIFIED: Only show games with interaction ---
+                // This is now handled by the PHP query, but we keep this
+                // for the 'Show Favourites Only' filter.
+                return true; 
             });
 
             // 2. Sort
@@ -547,23 +670,244 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             }
 
             // 3. Re-append to grid
-            // Clear grid
             grid.innerHTML = '';
-            // Append sorted/filtered items
             filteredGames.forEach(game => grid.appendChild(game));
             
-            if (filteredGames.length === 0) {
-                grid.innerHTML = '<p>No games match your criteria.</p>';
+            if (filteredGames.length === 0 && allGames.length > 0) {
+                 grid.innerHTML = '<p>No games match your criteria.</p>';
+            } else if (allGames.length === 0) {
+                 grid.innerHTML = '<p>You have not rated, favourited, or surveyed any games yet. Go to the Library to get started!</p>';
             }
         }
 
         // Add event listeners to all controls
         controls.addEventListener('change', applySortAndFilter);
-
-        // Initial sort (default is alphabetical, which is already done by PHP)
+        
+        // --- MODIFIED: Update empty message based on PHP ---
+        if (allGames.length === 0) {
+             grid.innerHTML = '<p>You have not rated, favourited, or surveyed any games yet. Go to the Library to get started!</p>';
+        }
     });
 
+    // --- 5. NEW: Game Detail Modal JavaScript ---
+    
+    // --- Global slideshow variables for the modal ---
+    let modalCurrentSlide = 0;
+    let modalSlides = [];
+    let modalDots = [];
+    let modalTotalSlides = 0;
+    let modalSlideTimer = null;
+    const modalFallbackImg = '../../uploads/placeholder.png';
+    
+    // --- Slideshow logic (adapted for modal) ---
+    function initializeModalSlideshow(gallery) {
+        modalSlides = document.querySelectorAll('#modalSlideshowContent .slide');
+        modalDots = document.querySelectorAll('#modalSlideIndicators .dot');
+        modalTotalSlides = modalSlides.length;
+        modalCurrentSlide = 0;
+        
+        if (modalTotalSlides > 0) {
+            showModalSlide(0);
+        }
+        if (modalTotalSlides > 1) {
+            startModalAutoSlide();
+        } else {
+            stopModalAutoSlide();
+        }
+        
+        // Add dot click listeners
+        modalDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                stopModalAutoSlide();
+                showModalSlide(index);
+                startModalAutoSlide();
+            });
+        });
+    }
+
+    function showModalSlide(n) {
+        if (modalTotalSlides === 0) return;
+        modalCurrentSlide = (n + modalTotalSlides) % modalTotalSlides; // Wraps around
+        modalSlides.forEach(slide => slide.classList.remove('active'));
+        modalDots.forEach(dot => dot.classList.remove('active'));
+        if (modalSlides[modalCurrentSlide]) modalSlides[modalCurrentSlide].classList.add('active');
+        if (modalDots[modalCurrentSlide]) modalDots[modalCurrentSlide].classList.add('active');
+    }
+
+    function modalChangeSlide(n) {
+        stopModalAutoSlide();
+        showModalSlide(modalCurrentSlide + n);
+        startModalAutoSlide();
+    }
+
+    function startModalAutoSlide() {
+        if (modalTotalSlides > 1 && !modalSlideTimer) {
+            modalSlideTimer = setInterval(() => showModalSlide(modalCurrentSlide + 1), 5000);
+        }
+    }
+
+    function stopModalAutoSlide() {
+        clearInterval(modalSlideTimer);
+        modalSlideTimer = null;
+    }
+
+    // --- Feedback logic (adapted for modal) ---
+    async function sendModalFeedback(gameId, feedbackData) {
+        try {
+            const response = await fetch('../../hub_update_feedback.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ game_id: gameId, ...feedbackData })
+            });
+            if (!response.ok) console.error('Feedback update failed:', response.statusText);
+        } catch (error) {
+            console.error('Error sending feedback:', error);
+        }
+    }
+
+    function initializeModalFeedback(gameId) {
+        const favoriteIcon = document.getElementById('modalFavoriteIcon');
+        const starRatingContainer = document.getElementById('modalStarRating');
+        
+        favoriteIcon.setAttribute('data-game-id', gameId);
+        starRatingContainer.setAttribute('data-game-id', gameId);
+
+        // --- Favorite (Heart) Logic ---
+        favoriteIcon.onclick = function() {
+            const isNowActive = !this.classList.contains('active');
+            this.classList.toggle('active');
+            this.classList.toggle('fas');
+            this.classList.toggle('far');
+            sendModalFeedback(gameId, { favorite: isNowActive ? 1 : 0 });
+        };
+
+        // --- Star Rating Logic ---
+        const stars = starRatingContainer.querySelectorAll('.star');
+        
+        function updateModalStars(rating) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'));
+                star.classList.toggle('fas', starValue <= rating);
+                star.classList.toggle('far', starValue > rating);
+            });
+        }
+
+        stars.forEach(star => {
+            star.onclick = function() {
+                const ratingValue = parseInt(this.getAttribute('data-value'));
+                updateModalStars(ratingValue);
+                sendModalFeedback(gameId, { rating: ratingValue });
+            };
+        });
+    }
+    
+    // --- Main Modal Population Functions ---
+    function populateGameModal(data) {
+        const game = data.details;
+        const gallery = data.gallery;
+        const feedback = data.feedback;
+
+        // 1. Populate Text and Links
+        document.getElementById('modalGameTitle').textContent = game.game_name;
+        document.getElementById('modalGameDesc').innerHTML = game.game_desc.replace(/\n/g, '<br>'); // nl2br
+        document.getElementById('modalTrailerLink').href = game.game_trailerLink;
+        document.getElementById('modalGameLink').href = game.game_Link;
+        document.getElementById('modalSurveyLink').href = `../survey/hub_survey_game.php?game_id=${game.game_id}`;
+
+        // 2. Populate Feedback Icons
+        const favoriteIcon = document.getElementById('modalFavoriteIcon');
+        favoriteIcon.className = 'favorite-icon fa-heart'; // Reset classes
+        if (feedback.favorite_game == 1) {
+            favoriteIcon.classList.add('fas', 'active');
+        } else {
+            favoriteIcon.classList.add('far');
+        }
+        
+        const starContainer = document.getElementById('modalStarRating');
+        let starHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const iconClass = (i <= feedback.game_rating) ? 'fas' : 'far';
+            starHTML += `<i class="star ${iconClass} fa-star" data-value="${i}"></i>`;
+        }
+        starContainer.innerHTML = starHTML;
+
+        // 3. Populate Slideshow
+        const slideContainer = document.getElementById('modalSlideshowContent');
+        const indicatorContainer = document.getElementById('modalSlideIndicators');
+        let slideHTML = '';
+        let indicatorHTML = '';
+        
+        let imagesToUse = gallery.length > 0 ? gallery : [{ img_path: modalFallbackImg }];
+
+        imagesToUse.forEach((image, index) => {
+            const activeClass = (index === 0) ? 'active' : '';
+            slideHTML += `<div class="slide ${activeClass}">
+                            <img src="../../${image.img_path}" alt="Game Screenshot">
+                          </div>`;
+            if (imagesToUse.length > 1) {
+                 indicatorHTML += `<span class="dot ${activeClass}" data-index="${index}"></span>`;
+            }
+        });
+        
+        slideContainer.innerHTML = slideHTML;
+        indicatorContainer.innerHTML = indicatorHTML;
+        
+        // 4. (Re)Initialize interactive elements
+        initializeModalSlideshow();
+        initializeModalFeedback(game.game_id);
+    }
+
+    function setModalLoading() {
+        stopModalAutoSlide();
+        document.getElementById('modalGameTitle').textContent = 'Loading...';
+        document.getElementById('modalGameDesc').textContent = 'Loading game description...';
+        document.getElementById('modalTrailerLink').href = '#';
+        document.getElementById('modalGameLink').href = '#';
+        document.getElementById('modalSurveyLink').href = '#';
+        document.getElementById('modalFavoriteIcon').className = 'favorite-icon far fa-heart';
+        document.getElementById('modalStarRating').innerHTML = `
+            <i class="star far fa-star" data-value="1"></i>
+            <i class="star far fa-star" data-value="2"></i>
+            <i class="star far fa-star" data-value="3"></i>
+            <i class="star far fa-star" data-value="4"></i>
+            <i class="star far fa-star" data-value="5"></i>`;
+        document.getElementById('modalSlideshowContent').innerHTML = `
+            <div class="slide active">
+                <img src="${modalFallbackImg}" alt="Loading...">
+            </div>`;
+        document.getElementById('modalSlideIndicators').innerHTML = '';
+    }
+
+    async function openGameModal(gameId) {
+        openModal('gameDetailModal');
+        setModalLoading();
+        
+        try {
+            const response = await fetch(`../../hub_fetch_game_details.php?game_id=${gameId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data.error) {
+                 document.getElementById('modalGameTitle').textContent = 'Error';
+                 document.getElementById('modalGameDesc').textContent = data.error;
+            } else {
+                populateGameModal(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch game details:', error);
+            document.getElementById('modalGameTitle').textContent = 'Error';
+            document.getElementById('modalGameDesc').textContent = 'Could not load game details. Please try again.';
+        }
+    }
+    
+    // Custom close function for the game modal to stop the slideshow
+    function closeGameModal() {
+        closeModal('gameDetailModal');
+        stopModalAutoSlide();
+    }
 </script>
 
 </body>
 </html>
+}

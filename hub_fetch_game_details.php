@@ -2,27 +2,27 @@
 session_start();
 require 'hub_conn.php';
 
-// Set content type to JSON
+
 header('Content-Type: application/json');
 
-// --- 1. Check for Authentication ---
+//Confirm the Authentication 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401); // Unauthorized
     echo json_encode(['error' => 'User not logged in.']);
     exit();
 }
 
-// --- 2. Get and Validate IDs ---
+//Obtain and verify the IDs
 $user_id = (int)$_SESSION['user_id'];
 $game_id = isset($_GET['game_id']) ? (int)$_GET['game_id'] : 0;
 
 if ($game_id <= 0) {
-    http_response_code(400); // Bad Request
+    http_response_code(400); // Bad request
     echo json_encode(['error' => 'Invalid game ID.']);
     exit();
 }
 
-// --- 3. Fetch All Data ---
+//Get all information
 $game_details = selectGameByID($game_id);
 
 if (!$game_details) {
@@ -34,7 +34,7 @@ if (!$game_details) {
 $gallery_images = selectGameGalleryImages($game_id);
 $user_feedback = selectUserGameFeedback($user_id, $game_id);
 
-// --- 4. Combine and Return Data ---
+//Combine and return data
 $data = [
     'details'  => $game_details,
     'gallery'  => $gallery_images,

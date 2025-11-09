@@ -2,17 +2,17 @@
 session_start();
 require 'hub_conn.php';
 
-// Set content type to JSON
+
 header('Content-Type: application/json');
 
-// --- 1. Check for Authentication ---
+//Confirm the Authentication
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401); // Unauthorized
     echo json_encode(['success' => false, 'message' => 'User not logged in.']);
     exit();
 }
 
-// --- 2. Get Data from POST request ---
+//Obtain and verify the IDs
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!$data) {
@@ -21,15 +21,14 @@ if (!$data) {
     exit();
 }
 
-// --- 3. Sanitize and Prepare Variables ---
 $user_id = (int)$_SESSION['user_id'];
 $game_id = isset($data['game_id']) ? (int)$data['game_id'] : 0;
 
-// Initialize update values to null
+//Set the initial update values to null
 $rating = null;
 $favorite = null;
 
-// Check which value is being updated
+//Check which value is changed/updated
 if (isset($data['rating'])) {
     $rating = (int)$data['rating'];
     if ($rating < 1 || $rating > 5) {
@@ -56,17 +55,17 @@ if ($game_id <= 0) {
     exit();
 }
 
-// --- 4. Call the correct upsert function ---
+//Call the correct upsert function
 $success = false;
 if ($rating !== null) {
-    // Call the new rating-specific function
+    //Call the new "rating" specific function
     $success = upsertGameRating($user_id, $game_id, $rating);
 } elseif ($favorite !== null) {
-    // Call the new favorite-specific function
+    //Call the new "favorite" specific function
     $success = upsertGameFavourite($user_id, $game_id, $favorite);
 }
 
-// --- 5. Send JSON Response ---
+//Send JSON Response
 if ($success) {
     echo json_encode(['success' => true, 'message' => 'Feedback updated successfully.']);
 } else {

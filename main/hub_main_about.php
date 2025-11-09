@@ -45,15 +45,14 @@ if ($_POST) {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $server = $_POST['server'];
+        // $server = $_POST['server']; // REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
-
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            $success = registerUser($username, $email, $password, $server, $prompt, $answer);
-            
+            // Call function without $server
+            $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
             } else {

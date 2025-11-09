@@ -202,7 +202,6 @@ $users = selectAllUsers();
                     <th>ID</th>
                     <th>Username</th>
                     <th>Email</th>
-                    <th>Server</th>
                     <th>Admin Status</th>
                     <th>Action</th>
                 </tr>
@@ -213,7 +212,6 @@ $users = selectAllUsers();
                     <td><?php echo htmlspecialchars($user['user_id']); ?></td>
                     <td><?php echo htmlspecialchars($user['user_username']); ?></td>
                     <td><?php echo htmlspecialchars($user['user_email']); ?></td>
-                    <td><?php echo htmlspecialchars($user['user_server']); ?></td>
                     <td><?php echo htmlspecialchars($user['is_admin']); ?></td>
                     <td>
                         <a href="hub_admin_user.php?id=<?php echo htmlspecialchars($user['user_id']); ?>">Edit</a> |

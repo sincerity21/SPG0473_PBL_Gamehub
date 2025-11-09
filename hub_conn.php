@@ -12,7 +12,7 @@ if ($conn->connect_error){
 }
 
 // To register a new user
-function registerUser($username, $email, $password, $server, $prompt, $answer){
+function registerUser($username, $email, $password, $prompt, $answer){
     global $conn;
     
     // Hashed password and security answer
@@ -20,8 +20,8 @@ function registerUser($username, $email, $password, $server, $prompt, $answer){
     $hashed_answer = password_hash($answer, PASSWORD_DEFAULT);
     
   
-    $sql = "INSERT INTO users (user_username, user_email, user_password, user_server, sec_prompt, sec_answer) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (user_username, user_email, user_password, sec_prompt, sec_answer) 
+            VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
 
@@ -30,7 +30,8 @@ function registerUser($username, $email, $password, $server, $prompt, $answer){
         return false;
     }
 
-    $stmt->bind_param("ssssss", $username, $email, $hashed_password, $server, $prompt, $hashed_answer);
+    // Bind 5 strings ("sssss") instead of 6
+    $stmt->bind_param("sssss", $username, $email, $hashed_password, $prompt, $hashed_answer);
     $result = $stmt->execute();
     $stmt->close();
 

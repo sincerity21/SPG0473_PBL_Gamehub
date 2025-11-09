@@ -27,23 +27,6 @@
             </div>
 
             <div class="form-group">
-                <label for="server">Preferred Server Region:</label>
-                <select name="server" id="server" required>
-                    <option value="seas">Southeast Asia</option>
-                    <option value="east">East Asia</option>
-                    <option value="aus">Oceania</option>
-                    <option value="mea">Middle East</option>
-                    <option value="safrica">South Africa</option>
-                    <option value="euwest">West Europe</option>
-                    <option value="eunorth">North Europe</option>
-                    <option value="nawest">West N. America</option>
-                    <option value="naeast">East N. America</option>
-                    <option value="nacentral">Central N. America</option>
-                    <option value="southmerica">South Americas</option>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label for="prompt">Security Prompt (Question):</label>
                 <select name="prompt" id="prompt" required>
                     <option value="prompt_1">What is love?</option>

@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
 }
 
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    header('Location: hub_home_category_logged_in.php'); // Redirect if no valid game ID
+    header('Location: hub_home_category_logged_in.php'); //  Redirect if no valid game ID
     exit();
 }
 
@@ -16,28 +16,28 @@ $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 
-//get all data
+// get all data
 
-//Get the game's main info
+// Get the game's main info
 $game = selectGameByID($game_id);
 
 if (!$game) {
-    // redirect back if game not found
+    //  redirect back if game not found
     header('Location: hub_home_category_logged_in.php');
     exit();
 }
 
-//Get slideshow images
+// Get slideshow images
 $gallery_images = selectGameGalleryImages($game_id);
 
-// Get this user's feedback
+//  Get this user's feedback
 $feedback = selectUserGameFeedback($user_id, $game_id);
 
-//Set default heart/star values
+// Set default heart/star values
 $current_rating = $feedback['game_rating'] ?? 0;
 $is_favorite = $feedback['favorite_game'] ?? 0;
 
-//Use a placeholder if no gallery images
+// Use a placeholder if no gallery images
 $fallback_path = 'uploads/placeholder.png';
 if (empty($gallery_images)) {
     $gallery_images[] = ['img_path' => $fallback_path];
@@ -49,7 +49,7 @@ if (empty($gallery_images)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Color Theme Variables */
         :root {
@@ -326,17 +326,17 @@ if (empty($gallery_images)) {
 <script>
     
 
-    //Side Menu
+    // Side Menu
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    //Dark Mode
+    // Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement;
 
-    //Applies dark mode and updates menu text
+    // Applies dark mode and updates menu text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -347,24 +347,24 @@ if (empty($gallery_images)) {
         }
     }
 
-    //Toggles dark mode on click
+    // Toggles dark mode on click
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        // Toggle the state
+        //  Toggle the state
         applyDarkMode(!isDark);
 
-        // Save preference to local storage
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    //Set correct menu text on page load
+    // Set correct menu text on page load
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
 
-    //Slideshow Logic
+    // Slideshow Logic
     let currentSlide = 0;
     const slides = document.querySelectorAll('#slideshow-content .slide');
     const dots = document.querySelectorAll('#slide-indicators .dot');
@@ -373,7 +373,7 @@ if (empty($gallery_images)) {
 
     function showSlide(n) {
         if (totalSlides === 0) return;
-        currentSlide = (n + totalSlides) % totalSlides; //Loop back to start/end
+        currentSlide = (n + totalSlides) % totalSlides; // Loop back to start/end
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
         if (slides[currentSlide]) slides[currentSlide].classList.add('active');
@@ -399,9 +399,9 @@ if (empty($gallery_images)) {
     });
 
 
-    //Feedback (Heart/Stars) Logic
+    // Feedback (Heart/Stars) Logic
 
-    // Generic function to send feedback updates
+    //  Generic function to send feedback updates
     async function sendFeedback(gameId, feedbackData) {
         try {
             const response = await fetch('../../hub_update_feedback.php', {
@@ -412,47 +412,47 @@ if (empty($gallery_images)) {
                 },
                 body: JSON.stringify({
                     game_id: gameId,
-                    ...feedbackData //e.g. { rating: 4 } or { favorite: 1 }
+                    ...feedbackData // e.g. { rating: 4 } or { favorite: 1 }
                 })
             });
 
             if (!response.ok) {
                 console.error('Feedback update failed:', response.statusText);
             }
-            // You can optionally handle the JSON response here
-            // const result = await response.json();
-            // console.log(result.message);
+            //  You can optionally handle the JSON response here
+            //  const result = await response.json();
+            //  console.log(result.message);
 
         } catch (error) {
             console.error('Error sending feedback:', error);
         }
     }
 
-    //Favorite (Heart icon)
+    // Favorite (Heart icon)
     const favoriteIcon = document.getElementById('favoriteIcon');
     if (favoriteIcon) {
         favoriteIcon.addEventListener('click', function() {
             const gameId = this.getAttribute('data-game-id');
             const isNowActive = !this.classList.contains('active');
             
-            // Toggle visual state immediately
+            //  Toggle visual state immediately
             this.classList.toggle('active');
-            this.classList.toggle('fas'); // Toggle solid icon
-            this.classList.toggle('far'); // Toggle regular icon
+            this.classList.toggle('fas'); //  Toggle solid icon
+            this.classList.toggle('far'); //  Toggle regular icon
             
-            //Send update to server
+            // Send update to server
             const favoriteValue = isNowActive ? 1 : 0;
             sendFeedback(gameId, { favorite: favoriteValue });
         });
     }
 
-    //Star Rating
+    // Star Rating
     const starRatingContainer = document.getElementById('starRating');
     if (starRatingContainer) {
         const stars = starRatingContainer.querySelectorAll('.star');
         const gameId = starRatingContainer.getAttribute('data-game-id');
 
-        // Function to visually update stars
+        //  Function to visually update stars
         function updateStars(rating) {
             stars.forEach(star => {
                 const starValue = parseInt(star.getAttribute('data-value'));
@@ -466,15 +466,15 @@ if (empty($gallery_images)) {
             });
         }
 
-        // Add click event to each star
+        //  Add click event to each star
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 const ratingValue = parseInt(this.getAttribute('data-value'));
                 
-                // Update visual state
+                //  Update visual state
                 updateStars(ratingValue);
                 
-                // Send update to server
+                //  Send update to server
                 sendFeedback(gameId, { rating: ratingValue });
             });
         });

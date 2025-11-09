@@ -10,37 +10,37 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     exit();
 }
 
-//User is confirmed as admin
+// User is confirmed as admin
 $username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $error = '';
 $user_to_edit = null;
 
-//Edit User
+// Edit User
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit_user') {
     $id = (int)$_POST['user_id'];
     $username_form = $_POST['username'];
     $email_form = $_POST['email'];
     $new_password = $_POST['password'] ?? '';
     
-    //Get the user's current info
+    // Get the user's current info
     $current_user_data = selectUserByID($id);
     
     if ($current_user_data) {
-        //Check if password was changed
+        // Check if password was changed
         if (!empty($new_password)) {
-            //If new password, hash it
+            // If new password, hash it
             $final_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
         } else {
-            // Keep the existing hash if the field was left blank
+            //  Keep the existing hash if the field was left blank
             $final_password_hash = $current_user_data['user_password'];
         }
 
-        //Save the changes to the database
+        // Save the changes to the database
         $result = updateByID($id, $username_form, $email_form, $final_password_hash);  
 
         if ($result) {
-            //Succes, go back to the user list
+            // Succes, go back to the user list
             header('Location: hub_admin_user.php?status=updated');     
             exit();
         } else {
@@ -51,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-//Check if URL is for editing a user
+// Check if URL is for editing a user
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id']) && is_numeric($_GET['id'])) {
     $user_to_edit = selectUserByID((int)$_GET['id']);
 }
 
-//Get all users to show in the table
+// Get all users to show in the table
 $users = selectAllUsers(); 
 ?>
 <!DOCTYPE html>
@@ -65,7 +65,7 @@ $users = selectAllUsers();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - User Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
@@ -220,8 +220,8 @@ $users = selectAllUsers();
     </div>
 
     <?php
-    //Include the modal file
-    // We only include it if we are in an edit state
+    // Include the modal file
+    //  We only include it if we are in an edit state
     if ($user_to_edit) {
         include 'hub_admin_user_edit.php';
     }
@@ -230,7 +230,7 @@ $users = selectAllUsers();
     <script>
         
         
-        //Updated Dark Mode
+        // Updated Dark Mode
         const darkModeIcon = document.getElementById('darkModeIcon');
         const localStorageKey = 'adminGamehubDarkMode';
         const htmlElement = document.documentElement;
@@ -256,7 +256,7 @@ $users = selectAllUsers();
             applyDarkMode(isDark);
         })();
 
-        //Modal JS
+        // Modal JS
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -265,11 +265,11 @@ $users = selectAllUsers();
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            //clean the URL
+            // clean the URL
             window.history.pushState({}, '', 'hub_admin_user.php');
         }
         
-        // Auto-open modal if PHP has set the user_to_edit
+        //  Auto-open modal if PHP has set the user_to_edit
         <?php if ($user_to_edit): ?>
             openModal('editUserModal');
         <?php endif; ?>

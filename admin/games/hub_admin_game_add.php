@@ -44,7 +44,7 @@
 
             <div class="form-group">
                 <label for="game_Link">Game Link (URL):</label>
-                <input type="text" id="game_Link" name="game_Link" placeholder="e.g., https://store.steampowered.com/..." required>
+                <input type="text" id="game_Link" name="game_Link" placeholder="e.g., https:// store.steampowered.com/..." required>
             </div>
             <button type="submit" class="btn">Add Game</button>
         </form>

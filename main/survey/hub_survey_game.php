@@ -2,15 +2,15 @@
 session_start();
 require '../../hub_conn.php'; 
 
-// --- 1. Authentication & Authorization ---
+//  --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
 }
 
-// --- 2. Get and Validate Game ID ---
+//  --- 2. Get and Validate Game ID ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    header('Location: ../logged_in/hub_home_category_logged_in.php'); // Redirect if no valid game ID
+    header('Location: ../logged_in/hub_home_category_logged_in.php'); //  Redirect if no valid game ID
     exit();
 }
 
@@ -18,7 +18,7 @@ $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 
-// --- 3. Fetch Game Data ---
+//  --- 3. Fetch Game Data ---
 $game = selectGameByID($game_id);
 if (!$game) {
     header('Location: ../logged_in/hub_home_category_logged_in.php');
@@ -28,7 +28,7 @@ if (!$game) {
 $message = '';
 $message_type = '';
 
-// --- 4. Handle Form Submission ---
+//  --- 4. Handle Form Submission ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $frequency = $_POST['frequency'] ?? '';
     $open_feedback = $_POST['open_feedback'] ?? '';
@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($frequency) && !empty($open_feedback)) {
         if (upsertGameFeedback($user_id, $game_id, $frequency, $open_feedback)) {
             
-            // --- MODIFICATION: Redirect to site survey page on success ---
-            // We must pass the game_id so the "Go to Game" button works
+            //  --- MODIFICATION: Redirect to site survey page on success ---
+            //  We must pass the game_id so the "Go to Game" button works
             header('Location: hub_survey_site.php?game_id=' . $game_id);
             exit();
 
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// --- 5. Fetch Existing Feedback to pre-fill form ---
+//  --- 5. Fetch Existing Feedback to pre-fill form ---
 $existing_feedback = selectUserSurveyFeedback($user_id, $game_id);
 $current_frequency = $existing_feedback['feedback_game_frequency'] ?? '';
 $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
@@ -63,7 +63,7 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback for <?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
         :root {
@@ -334,13 +334,13 @@ $current_open_feedback = $existing_feedback['feedback_game_open'] ?? '';
 </div>
 
 <script>
-    // --- 1. Side Menu Toggle Logic ---
+    //  --- 1. Side Menu Toggle Logic ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
+    //  --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; 

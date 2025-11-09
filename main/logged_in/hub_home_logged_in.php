@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check for login
+//  Check for login
 if (!isset($_SESSION['username'])) {
     header('Location: ../../hub_login.php');
     exit();
@@ -15,7 +15,7 @@ $username = htmlspecialchars($_SESSION['username']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Welcome</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /*Variables for Theming*/
         :root {
@@ -297,7 +297,7 @@ $username = htmlspecialchars($_SESSION['username']);
         menu.classList.toggle('open');
     });
 
-    //Updated Dark Mode
+    // Updated Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement;
@@ -313,14 +313,14 @@ $username = htmlspecialchars($_SESSION['username']);
         }
     }
 
-    //Function toggles  mode
+    // Function toggles  mode
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        // Toggle the state
+        //  Toggle the state
         applyDarkMode(!isDark);
 
-        // Save preference to local storage
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 

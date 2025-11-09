@@ -2,7 +2,7 @@
 session_start();
 require '../hub_conn.php'; 
 
-// --- MODIFIED BLOCK: Added all modal variables ---
+//  --- MODIFIED BLOCK: Added all modal variables ---
 $login_error = '';
 $register_error = '';
 $forgot_step1_error = '';
@@ -12,10 +12,10 @@ $reset_success = '';
 $login_register_success = '';
 
 if ($_POST) {
-    // Check which action is being performed
+    //  Check which action is being performed
     $action = $_POST['action'] ?? '';
 
-    // --- LOGIN LOGIC ---
+    //  --- LOGIN LOGIC ---
     if ($action === 'login') {
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -32,7 +32,7 @@ if ($_POST) {
                 header("Location: ../admin/user/hub_admin_user.php"); 
             } else {
                 $_SESSION['is_admin'] = false;
-                // Redirect to the LOGGED IN detail page for this game
+                //  Redirect to the LOGGED IN detail page for this game
                 header("Location: logged_in/hub_game_detail_logged_in.php?game_id=" . $_GET['game_id']);
             }
             exit(); 
@@ -41,18 +41,18 @@ if ($_POST) {
         }
     }
 
-    // --- REGISTER LOGIC ---
+    //  --- REGISTER LOGIC ---
     if ($action === 'register') {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        // $server = $_POST['server']; // REMOVED
+        //  $server = $_POST['server']; //  REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            // Call function without $server
+            //  Call function without $server
             $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
@@ -62,13 +62,13 @@ if ($_POST) {
         }
     }
     
-    // --- FORGOT PASSWORD STEP 1 LOGIC ---
+    //  --- FORGOT PASSWORD STEP 1 LOGIC ---
     if ($action === 'forgot_step1') {
         $username = trim($_POST['username']);
         if (!empty($username)) {
             $userData = getUserResetData($conn, $username);
             if ($userData) {
-                // Success: Store data and let the page reload to show modal 2
+                //  Success: Store data and let the page reload to show modal 2
                 $_SESSION['temp_user_id'] = $userData['user_id'];
                 $_SESSION['security_question'] = $userData['security_question'];
                 $_SESSION['security_answer_hash'] = $userData['security_answer_hash'];
@@ -81,11 +81,11 @@ if ($_POST) {
         }
     }
     
-    // --- FORGOT PASSWORD STEP 2 LOGIC ---
+    //  --- FORGOT PASSWORD STEP 2 LOGIC ---
     if ($action === 'forgot_step2') {
         if (!isset($_SESSION['temp_user_id']) || !isset($_SESSION['security_answer_hash'])) {
             $forgot_step1_error = "Session expired. Please start over.";
-            // Clear session just in case
+            //  Clear session just in case
             session_unset();
             session_destroy();
         } else {
@@ -93,10 +93,10 @@ if ($_POST) {
             if (empty($user_answer)) {
                 $forgot_step2_error = "Please provide an answer to your security question.";
             } elseif (password_verify($user_answer, $_SESSION['security_answer_hash'])) {
-                // Success: Set auth flag and let page reload to show modal 3
+                //  Success: Set auth flag and let page reload to show modal 3
                 $_SESSION['auth_for_reset'] = true;
             } else {
-                // Failure: Destroy session and send back to step 1
+                //  Failure: Destroy session and send back to step 1
                 session_unset();
                 session_destroy();
                 $forgot_step1_error = "Incorrect security answer. Please start the reset process again.";
@@ -104,7 +104,7 @@ if ($_POST) {
         }
     }
     
-    // --- RESET PASSWORD STEP 3 LOGIC ---
+    //  --- RESET PASSWORD STEP 3 LOGIC ---
     if ($action === 'reset_password') {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
@@ -127,7 +127,7 @@ if ($_POST) {
                 
                 if ($update_successful) {
                     $reset_success = "Your password has been reset successfully!";
-                    // Clear all temporary session data
+                    //  Clear all temporary session data
                     unset($_SESSION['temp_user_id']);
                     unset($_SESSION['security_question']);
                     unset($_SESSION['security_answer_hash']);
@@ -141,7 +141,7 @@ if ($_POST) {
     }
 }
 
-// --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
+//  --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
@@ -181,17 +181,17 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-// --- END OF LOGIC BLOCK ---
+//  --- END OF LOGIC BLOCK ---
 
-// --- 1. Get and Validate Game ID ---
+//  --- 1. Get and Validate Game ID ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    header('Location: hub_home_category.php'); // Redirect if no valid game ID
+    header('Location: hub_home_category.php'); //  Redirect if no valid game ID
     exit();
 }
 
 $game_id = (int)$_GET['game_id'];
 
-// --- 2. Fetch All Data ---
+//  --- 2. Fetch All Data ---
 $game = selectGameByID($game_id);
 
 if (!$game) {
@@ -201,11 +201,11 @@ if (!$game) {
 
 $gallery_images = selectGameGalleryImages($game_id);
 
-// --- 3. Set Defaults for Logged-out state ---
+//  --- 3. Set Defaults for Logged-out state ---
 $current_rating = 0;
 $is_favorite = 0;
 
-// Fallback image if gallery is empty
+//  Fallback image if gallery is empty
 $fallback_path = 'uploads/placeholder.png';
 if (empty($gallery_images)) {
     $gallery_images[] = ['img_path' => $fallback_path];
@@ -217,7 +217,7 @@ if (empty($gallery_images)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
         :root {
@@ -635,28 +635,28 @@ if (empty($gallery_images)) {
 </div>
 
 <?php
-    // --- MODIFIED BLOCK: Include all modals ---
+    //  --- MODIFIED BLOCK: Include all modals ---
     include '../hub_login.php';
     include '../hub_register.php';
-    include '../hub_forgotpassword.php'; // Step 1
-    include '../hub_forgotpassword2.php'; // Step 2
-    include '../hub_resetpassword.php'; // Step 3
+    include '../hub_forgotpassword.php'; //  Step 1
+    include '../hub_forgotpassword2.php'; //  Step 2
+    include '../hub_resetpassword.php'; //  Step 3
 ?>
 
 <script>
     
 
-    // --- 1. Side Menu & Dark Mode (Standard) ---
+    //  --- 1. Side Menu & Dark Mode (Standard) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    // --- Updated Dark Mode Logic ---
+    //  --- Updated Dark Mode Logic ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; // Target the <html> tag
+    const htmlElement = document.documentElement; //  Target the <html> tag
 
-    // This function now applies the class to <html> AND updates the button text
+    //  This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -667,26 +667,26 @@ if (empty($gallery_images)) {
         }
     }
 
-    // This function toggles the mode
+    //  This function toggles the mode
     function toggleDarkMode() {
-        // Check the class on the <html> tag
+        //  Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        // Toggle the state
+        //  Toggle the state
         applyDarkMode(!isDark);
 
-        // Save preference to local storage
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // This function runs on page load to set the *button text* correctly.
-    // The class itself was already set by the script in the <head>.
+    //  This function runs on page load to set the *button text* correctly.
+    //  The class itself was already set by the script in the <head>.
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
 
-    // --- 2. Slideshow Logic ---
+    //  --- 2. Slideshow Logic ---
     let currentSlide = 0;
     const slides = document.querySelectorAll('#slideshow-content .slide');
     const dots = document.querySelectorAll('#slide-indicators .dot');
@@ -695,7 +695,7 @@ if (empty($gallery_images)) {
 
     function showSlide(n) {
         if (totalSlides === 0) return;
-        currentSlide = (n + totalSlides) % totalSlides; // Wraps around
+        currentSlide = (n + totalSlides) % totalSlides; //  Wraps around
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
         if (slides[currentSlide]) slides[currentSlide].classList.add('active');
@@ -721,9 +721,9 @@ if (empty($gallery_images)) {
     });
 
 
-    // --- 3. UPDATED: Logged-out Feedback Click ---
+    //  --- 3. UPDATED: Logged-out Feedback Click ---
     
-    // --- NEW Modal JavaScript ---
+    //  --- NEW Modal JavaScript ---
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -739,7 +739,7 @@ if (empty($gallery_images)) {
         openModal(toModalId);
     }
     
-    // --- MODIFIED BLOCK: Updated JS to check all variables ---
+    //  --- MODIFIED BLOCK: Updated JS to check all variables ---
     <?php if (!empty($login_error)): ?>
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>
@@ -753,28 +753,28 @@ if (empty($gallery_images)) {
     <?php elseif (!empty($reset_error) || !empty($reset_success)): ?>
         openModal('resetPasswordModal');
     <?php elseif (isset($_SESSION['auth_for_reset']) && $_SESSION['auth_for_reset'] === true): ?>
-        // Successful step 2, show step 3
+        //  Successful step 2, show step 3
         openModal('resetPasswordModal');
     <?php elseif (isset($_SESSION['temp_user_id'])): ?>
-        // Successful step 1, show step 2
+        //  Successful step 1, show step 2
         openModal('forgotPasswordModal2');
     <?php endif; ?>
 
-    // --- Favorite (Heart) Logic ---
+    //  --- Favorite (Heart) Logic ---
     const favoriteIcon = document.getElementById('favoriteIcon');
     if (favoriteIcon) {
         favoriteIcon.addEventListener('click', function() {
-            openModal('loginModal'); // Open login modal on click
+            openModal('loginModal'); //  Open login modal on click
         });
     }
 
-    // --- Star Rating Logic ---
+    //  --- Star Rating Logic ---
     const starRatingContainer = document.getElementById('starRating');
     if (starRatingContainer) {
         const stars = starRatingContainer.querySelectorAll('.star');
         stars.forEach(star => {
             star.addEventListener('click', function() {
-                openModal('loginModal'); // Open login modal on click
+                openModal('loginModal'); //  Open login modal on click
             });
         });
     }

@@ -14,7 +14,7 @@ if (!isset($_GET['id']) || !isset($_GET['game_id']) || !is_numeric($_GET['id']) 
 
 $image_id = (int)$_GET['id'];
 $game_id = (int)$_GET['game_id'];
-$change_amount = 1; //Increase value of sort order
+$change_amount = 1; // Increase value of sort order
 
 updateImageSortOrder($image_id, $change_amount);
 

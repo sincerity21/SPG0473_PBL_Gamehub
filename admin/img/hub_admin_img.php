@@ -9,14 +9,14 @@ if (!isset($_SESSION['username'])) {
 
 $error = '';
 
-//Check if a specific game ID is requested
+// Check if a specific game ID is requested
 $game_id = isset($_GET['game_id']) ? (int)$_GET['game_id'] : null;
 
-//Form Submissions (uploads)
+// Form Submissions (uploads)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $game_id_form = (int)$_POST['game_id']; //Get game_id from the form
+    $game_id_form = (int)$_POST['game_id']; // Get game_id from the form
 
-    //Add gallery image
+    // Add gallery image
     if ($_POST['action'] === 'add_gallery' && isset($_FILES['gallery_images'])) {
         $upload_dir = 'uploads/gallery/'; 
         $server_upload_path = __DIR__ . '/../../' . $upload_dir; 
@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
         }
         
-        //Go back to the same game page
+        // Go back to the same game page
         header('Location: hub_admin_img.php?game_id=' . $game_id_form . '&status=gallery_updated');
         exit();
     }
 
-    //Add or Update cover image
+    // Add or Update cover image
     if ($_POST['action'] === 'add_cover' && isset($_FILES['cover_image'])) {
         $old_cover_path = null;
         $covers = selectGameCovers($game_id_form);
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             if (move_uploaded_file($file_tmp_path, $dest_path)) {
                 if (addOrUpdateGameCover($game_id_form, $db_path)) {
-                    //New cover is saved, now delete the old one
+                    // New cover is saved, now delete the old one
                     if ($old_cover_path) {
                         $old_file_server_path = __DIR__ . '/../../' . $old_cover_path;
                         if (file_exists($old_file_server_path)) {
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 
-//Get Data to Display on the Page
+// Get Data to Display on the Page
 $games = selectAllGames(); 
 $gallery_images = [];
 $cover_images = [];
@@ -124,7 +124,7 @@ if ($game_id) {
             }
         }
     } else {
-        $game_id = null; //Invalid game_id, reset to list view
+        $game_id = null; // Invalid game_id, reset to list view
     }
 }
 
@@ -136,7 +136,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Main Page & Modal Styles */
         :root {
@@ -225,7 +225,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode'; // Use a unique dark mode key for this page
+        const localStorageKey = 'adminGamehubDarkMode'; //  Use a unique dark mode key for this page
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -348,7 +348,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     </div>
 
     <?php
-    //Load the HTML for the modals forms
+    // Load the HTML for the modals forms
     if ($game_id) {
         include 'hub_admin_img_add.php';
         include 'hub_admin_cover_add.php';
@@ -358,9 +358,9 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     <script>
         
 
-        //Dark Mode Toggle
+        // Dark Mode Toggle
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode'; //Use a unique dark mode key for this page
+        const localStorageKey = 'adminGamehubDarkMode'; // Use a unique dark mode key for this page
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -384,7 +384,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
             applyDarkMode(isDark);
         })();
 
-        //Modal JS
+        // Modal JS
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -393,11 +393,11 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            //Clean the URL
+            // Clean the URL
             window.history.pushState({}, '', 'hub_admin_img.php?game_id=<?php echo $game_id; ?>');
         }
         
-        //Auto-open modal based on URL
+        // Auto-open modal based on URL
         <?php if (isset($_GET['action'])): ?>
             <?php if ($_GET['action'] == 'add_gallery'): ?>
                 openModal('addGalleryModal');

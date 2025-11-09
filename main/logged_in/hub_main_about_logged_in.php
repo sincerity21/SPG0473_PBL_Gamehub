@@ -2,7 +2,7 @@
 session_start();
 require '../../hub_conn.php'; 
 
-//Check for login
+// Check for login
 
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
@@ -16,11 +16,11 @@ $username = htmlspecialchars($_SESSION['username']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - About Us</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https:// fonts.googleapis.com">
+    <link rel="preconnect" href="https:// fonts.gstatic.com" crossorigin>
+    <link href="https:// fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         /* Color Theme Variables*/
@@ -459,8 +459,8 @@ $username = htmlspecialchars($_SESSION['username']);
                 <h3>IMAN DARWISH</h3>
                 <p>Front-End, HTML</p>
                 <div class="social-links">
-                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https:// instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https:// linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>
@@ -471,8 +471,8 @@ $username = htmlspecialchars($_SESSION['username']);
                 <h3>KHAIRULANWAR</h3>
                 <p>Design, GUI</p>
                 <div class="social-links">
-                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https:// instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https:// linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>
@@ -483,7 +483,7 @@ $username = htmlspecialchars($_SESSION['username']);
                 <h3>FAWWAZ</h3>
                 <p>Back-End, Database</p>
                 <div class="social-links">
-                    <a href="https://github.com/sincerity21" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https:// github.com/sincerity21" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                     </div>
             </div>
         </div>
@@ -494,12 +494,12 @@ $username = htmlspecialchars($_SESSION['username']);
 <script>
     
         
-    //Standard Menu & Dark Mode
+    // Standard Menu & Dark Mode
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    //Dark Mode
+    // Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement;
@@ -514,14 +514,14 @@ $username = htmlspecialchars($_SESSION['username']);
         }
     }
 
-    //Function toggles mode
+    // Function toggles mode
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        // Toggle the state
+        //  Toggle the state
         applyDarkMode(!isDark);
 
-        // Save preference to local storage
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
     

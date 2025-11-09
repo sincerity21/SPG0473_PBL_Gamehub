@@ -2,15 +2,15 @@
 session_start();
 require '../../hub_conn.php'; 
 
-// --- 1. Authentication & Authorization ---
+//  --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
 }
 
-// --- 2. Get and Validate Game ID (from previous page) ---
+//  --- 2. Get and Validate Game ID (from previous page) ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    // If game_id is lost, redirect to home
+    //  If game_id is lost, redirect to home
     header('Location: ../logged_in/hub_home_logged_in.php'); 
     exit();
 }
@@ -19,10 +19,10 @@ $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 
-// --- 3. Fetch Game Data (for the modal's "Go to Game" button) ---
+//  --- 3. Fetch Game Data (for the modal's "Go to Game" button) ---
 $game = selectGameByID($game_id);
 if (!$game) {
-    // If game is invalid, just set a fallback link
+    //  If game is invalid, just set a fallback link
     $game_link = '../logged_in/hub_home_category_logged_in.php'; 
 } else {
     $game_link = $game['game_Link'];
@@ -32,14 +32,14 @@ $message = '';
 $message_type = '';
 $survey_finished = false;
 
-// --- 4. Handle Form Submission ---
+//  --- 4. Handle Form Submission ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $satisfaction = $_POST['satisfaction'] ?? '';
     $open_feedback = $_POST['site_feedback'] ?? '';
 
     if (!empty($satisfaction) && !empty($open_feedback)) {
         if (upsertSiteFeedback($user_id, $satisfaction, $open_feedback)) {
-            // SUCCESS! Set flag to open modal
+            //  SUCCESS! Set flag to open modal
             $survey_finished = true;
         } else {
             $message = 'There was an error saving your feedback. Please try again.';
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// --- 5. Fetch Existing Feedback to pre-fill form ---
+//  --- 5. Fetch Existing Feedback to pre-fill form ---
 $existing_feedback = selectUserSiteFeedback($user_id);
 $current_satisfaction = $existing_feedback['feedback_site_satisfaction'] ?? '';
 $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
@@ -63,7 +63,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site Feedback - GameHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
         :root {
@@ -394,19 +394,19 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
 </div>
 
 <?php
-    // Include the new modal file
-    // We pass the $game_link variable to it
+    //  Include the new modal file
+    //  We pass the $game_link variable to it
     include 'hub_survey_finished.php';
 ?>
 
 <script>
-    // --- 1. Side Menu Toggle Logic ---
+    //  --- 1. Side Menu Toggle Logic ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
+    //  --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; 
@@ -432,7 +432,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         applyDarkMode(isDark);
     })();
     
-    // --- 3. Modal Control Logic ---
+    //  --- 3. Modal Control Logic ---
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -443,7 +443,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         if (modal) modal.style.display = 'none';
     }
     
-    // Auto-open modal if PHP has set the survey_finished flag
+    //  Auto-open modal if PHP has set the survey_finished flag
     <?php if ($survey_finished): ?>
         openModal('surveyFinishedModal');
     <?php endif; ?>

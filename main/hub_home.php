@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../hub_conn.php'; // Path to hub_conn.php from /main/ folder
+require '../hub_conn.php'; //  Path to hub_conn.php from /main/ folder
 
 $login_error = '';
 $register_error = '';
@@ -11,10 +11,10 @@ $reset_success = '';
 $login_register_success = '';
 
 if ($_POST) {
-    // Check which action is being performed
+    //  Check which action is being performed
     $action = $_POST['action'] ?? '';
 
-    // --- LOGIN LOGIC ---
+    //  --- LOGIN LOGIC ---
     if ($action === 'login') {
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -36,18 +36,18 @@ if ($_POST) {
         }
     }
 
-    // --- REGISTER LOGIC ---
+    //  --- REGISTER LOGIC ---
     if ($action === 'register') {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        // $server = $_POST['server']; // REMOVED
+        //  $server = $_POST['server']; //  REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            // Call function without $server
+            //  Call function without $server
             $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
@@ -57,13 +57,13 @@ if ($_POST) {
         }
     }
     
-    // --- FORGOT PASSWORD STEP 1 LOGIC ---
+    //  --- FORGOT PASSWORD STEP 1 LOGIC ---
     if ($action === 'forgot_step1') {
         $username = trim($_POST['username']);
         if (!empty($username)) {
             $userData = getUserResetData($conn, $username);
             if ($userData) {
-                // Success: Store data and let the page reload to show modal 2
+                //  Success: Store data and let the page reload to show modal 2
                 $_SESSION['temp_user_id'] = $userData['user_id'];
                 $_SESSION['security_question'] = $userData['security_question'];
                 $_SESSION['security_answer_hash'] = $userData['security_answer_hash'];
@@ -76,11 +76,11 @@ if ($_POST) {
         }
     }
     
-    // --- FORGOT PASSWORD STEP 2 LOGIC ---
+    //  --- FORGOT PASSWORD STEP 2 LOGIC ---
     if ($action === 'forgot_step2') {
         if (!isset($_SESSION['temp_user_id']) || !isset($_SESSION['security_answer_hash'])) {
             $forgot_step1_error = "Session expired. Please start over.";
-            // Clear session just in case
+            //  Clear session just in case
             session_unset();
             session_destroy();
         } else {
@@ -88,10 +88,10 @@ if ($_POST) {
             if (empty($user_answer)) {
                 $forgot_step2_error = "Please provide an answer to your security question.";
             } elseif (password_verify($user_answer, $_SESSION['security_answer_hash'])) {
-                // Success: Set auth flag and let page reload to show modal 3
+                //  Success: Set auth flag and let page reload to show modal 3
                 $_SESSION['auth_for_reset'] = true;
             } else {
-                // Failure: Destroy session and send back to step 1
+                //  Failure: Destroy session and send back to step 1
                 session_unset();
                 session_destroy();
                 $forgot_step1_error = "Incorrect security answer. Please start the reset process again.";
@@ -99,7 +99,7 @@ if ($_POST) {
         }
     }
     
-    // --- RESET PASSWORD STEP 3 LOGIC ---
+    //  --- RESET PASSWORD STEP 3 LOGIC ---
     if ($action === 'reset_password') {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
@@ -122,7 +122,7 @@ if ($_POST) {
                 
                 if ($update_successful) {
                     $reset_success = "Your password has been reset successfully!";
-                    // Clear all temporary session data
+                    //  Clear all temporary session data
                     unset($_SESSION['temp_user_id']);
                     unset($_SESSION['security_question']);
                     unset($_SESSION['security_answer_hash']);
@@ -136,7 +136,7 @@ if ($_POST) {
     }
 }
 
-// --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
+//  --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
@@ -148,10 +148,10 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     $default_question = "Your selected security question (not recognized by internal logic).";
     $default_greeting = "Hi $username, That's okay, it happens! Just answer the question below to confirm it's you and reset your password.";
 
-    $resolved_question_text = $security_question; // Default to the raw prompt code
+    $resolved_question_text = $security_question; //  Default to the raw prompt code
     $greeting_text = $default_greeting;
 
-    // Map the prompt codes to human-readable questions and greetings
+    //  Map the prompt codes to human-readable questions and greetings
     switch (strtolower(trim($security_question))) {
         case 'prompt_1':
             $resolved_question_text = "What is love?";
@@ -179,7 +179,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-// --- END OF LOGIC BLOCK ---
+//  --- END OF LOGIC BLOCK ---
 ?>
 <!DOCTYPE html>
 <html> 
@@ -187,7 +187,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Welcome</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* --- 1. CSS Variables for Theming --- */
         :root {
@@ -594,12 +594,12 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 </div>
 
 <?php
-    // Include all modals
+    //  Include all modals
     include '../hub_login.php';
     include '../hub_register.php';
-    include '../hub_forgotpassword.php'; // Step 1
-    include '../hub_forgotpassword2.php'; // Step 2
-    include '../hub_resetpassword.php'; // Step 3
+    include '../hub_forgotpassword.php'; //  Step 1
+    include '../hub_forgotpassword2.php'; //  Step 2
+    include '../hub_resetpassword.php'; //  Step 3
 ?>
 
 <script>
@@ -608,10 +608,10 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         menu.classList.toggle('open');
     });
 
-    // --- CHANGE 3: UPDATED DARK MODE SCRIPT ---
+    //  --- CHANGE 3: UPDATED DARK MODE SCRIPT ---
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; // Target the <html> tag
+    const htmlElement = document.documentElement; //  Target the <html> tag
 
     function applyDarkMode(isDark) {
         if (isDark) {
@@ -629,15 +629,15 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // ThisIIFE now just sets the button text
+    //  ThisIIFE now just sets the button text
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
-    // --- END OF CHANGE 3 ---
+    //  --- END OF CHANGE 3 ---
 
 
-    // --- Modal JavaScript ---
+    //  --- Modal JavaScript ---
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -653,7 +653,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         openModal(toModalId);
     }
     
-    // Auto-open modal based on PHP errors or session state
+    //  Auto-open modal based on PHP errors or session state
     <?php if (!empty($login_error)): ?>
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>
@@ -667,10 +667,10 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     <?php elseif (!empty($reset_error) || !empty($reset_success)): ?>
         openModal('resetPasswordModal');
     <?php elseif (isset($_SESSION['auth_for_reset']) && $_SESSION['auth_for_reset'] === true): ?>
-        // Successful step 2, show step 3
+        //  Successful step 2, show step 3
         openModal('resetPasswordModal');
     <?php elseif (isset($_SESSION['temp_user_id'])): ?>
-        // Successful step 1, show step 2
+        //  Successful step 1, show step 2
         openModal('forgotPasswordModal2');
     <?php endif; ?>
 </script>

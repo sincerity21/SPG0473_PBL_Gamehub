@@ -2,7 +2,7 @@
 session_start();
 require '../../hub_conn.php'; 
 
-//check for login
+// check for login
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
@@ -12,16 +12,16 @@ $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 $email = htmlspecialchars($_SESSION['email']);
 
-//Modal Error/Success Variables
+// Modal Error/Success Variables
 $username_error = '';
 $username_success = '';
 $password_error = '';
 $password_success = '';
 
-//Form Submissions
+// Form Submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
-    //Change Username
+    // Change Username
     if ($_POST['action'] === 'change_username') {
         $new_username = $_POST['new_username'] ?? '';
         $current_password = $_POST['current_password'] ?? '';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    //Change Password
+    // Change Password
     if ($_POST['action'] === 'change_password') {
         $current_password = $_POST['current_password'] ?? '';
         $new_password = $_POST['new_password'] ?? '';
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-//Get Game Data
+// Get Game Data
 $games_list = selectUserInteractedGames($user_id);
 $fallback_cover = 'uploads/placeholder.png';
 
@@ -73,7 +73,7 @@ $fallback_cover = 'uploads/placeholder.png';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - GameHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /*Variables for Theming */
         :root {
@@ -567,20 +567,20 @@ $fallback_cover = 'uploads/placeholder.png';
 </div>
 
 <?php
-    //Include Modals
+    // Include Modals
     include 'modal_change_username.php';
     include 'modal_change_password.php';
-    //Include game detail modal template
+    // Include game detail modal template
     include 'hub_main_profile_game_details.php';
 ?>
 
 <script>
-    //Side Menu Toggle
+    // Side Menu Toggle
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    //Dark Mode Logic
+    // Dark Mode Logic
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; 
@@ -606,7 +606,7 @@ $fallback_cover = 'uploads/placeholder.png';
         applyDarkMode(isDark);
     })();
 
-    //Modal Control
+    // Modal Control
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -616,32 +616,32 @@ $fallback_cover = 'uploads/placeholder.png';
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'none';
         
-        // Clear success/error messages when closing
+        //  Clear success/error messages when closing
         const successMsg = modal.querySelector('.success');
         const errorMsg = modal.querySelector('.error');
         if (successMsg) successMsg.style.display = 'none';
         if (errorMsg) errorMsg.style.display = 'none';
     }
     
-    // Auto-open modal if PHP has set an error/success
+    //  Auto-open modal if PHP has set an error/success
     <?php if (!empty($username_error) || !empty($username_success)): ?>
         openModal('changeUsernameModal');
     <?php elseif (!empty($password_error) || !empty($password_success)): ?>
         openModal('changePasswordModal');
     <?php endif; ?>
 
-    //Sorting and Filtering
+    // Sorting and Filtering
     document.addEventListener('DOMContentLoaded', function() {
         const controls = document.getElementById('sortControls');
         const grid = document.getElementById('gameGrid');
-        // Convert NodeList to Array to make it sortable
+        //  Convert NodeList to Array to make it sortable
         const allGames = Array.from(grid.getElementsByClassName('game-card'));
 
         function applySortAndFilter() {
             const sortType = controls.querySelector('input[name="sort"]:checked').value;
             const showFavourites = controls.querySelector('#showFavourites').checked;
 
-            //Filter
+            // Filter
             let filteredGames = allGames.filter(game => {
                 if (showFavourites) {
                     return game.dataset.favourite == '1';
@@ -649,7 +649,7 @@ $fallback_cover = 'uploads/placeholder.png';
                 return true; 
             });
 
-            //Sort
+            // Sort
             if (sortType === 'alpha') {
                 filteredGames.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
             } else if (sortType === 'rating') {
@@ -657,14 +657,14 @@ $fallback_cover = 'uploads/placeholder.png';
             } else if (sortType === 'category') {
                 filteredGames.sort((a, b) => {
                     if (a.dataset.category === b.dataset.category) {
-                        // If categories are same, sort by name
+                        //  If categories are same, sort by name
                         return a.dataset.name.localeCompare(b.dataset.name);
                     }
                     return a.dataset.category.localeCompare(b.dataset.category);
                 });
             }
 
-            //Re-append to grid
+            // Re-append to grid
             grid.innerHTML = '';
             filteredGames.forEach(game => grid.appendChild(game));
             
@@ -675,18 +675,18 @@ $fallback_cover = 'uploads/placeholder.png';
             }
         }
 
-        //Add event listeners to all controls
+        // Add event listeners to all controls
         controls.addEventListener('change', applySortAndFilter);
         
-        //Update empty message based on PHP
+        // Update empty message based on PHP
         if (allGames.length === 0) {
              grid.innerHTML = '<p>You have not rated, favourited, or surveyed any games yet. Go to the Library to get started!</p>';
         }
     });
 
-    //Game Detail Modal
+    // Game Detail Modal
     
-    //Global slideshow variables for the modal
+    // Global slideshow variables for the modal
     let modalCurrentSlide = 0;
     let modalSlides = [];
     let modalDots = [];
@@ -694,7 +694,7 @@ $fallback_cover = 'uploads/placeholder.png';
     let modalSlideTimer = null;
     const modalFallbackImg = '../../uploads/placeholder.png';
     
-    // Slideshow
+    //  Slideshow
     function initializeModalSlideshow(gallery) {
         modalSlides = document.querySelectorAll('#modalSlideshowContent .slide');
         modalDots = document.querySelectorAll('#modalSlideIndicators .dot');
@@ -710,7 +710,7 @@ $fallback_cover = 'uploads/placeholder.png';
             stopModalAutoSlide();
         }
         
-        //Add dot click listeners
+        // Add dot click listeners
         modalDots.forEach((dot, index) => {
             dot.addEventListener('click', () => {
                 stopModalAutoSlide();
@@ -746,7 +746,7 @@ $fallback_cover = 'uploads/placeholder.png';
         modalSlideTimer = null;
     }
 
-    //Feedback
+    // Feedback
     async function sendModalFeedback(gameId, feedbackData) {
         try {
             const response = await fetch('../../hub_update_feedback.php', {
@@ -767,7 +767,7 @@ $fallback_cover = 'uploads/placeholder.png';
         favoriteIcon.setAttribute('data-game-id', gameId);
         starRatingContainer.setAttribute('data-game-id', gameId);
 
-        //Favorite (Heart)
+        // Favorite (Heart)
         favoriteIcon.onclick = function() {
             const isNowActive = !this.classList.contains('active');
             this.classList.toggle('active');
@@ -776,7 +776,7 @@ $fallback_cover = 'uploads/placeholder.png';
             sendModalFeedback(gameId, { favorite: isNowActive ? 1 : 0 });
         };
 
-        //Star Rating
+        // Star Rating
         const stars = starRatingContainer.querySelectorAll('.star');
         
         function updateModalStars(rating) {
@@ -796,22 +796,22 @@ $fallback_cover = 'uploads/placeholder.png';
         });
     }
     
-    //Main Modal Population Functions
+    // Main Modal Population Functions
     function populateGameModal(data) {
         const game = data.details;
         const gallery = data.gallery;
         const feedback = data.feedback;
 
-        //Populate Text and Links
+        // Populate Text and Links
         document.getElementById('modalGameTitle').textContent = game.game_name;
-        document.getElementById('modalGameDesc').innerHTML = game.game_desc.replace(/\n/g, '<br>'); // nl2br
+        document.getElementById('modalGameDesc').innerHTML = game.game_desc.replace(/\n/g, '<br>'); //  nl2br
         document.getElementById('modalTrailerLink').href = game.game_trailerLink;
         document.getElementById('modalGameLink').href = game.game_Link;
         document.getElementById('modalSurveyLink').href = `../survey/hub_survey_game.php?game_id=${game.game_id}`;
 
-        //Populate Feedback Icons
+        // Populate Feedback Icons
         const favoriteIcon = document.getElementById('modalFavoriteIcon');
-        favoriteIcon.className = 'favorite-icon fa-heart'; // Reset classes
+        favoriteIcon.className = 'favorite-icon fa-heart'; //  Reset classes
         if (feedback.favorite_game == 1) {
             favoriteIcon.classList.add('fas', 'active');
         } else {
@@ -826,7 +826,7 @@ $fallback_cover = 'uploads/placeholder.png';
         }
         starContainer.innerHTML = starHTML;
 
-        //Populate Slideshow
+        // Populate Slideshow
         const slideContainer = document.getElementById('modalSlideshowContent');
         const indicatorContainer = document.getElementById('modalSlideIndicators');
         let slideHTML = '';
@@ -847,7 +847,7 @@ $fallback_cover = 'uploads/placeholder.png';
         slideContainer.innerHTML = slideHTML;
         indicatorContainer.innerHTML = indicatorHTML;
         
-        //(Re)Initialize interactive elements
+        // (Re)Initialize interactive elements
         initializeModalSlideshow();
         initializeModalFeedback(game.game_id);
     }
@@ -896,7 +896,7 @@ $fallback_cover = 'uploads/placeholder.png';
         }
     }
     
-    // Custom close function for the game modal to stop the slideshow
+    //  Custom close function for the game modal to stop the slideshow
     function closeGameModal() {
         closeModal('gameDetailModal');
         stopModalAutoSlide();

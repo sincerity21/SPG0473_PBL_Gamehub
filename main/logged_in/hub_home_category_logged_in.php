@@ -9,11 +9,11 @@ if (!isset($_SESSION['username'])) {
 
 $username = htmlspecialchars($_SESSION['username']);
 
-// Get data for the page
+//  Get data for the page
 $categories = selectAllGameCategories();
 $games = selectAllGamesWithCovers();
 
-//Define the placeholder image path
+// Define the placeholder image path
 $fallback_cover = 'uploads/placeholder.png'; 
 ?>
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ $fallback_cover = 'uploads/placeholder.png';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Library</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /*Variables for Theming */
         :root {
@@ -258,7 +258,7 @@ $fallback_cover = 'uploads/placeholder.png';
         <?php if (!empty($games)): ?>
             <?php foreach ($games as $game): ?>
                 <?php
-                // Use fallback placeholder if cover_path is missing
+                //  Use fallback placeholder if cover_path is missing
                 $cover_path = !empty($game['cover_path']) ? $game['cover_path'] : $fallback_cover;
                 ?>
                 <a href="hub_game_detail_logged_in.php?game_id=<?php echo $game['game_id']; ?>" 
@@ -279,16 +279,16 @@ $fallback_cover = 'uploads/placeholder.png';
 <script>
     
 
-    //Side Menu Toggle
+    // Side Menu Toggle
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    //Dark Mode
+    // Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; // Target the <html> tag
+    const htmlElement = document.documentElement; //  Target the <html> tag
 
     function applyDarkMode(isDark) {
         if (isDark) {
@@ -300,14 +300,14 @@ $fallback_cover = 'uploads/placeholder.png';
         }
     }
 
-    //Function toggles mode
+    // Function toggles mode
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        //Toggle the state
+        // Toggle the state
         applyDarkMode(!isDark);
 
-        //Save preference to local storage
+        // Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
@@ -317,31 +317,31 @@ $fallback_cover = 'uploads/placeholder.png';
     })();
 
 
-    //Category Filtering
+    // Category Filtering
     document.addEventListener('DOMContentLoaded', function() {
         const filterContainer = document.getElementById('categoryFilters');
         const gameCards = document.querySelectorAll('#gameGrid .game-card');
 
         if (filterContainer) {
             filterContainer.addEventListener('click', function(e) {
-                // Only act if a filter button was clicked
+                //  Only act if a filter button was clicked
                 if (!e.target.classList.contains('filter-btn')) {
                     return;
                 }
                 const selectedCategory = e.target.getAttribute('data-category');
 
-                // Update active button state
+                //  Update active button state
                 filterContainer.querySelector('.filter-btn.active').classList.remove('active');
                 e.target.classList.add('active');
 
-                //Show or hide game cards based on selection
+                // Show or hide game cards based on selection
                 gameCards.forEach(card => {
                     const cardCategory = card.getAttribute('data-category');
                     
                     if (selectedCategory === 'all' || cardCategory === selectedCategory) {
-                        card.style.display = 'block'; // Show card
+                        card.style.display = 'block'; //  Show card
                     } else {
-                        card.style.display = 'none';  // Hide card
+                        card.style.display = 'none';  //  Hide card
                     }
                 });
             });

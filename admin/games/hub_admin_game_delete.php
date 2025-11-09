@@ -4,21 +4,19 @@ require '../../hub_conn.php';
 // Define the root path for file deletion
 define('ROOT_PATH', __DIR__ . '/../../'); 
 
-// 1. Check for ID
+//Check for ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Error: Game ID not specified.");
 }
 
 $id = $_GET['id'];
 
-// 2. Fetch game data to get the image path before deleting the database record
+//Fetch game data to get the image path before deleting the database record
 $game = selectGameByID($id); 
 
 if ($game) {
     
-    // --- NEW LOGIC: DELETE ASSOCIATED FILES ---
-
-    // 3a. Delete all associated GALLERY image files
+    //Find all gallery images for this game and remove them from the server
     $gallery_images = selectGameGalleryImages($id);
     if ($gallery_images) {
         foreach ($gallery_images as $image) {
@@ -28,8 +26,8 @@ if ($game) {
         }
     }
 
-    // 3b. Delete all associated COVER image files
-    // (We check if function exists just in case)
+    //Delete all related cover image files
+    //check if function exists
     if (function_exists('selectGameCovers')) {
         $cover_images = selectGameCovers($id);
         if ($cover_images) {
@@ -41,24 +39,17 @@ if ($game) {
         }
     }
     
-    // 3c. (Original Code) Delete the MAIN game image file from the server
+    //Delete the main game image file from the server
     $image_path = $game['game_img'];
     if (!empty($image_path) && file_exists(ROOT_PATH . $image_path)) {
         // Use the absolute path to delete the file
         unlink(ROOT_PATH . $image_path);
     }
     
-    // --- END OF NEW LOGIC ---
-
-
-    // 4. Delete the game record from the database
-    // Because you added ON DELETE CASCADE, this single call will now
-    // delete the game AND all its associated records from
-    // game_images, game_cover, rating, favourites, and feedback_game.
     deleteGameByID($id); 
 }
 
-// 5. Redirect back to the game listing page (hub_admin_games.php)
+//Go back to the game listing page
 header('Location: hub_admin_games.php');
 
 exit();

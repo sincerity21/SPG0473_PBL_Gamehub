@@ -2,13 +2,11 @@
 session_start();
 require '../../hub_conn.php'; 
 
-// --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
 }
 
-// --- 2. Get and Validate Game ID ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
     header('Location: hub_home_category_logged_in.php'); // Redirect if no valid game ID
     exit();
@@ -18,28 +16,28 @@ $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
 
-// --- 3. Fetch All Data ---
+//get all data
 
-// Get main game details (name, desc, trailer)
+//Get the game's main info
 $game = selectGameByID($game_id);
 
 if (!$game) {
-    // If game not found, redirect back
+    // redirect back if game not found
     header('Location: hub_home_category_logged_in.php');
     exit();
 }
 
-// Get gallery images for the slideshow
+//Get slideshow images
 $gallery_images = selectGameGalleryImages($game_id);
 
-// Get this user's feedback for this game
+// Get this user's feedback
 $feedback = selectUserGameFeedback($user_id, $game_id);
 
-// Set initial states for icons
+//Set default heart/star values
 $current_rating = $feedback['game_rating'] ?? 0;
 $is_favorite = $feedback['favorite_game'] ?? 0;
 
-// Fallback image if gallery is empty
+//Use a placeholder if no gallery images
 $fallback_path = 'uploads/placeholder.png';
 if (empty($gallery_images)) {
     $gallery_images[] = ['img_path' => $fallback_path];
@@ -53,7 +51,7 @@ if (empty($gallery_images)) {
     <title><?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming (from hub_home_logged_in.php) --- */
+        /* Color Theme Variables */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -72,7 +70,7 @@ if (empty($gallery_images)) {
             --border-color: #444; --welcome-title-color: #ecf0f1;
         }
 
-        /* --- 2. Base & Menu Styles (from hub_home_category_logged_in.php) --- */
+        /* Base & Menu Styles */
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--main-text-color); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
         .header { background-color: var(--card-bg-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px var(--shadow-color); position: sticky; top: 0; z-index: 1001; }
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
@@ -81,18 +79,18 @@ if (empty($gallery_images)) {
         .side-menu.open { transform: translateX(0); }
         .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
-        /* --- ADDED .active class styles --- */
+        /* Style for the 'active' menu link */
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
-        /* --- END ADDED --- */
+        /* END ADDED  */
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
         
-        /* --- 3. Page Layout (Sketch) --- */
+        /* Page Layout */
         .content-container {
-            max-width: 1000px; /* Reduced width for detail view */
+            max-width: 1000px;
             margin: 0 auto;
             padding: 30px;
         }
@@ -107,7 +105,7 @@ if (empty($gallery_images)) {
             align-items: flex-start;
         }
         
-        /* --- 4. Left Column: Slideshow (from hub_games_view.php) --- */
+        /* Left Column: Slideshow */
         .image-slideshow {
             position: relative;
             width: 100%;
@@ -129,7 +127,7 @@ if (empty($gallery_images)) {
         .dot { display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: background 0.3s; }
         .dot.active { background: white; }
 
-        /* --- 5. Right Column: Game Info (Sketch) --- */
+        /* Right Column (Game Info) */
         .game-info {
             display: flex;
             flex-direction: column;
@@ -328,17 +326,17 @@ if (empty($gallery_images)) {
 <script>
     
 
-    // --- Side Menu ---
+    //Side Menu
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    // --- Updated Dark Mode Logic ---
+    //Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; // Target the <html> tag
+    const htmlElement = document.documentElement;
 
-    // This function now applies the class to <html> AND updates the button text
+    //Applies dark mode and updates menu text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -349,9 +347,8 @@ if (empty($gallery_images)) {
         }
     }
 
-    // This function toggles the mode
+    //Toggles dark mode on click
     function toggleDarkMode() {
-        // Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
         // Toggle the state
@@ -361,14 +358,13 @@ if (empty($gallery_images)) {
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // This function runs on page load to set the *button text* correctly.
-    // The class itself was already set by the script in the <head>.
+    //Set correct menu text on page load
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
 
-    // --- 2. Slideshow Logic (from hub_games_view.php) ---
+    //Slideshow Logic
     let currentSlide = 0;
     const slides = document.querySelectorAll('#slideshow-content .slide');
     const dots = document.querySelectorAll('#slide-indicators .dot');
@@ -377,7 +373,7 @@ if (empty($gallery_images)) {
 
     function showSlide(n) {
         if (totalSlides === 0) return;
-        currentSlide = (n + totalSlides) % totalSlides; // Wraps around
+        currentSlide = (n + totalSlides) % totalSlides; //Loop back to start/end
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
         if (slides[currentSlide]) slides[currentSlide].classList.add('active');
@@ -403,7 +399,7 @@ if (empty($gallery_images)) {
     });
 
 
-    // --- 3. NEW: Feedback (Heart/Stars) AJAX Logic ---
+    //Feedback (Heart/Stars) Logic
 
     // Generic function to send feedback updates
     async function sendFeedback(gameId, feedbackData) {
@@ -416,7 +412,7 @@ if (empty($gallery_images)) {
                 },
                 body: JSON.stringify({
                     game_id: gameId,
-                    ...feedbackData // e.g., { rating: 4 } or { favorite: 1 }
+                    ...feedbackData //e.g. { rating: 4 } or { favorite: 1 }
                 })
             });
 
@@ -432,7 +428,7 @@ if (empty($gallery_images)) {
         }
     }
 
-    // --- Favorite (Heart) Logic ---
+    //Favorite (Heart icon)
     const favoriteIcon = document.getElementById('favoriteIcon');
     if (favoriteIcon) {
         favoriteIcon.addEventListener('click', function() {
@@ -444,13 +440,13 @@ if (empty($gallery_images)) {
             this.classList.toggle('fas'); // Toggle solid icon
             this.classList.toggle('far'); // Toggle regular icon
             
-            // Send update to server
+            //Send update to server
             const favoriteValue = isNowActive ? 1 : 0;
             sendFeedback(gameId, { favorite: favoriteValue });
         });
     }
 
-    // --- Star Rating Logic ---
+    //Star Rating
     const starRatingContainer = document.getElementById('starRating');
     if (starRatingContainer) {
         const stars = starRatingContainer.querySelectorAll('.star');

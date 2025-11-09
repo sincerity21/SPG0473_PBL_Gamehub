@@ -2,7 +2,8 @@
 session_start();
 require '../../hub_conn.php'; 
 
-// --- 1. Authentication & Authorization ---
+//Check for login
+
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
@@ -22,7 +23,7 @@ $username = htmlspecialchars($_SESSION['username']);
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /* Color Theme Variables*/
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -32,7 +33,7 @@ $username = htmlspecialchars($_SESSION['username']);
             --shadow-color: rgba(0, 0, 0, 0.05);
             --border-color: #ddd;
             --welcome-title-color: #2c3e50;
-            --card-info-bg: #f39c12; /* Orange from sketch */
+            --card-info-bg: #f39c12;
             --card-info-text: #333;
         }
         html.dark-mode body {
@@ -44,11 +45,11 @@ $username = htmlspecialchars($_SESSION['username']);
             --shadow-color: rgba(0, 0, 0, 0.4);
             --border-color: #444; 
             --welcome-title-color: #ecf0f1;
-            --card-info-bg: #e67e22; /* Slightly darker orange for dark mode */
+            --card-info-bg: #e67e22;
             --card-info-text: #fff;
         }
 
-        /* === NEW BACKGROUND IMAGE STYLES === */
+        /*Blurred Background Image*/
         .background-image {
             position: fixed;
             top: -10px; /* Overscan to hide blur edges */
@@ -71,21 +72,19 @@ $username = htmlspecialchars($_SESSION['username']);
             background-color: var(--bg-color);
         }
 
-        /* 1. Light Mode Image */
+        /*Light Mode Image */
         #bg-light {
-            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
             background-image: url('../uploads/home/prototype.jpg');
             opacity: 1; /* Visible by default */
         }
 
-        /* 2. Dark Mode Image */
+        /* Dark Mode Image */
         #bg-dark {
-            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
             background-image: url('../uploads/home/darksouls.jpg');
             opacity: 0; /* Hidden by default */
         }
 
-        /* 3. The Swap Logic */
+        /* 3. The Swap */
         html.dark-mode body #bg-light {
             opacity: 0; /* Hide light image in dark mode */
         }
@@ -93,29 +92,26 @@ $username = htmlspecialchars($_SESSION['username']);
             opacity: 1; /* Show dark image in dark mode */
         }
         
-        /* === NEW: Dark Mode Glass Override === */
+        /*Dark Mode Glass Override*/
         html.dark-mode body .header,
         html.dark-mode body .side-menu {
-            background-color: var(--glass-bg-dark); /* Dark glass */
+            background-color: var(--glass-bg-dark); /* Dark glass*/
         }
-        /* === END NEW === */
 
 
-        /* --- 2. Base Styles --- */
+        /*Base Styles*/
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            /* background-color: var(--bg-color); */ /* REMOVED */
             color: var(--main-text-color);
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
         }
 
         .header {
-            /* background-color: var(--card-bg-color); */ /* OLD */
-            background-color: var(--glass-bg-light); /* NEW */
-            backdrop-filter: blur(10px); /* NEW */
+            background-color: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
@@ -129,12 +125,11 @@ $username = htmlspecialchars($_SESSION['username']);
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
         
-        /* --- 3. Side Menu --- */
+        /*Side Menu*/
         .side-menu {
             position: fixed; top: 60px; right: 0; width: 220px;
-            /* background-color: var(--card-bg-color); */ /* OLD */
-            background-color: var(--glass-bg-light); /* NEW */
-            backdrop-filter: blur(10px); /* NEW */
+            background-color: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
             box-shadow: -4px 4px 8px var(--shadow-color);
             border-radius: 8px 0 8px 8px;
             padding: 10px 0; z-index: 1000;
@@ -146,7 +141,7 @@ $username = htmlspecialchars($_SESSION['username']);
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
-        /* --- NEW: Login Link Style --- */
+        /*Login Link Style*/
         .side-menu a.login-link {
             color: var(--login-color) !important;
             font-weight: bold;
@@ -155,13 +150,13 @@ $username = htmlspecialchars($_SESSION['username']);
             background-color: var(--bg-color);
             color: #2ecc71 !important;
         }
-        /* --- END NEW --- */
+
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
         
-        /* --- 4. Content & Team Card Styles (Sketch) --- */
+        /* Content & Team Card Styles*/
         .content-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -193,13 +188,6 @@ $username = htmlspecialchars($_SESSION['username']);
             line-height: 1.7;
             color: var(--secondary-text-color);
         }
-
-        /*
-        ===============================================
-           === TEAM CARD CSS (Already Added) ===
-        ===============================================
-        */
-
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -270,12 +258,6 @@ $username = htmlspecialchars($_SESSION['username']);
             transform: scale(1.1);
         }
         
-        /*
-        ===============================================
-           === MODAL STYLES (Already Added) ===
-        ===============================================
-        */
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -284,7 +266,7 @@ $username = htmlspecialchars($_SESSION['username']);
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
             z-index: 2000;
-            display: none; /* Hidden by default */
+            display: none;
             align-items: center;
             justify-content: center;
             overflow-y: auto;
@@ -512,17 +494,16 @@ $username = htmlspecialchars($_SESSION['username']);
 <script>
     
         
-    // --- Standard Menu & Dark Mode JS ---
+    //Standard Menu & Dark Mode
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    // --- Updated Dark Mode Logic ---
+    //Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; // Target the <html> tag
+    const htmlElement = document.documentElement;
 
-    // This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -533,9 +514,8 @@ $username = htmlspecialchars($_SESSION['username']);
         }
     }
 
-    // This function toggles the mode
+    //Function toggles mode
     function toggleDarkMode() {
-        // Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
         // Toggle the state
@@ -544,9 +524,7 @@ $username = htmlspecialchars($_SESSION['username']);
         // Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
-
-    // This function runs on page load to set the *button text* correctly.
-    // The class itself was already set by the script in the <head>.
+    
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);

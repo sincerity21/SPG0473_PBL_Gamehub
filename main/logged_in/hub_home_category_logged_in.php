@@ -1,8 +1,7 @@
 <?php
 session_start();
-require '../../hub_conn.php'; // Assuming hub_conn is one level up
+require '../../hub_conn.php';
 
-// Ensure the user is logged in
 if (!isset($_SESSION['username'])) {
     header('Location: ../../hub_login.php');
     exit();
@@ -10,11 +9,11 @@ if (!isset($_SESSION['username'])) {
 
 $username = htmlspecialchars($_SESSION['username']);
 
-// Fetch data for the page
+// Get data for the page
 $categories = selectAllGameCategories();
-$games = selectAllGamesWithCovers(); // Use the NEW function
+$games = selectAllGamesWithCovers();
 
-// Define the placeholder image path
+//Define the placeholder image path
 $fallback_cover = 'uploads/placeholder.png'; 
 ?>
 <!DOCTYPE html>
@@ -25,7 +24,7 @@ $fallback_cover = 'uploads/placeholder.png';
     <title>GameHub - Library</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming (from hub_home_logged_in.php) --- */
+        /*Variables for Theming */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -48,7 +47,7 @@ $fallback_cover = 'uploads/placeholder.png';
             --welcome-title-color: #ecf0f1;
         }
 
-        /* --- 2. Base Styles (from hub_home_logged_in.php) --- */
+        /* Base Styles*/
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -73,7 +72,7 @@ $fallback_cover = 'uploads/placeholder.png';
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
 
-        /* --- 3. Side Menu (from hub_home_logged_in.php) --- */
+        /*Side Menu */
         .side-menu {
             position: fixed; top: 60px; right: 0; width: 220px;
             background-color: var(--card-bg-color);
@@ -86,16 +85,16 @@ $fallback_cover = 'uploads/placeholder.png';
         .side-menu.open { transform: translateX(0); }
         .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
-        /* --- ADDED .active class styles --- */
+        /*ADDED .active class styles*/
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
-        /* --- END ADDED --- */
+        /*END ADDED*/
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
 
-        /* --- 4. NEW: Content & Sketch Styles --- */
+        /*Content*/
         .content-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -109,7 +108,7 @@ $fallback_cover = 'uploads/placeholder.png';
             margin: 0;
         }
 
-        /* Wavy Divider from Sketch */
+        /*Wavy Divider*/
         .wave-divider {
             width: 100%;
             height: 30px;
@@ -135,7 +134,7 @@ $fallback_cover = 'uploads/placeholder.png';
             padding-bottom: 5px;
         }
 
-        /* Category Filter Buttons */
+        /*Category Filter Buttons*/
         .category-filters {
             display: flex;
             flex-wrap: wrap;
@@ -184,15 +183,13 @@ $fallback_cover = 'uploads/placeholder.png';
             box-shadow: 0 8px 16px var(--shadow-color);
         }
         
-        /* --- MODIFIED CSS --- */
         .game-card img {
             width: 100%;
-            height: auto; /* Let height be automatic */
-            aspect-ratio: 460 / 215; /* Enforce 460x215 aspect ratio */
-            object-fit: cover; /* Ensures image fills the space */
+            height: auto;
+            aspect-ratio: 460 / 215;
+            object-fit: cover;
             display: block;
         }
-        /* --- REMOVED .game-card-title CSS --- */
 
     </style>
 
@@ -282,18 +279,17 @@ $fallback_cover = 'uploads/placeholder.png';
 <script>
     
 
-    // --- 1. Side Menu Toggle Logic (from hub_home_logged_in.php) ---
+    //Side Menu Toggle
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    // --- Updated Dark Mode Logic ---
+    //Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; // Target the <html> tag
 
-    // This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -304,27 +300,24 @@ $fallback_cover = 'uploads/placeholder.png';
         }
     }
 
-    // This function toggles the mode
+    //Function toggles mode
     function toggleDarkMode() {
-        // Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
-        // Toggle the state
+        //Toggle the state
         applyDarkMode(!isDark);
 
-        // Save preference to local storage
+        //Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    // This function runs on page load to set the *button text* correctly.
-    // The class itself was already set by the script in the <head>.
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
 
 
-    // --- 3. NEW: Category Filtering Logic ---
+    //Category Filtering
     document.addEventListener('DOMContentLoaded', function() {
         const filterContainer = document.getElementById('categoryFilters');
         const gameCards = document.querySelectorAll('#gameGrid .game-card');
@@ -335,15 +328,13 @@ $fallback_cover = 'uploads/placeholder.png';
                 if (!e.target.classList.contains('filter-btn')) {
                     return;
                 }
-
-                // Get the category to filter by
                 const selectedCategory = e.target.getAttribute('data-category');
 
                 // Update active button state
                 filterContainer.querySelector('.filter-btn.active').classList.remove('active');
                 e.target.classList.add('active');
 
-                // Show/Hide game cards
+                //Show or hide game cards based on selection
                 gameCards.forEach(card => {
                     const cardCategory = card.getAttribute('data-category');
                     

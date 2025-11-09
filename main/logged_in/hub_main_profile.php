@@ -2,7 +2,7 @@
 session_start();
 require '../../hub_conn.php'; 
 
-// --- 1. Authentication & Authorization ---
+//check for login
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
@@ -10,18 +10,18 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
 
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
-$email = htmlspecialchars($_SESSION['email']); // Get email from session
+$email = htmlspecialchars($_SESSION['email']);
 
-// --- 2. Modal Error/Success Variables ---
+//Modal Error/Success Variables
 $username_error = '';
 $username_success = '';
 $password_error = '';
 $password_success = '';
 
-// --- 3. Handle Form Submissions ---
+//Form Submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
-    // --- Handle Change Username ---
+    //Change Username
     if ($_POST['action'] === 'change_username') {
         $new_username = $_POST['new_username'] ?? '';
         $current_password = $_POST['current_password'] ?? '';
@@ -32,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $result = updateUsername($user_id, $new_username, $current_password);
             if ($result === "success") {
                 $username_success = "Username updated successfully!";
-                $username = htmlspecialchars($new_username); // Update username on the page
+                $username = htmlspecialchars($new_username);
             } else {
-                $username_error = $result; // Show the error from the function
+                $username_error = $result;
             }
         }
     }
 
-    // --- Handle Change Password ---
+    //Change Password
     if ($_POST['action'] === 'change_password') {
         $current_password = $_POST['current_password'] ?? '';
         $new_password = $_POST['new_password'] ?? '';
@@ -56,15 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             if ($result === "success") {
                 $password_success = "Password updated successfully!";
             } else {
-                $password_error = $result; // Show the error
+                $password_error = $result;
             }
         }
     }
 }
 
-// --- 4. Fetch Game Data ---
+//Get Game Data
 $games_list = selectUserInteractedGames($user_id);
-$fallback_cover = 'uploads/placeholder.png'; // Fallback for games without covers
+$fallback_cover = 'uploads/placeholder.png';
 
 ?>
 <!DOCTYPE html>
@@ -75,7 +75,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
     <title>My Profile - GameHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /*Variables for Theming */
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -92,12 +92,11 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             --error-bg: #f8d7da;
             --error-text: #721c24;
             --error-border: #f5c6cb;
-            /* --- NEW: Added star/heart colors --- */
             --star-color: #f39c12;
             --heart-color: #e74c3c;
         }
         
-        /* --- 2. Dark Mode Fix --- */
+        /*Dark Mode*/
         html.dark-mode body {
             --bg-color: #121212; 
             --main-text-color: #f4f4f4; 
@@ -116,7 +115,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             --error-border: #5c2a30;
         }
 
-        /* --- 3. Base & Menu Styles --- */
+        /*Base & Menu Styles*/
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -162,7 +161,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
         
-        /* --- 4. Profile Page Layout --- */
+        /*Profile Page Layout*/
         .profile-container {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -250,7 +249,6 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             color: var(--main-text-color);
             box-shadow: 0 2px 5px var(--shadow-color);
             transition: transform 0.2s, box-shadow 0.2s;
-            /* --- NEW: Add cursor pointer --- */
             cursor: pointer;
         }
         .game-card:hover {
@@ -293,7 +291,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             margin-right: 5px;
         }
         
-        /* --- 5. Modal Styles --- */
+        /*Modal Styles*/
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); z-index: 2000; display: none;
@@ -307,8 +305,8 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         .modal-close {
             position: absolute;
             top: 10px;
-            left: 15px; /* <-- This was changed from 'right' */
-            right: auto; /* <-- This is added to be safe */
+            left: 15px;
+            right: auto; 
             font-size: 28px;
             font-weight: bold;
             color: var(--secondary-text-color);
@@ -350,10 +348,10 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             border: 1px solid var(--success-border); 
         }
 
-        /* --- 6. NEW: Game Detail Modal Styles (from hub_game_detail_logged_in.php) --- */
+        /*Game Detail Modal Styles*/
         .modal-container .game-detail-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 50/50 split */
+            grid-template-columns: 1fr 1fr;
             gap: 40px;
             align-items: flex-start;
         }
@@ -361,12 +359,12 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
             overflow: hidden;
             border-radius: 8px;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
-            margin-top: 30px; /* <-- ADD THIS LINE */
+            margin-top: 30px;
         }
         .modal-container .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
         .modal-container .slide.active { opacity: 1; }
@@ -401,8 +399,8 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             font-size: 1.1em;
             color: var(--secondary-text-color);
             line-height: 1.6;
-            max-height: 150px; /* Limit desc height */
-            overflow-y: auto; /* Add scroll if desc is long */
+            max-height: 150px;
+            overflow-y: auto;
         }
 
         .modal-container .favorite-icon {
@@ -448,7 +446,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             color: white;
         }
         .modal-container .next-link {
-            background-color: #8e44ad; /* Next button color */
+            background-color: #8e44ad;
             color: white;
             border: 2px solid #8e44ad;
             margin-top: 10px;
@@ -569,20 +567,20 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
 </div>
 
 <?php
-    // --- 6. Include Modals ---
+    //Include Modals
     include 'modal_change_username.php';
     include 'modal_change_password.php';
-    // --- NEW: Include game detail modal template ---
+    //Include game detail modal template
     include 'hub_main_profile_game_details.php';
 ?>
 
 <script>
-    // --- 1. Side Menu Toggle Logic ---
+    //Side Menu Toggle
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    // --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
+    //Dark Mode Logic
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; 
@@ -608,7 +606,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         applyDarkMode(isDark);
     })();
 
-    // --- 3. Modal Control Logic ---
+    //Modal Control
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -632,7 +630,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         openModal('changePasswordModal');
     <?php endif; ?>
 
-    // --- 4. Sorting and Filtering Logic ---
+    //Sorting and Filtering
     document.addEventListener('DOMContentLoaded', function() {
         const controls = document.getElementById('sortControls');
         const grid = document.getElementById('gameGrid');
@@ -643,18 +641,15 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             const sortType = controls.querySelector('input[name="sort"]:checked').value;
             const showFavourites = controls.querySelector('#showFavourites').checked;
 
-            // 1. Filter
+            //Filter
             let filteredGames = allGames.filter(game => {
                 if (showFavourites) {
                     return game.dataset.favourite == '1';
                 }
-                // --- MODIFIED: Only show games with interaction ---
-                // This is now handled by the PHP query, but we keep this
-                // for the 'Show Favourites Only' filter.
                 return true; 
             });
 
-            // 2. Sort
+            //Sort
             if (sortType === 'alpha') {
                 filteredGames.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
             } else if (sortType === 'rating') {
@@ -669,7 +664,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
                 });
             }
 
-            // 3. Re-append to grid
+            //Re-append to grid
             grid.innerHTML = '';
             filteredGames.forEach(game => grid.appendChild(game));
             
@@ -680,18 +675,18 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             }
         }
 
-        // Add event listeners to all controls
+        //Add event listeners to all controls
         controls.addEventListener('change', applySortAndFilter);
         
-        // --- MODIFIED: Update empty message based on PHP ---
+        //Update empty message based on PHP
         if (allGames.length === 0) {
              grid.innerHTML = '<p>You have not rated, favourited, or surveyed any games yet. Go to the Library to get started!</p>';
         }
     });
 
-    // --- 5. NEW: Game Detail Modal JavaScript ---
+    //Game Detail Modal
     
-    // --- Global slideshow variables for the modal ---
+    //Global slideshow variables for the modal
     let modalCurrentSlide = 0;
     let modalSlides = [];
     let modalDots = [];
@@ -699,7 +694,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
     let modalSlideTimer = null;
     const modalFallbackImg = '../../uploads/placeholder.png';
     
-    // --- Slideshow logic (adapted for modal) ---
+    // Slideshow
     function initializeModalSlideshow(gallery) {
         modalSlides = document.querySelectorAll('#modalSlideshowContent .slide');
         modalDots = document.querySelectorAll('#modalSlideIndicators .dot');
@@ -715,7 +710,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             stopModalAutoSlide();
         }
         
-        // Add dot click listeners
+        //Add dot click listeners
         modalDots.forEach((dot, index) => {
             dot.addEventListener('click', () => {
                 stopModalAutoSlide();
@@ -727,7 +722,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
 
     function showModalSlide(n) {
         if (modalTotalSlides === 0) return;
-        modalCurrentSlide = (n + modalTotalSlides) % modalTotalSlides; // Wraps around
+        modalCurrentSlide = (n + modalTotalSlides) % modalTotalSlides;
         modalSlides.forEach(slide => slide.classList.remove('active'));
         modalDots.forEach(dot => dot.classList.remove('active'));
         if (modalSlides[modalCurrentSlide]) modalSlides[modalCurrentSlide].classList.add('active');
@@ -751,7 +746,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         modalSlideTimer = null;
     }
 
-    // --- Feedback logic (adapted for modal) ---
+    //Feedback
     async function sendModalFeedback(gameId, feedbackData) {
         try {
             const response = await fetch('../../hub_update_feedback.php', {
@@ -772,7 +767,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         favoriteIcon.setAttribute('data-game-id', gameId);
         starRatingContainer.setAttribute('data-game-id', gameId);
 
-        // --- Favorite (Heart) Logic ---
+        //Favorite (Heart)
         favoriteIcon.onclick = function() {
             const isNowActive = !this.classList.contains('active');
             this.classList.toggle('active');
@@ -781,7 +776,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
             sendModalFeedback(gameId, { favorite: isNowActive ? 1 : 0 });
         };
 
-        // --- Star Rating Logic ---
+        //Star Rating
         const stars = starRatingContainer.querySelectorAll('.star');
         
         function updateModalStars(rating) {
@@ -801,20 +796,20 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         });
     }
     
-    // --- Main Modal Population Functions ---
+    //Main Modal Population Functions
     function populateGameModal(data) {
         const game = data.details;
         const gallery = data.gallery;
         const feedback = data.feedback;
 
-        // 1. Populate Text and Links
+        //Populate Text and Links
         document.getElementById('modalGameTitle').textContent = game.game_name;
         document.getElementById('modalGameDesc').innerHTML = game.game_desc.replace(/\n/g, '<br>'); // nl2br
         document.getElementById('modalTrailerLink').href = game.game_trailerLink;
         document.getElementById('modalGameLink').href = game.game_Link;
         document.getElementById('modalSurveyLink').href = `../survey/hub_survey_game.php?game_id=${game.game_id}`;
 
-        // 2. Populate Feedback Icons
+        //Populate Feedback Icons
         const favoriteIcon = document.getElementById('modalFavoriteIcon');
         favoriteIcon.className = 'favorite-icon fa-heart'; // Reset classes
         if (feedback.favorite_game == 1) {
@@ -831,7 +826,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         }
         starContainer.innerHTML = starHTML;
 
-        // 3. Populate Slideshow
+        //Populate Slideshow
         const slideContainer = document.getElementById('modalSlideshowContent');
         const indicatorContainer = document.getElementById('modalSlideIndicators');
         let slideHTML = '';
@@ -852,7 +847,7 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
         slideContainer.innerHTML = slideHTML;
         indicatorContainer.innerHTML = indicatorHTML;
         
-        // 4. (Re)Initialize interactive elements
+        //(Re)Initialize interactive elements
         initializeModalSlideshow();
         initializeModalFeedback(game.game_id);
     }
@@ -910,4 +905,3 @@ $fallback_cover = 'uploads/placeholder.png'; // Fallback for games without cover
 
 </body>
 </html>
-}

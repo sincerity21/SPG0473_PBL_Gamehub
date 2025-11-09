@@ -13,17 +13,17 @@ $upload_dir = 'uploads/images/';
 $error = '';
 $game_to_edit = null;
 
-// --- NEW: Handle All POST Actions ---
+//Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
-    // --- HANDLE ADD GAME ---
+    //Add game
     if ($_POST['action'] === 'add_game') {
         $game_category = $_POST['game_category'];
         $game_name = $_POST['game_name'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; // <-- ADDED
-        $game_img_filename = ''; // Default to empty string
+        $game_Link = $_POST['game_Link']; // <-- Added
+        $game_img_filename = ''; // Default --> empty string
 
         if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
             $file_tmp_path = $_FILES['game_img']['tmp_name'];
@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         if (!$error) {
-            // MODIFIED function call
             $result = addNewGame($game_category, $game_name, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
             if ($result) {
                 header('Location: hub_admin_games.php?status=added');
@@ -51,21 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // --- HANDLE EDIT GAME ---
+    //Edit game
     if ($_POST['action'] === 'edit_game') {
         $id = (int)$_POST['game_id'];
         $game_name = $_POST['game_name'];
         $game_category = $_POST['game_category'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; // <-- ADDED
+        $game_Link = $_POST['game_Link']; // <-- Added
 
-        // Get current game data to find old image path
+        //Get current game data to find old image path
         $game = selectGameByID($id);
         if ($game) {
-            $game_img_filename = $game['game_img']; // Start with the existing image
+            $game_img_filename = $game['game_img']; //Assume we're keeping the old image, unless a new one is uploaded
 
-            // Check if a new file was uploaded
+            //Check if the new file was uploaded
             if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
                 $file_tmp_path = $_FILES['game_img']['tmp_name'];
                 $file_name = $_FILES['game_img']['name'];
@@ -74,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $dest_path = ROOT_PATH . $upload_dir . $new_file_name;
 
                 if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                    $game_img_filename = $upload_dir . $new_file_name; // Set new path
-                    // Delete the old file
+                    $game_img_filename = $upload_dir . $new_file_name; //Set new path
+                    //Delete the old file
                     if (!empty($game['game_img']) && file_exists(ROOT_PATH . $game['game_img'])) {
                          unlink(ROOT_PATH . $game['game_img']);
                     }
@@ -84,9 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
-            // Update database if no upload error
+            //If no errors occurred, proceed with the database update
             if (!$error) {
-                // MODIFIED function call
+
                 $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
                 if ($result) {
                     header('Location: hub_admin_games.php?status=updated'); 
@@ -101,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// --- NEW: Check for GET actions (to open modals) ---
+//Check URL fo actions 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $game_to_edit = selectGameByID((int)$_GET['id']);
@@ -118,7 +117,7 @@ $games = selectAllGames();
     <title>Game Listing - Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ... (All CSS rules from file) ... */
+        /* Main Page Styles */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -317,7 +316,7 @@ $games = selectAllGames();
     </div>
 
     <?php
-    // --- NEW: Include modal files ---
+    //modal files
     include 'hub_admin_game_add.php';
     if ($game_to_edit) {
         include 'hub_admin_game_edit.php';
@@ -325,7 +324,7 @@ $games = selectAllGames();
     ?>
 
     <script>
-        // --- Updated Dark Mode Logic ---
+        //Updated Dark Mode
         const darkModeIcon = document.getElementById('darkModeIcon');
         const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         const htmlElement = document.documentElement;
@@ -351,7 +350,7 @@ $games = selectAllGames();
             applyDarkMode(isDark);
         })();
 
-        // --- Modal JavaScript ---
+        //Modal Js
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -367,7 +366,7 @@ $games = selectAllGames();
             openModal('editGameModal');
         <?php endif; ?>
 
-        // --- Search Bar Logic ---
+        //Search bar
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('gameSearchInput');
             const tableBody = document.getElementById('gameTableBody');
@@ -379,14 +378,14 @@ $games = selectAllGames();
 
                     for (let i = 0; i < tableRows.length; i++) {
                         const row = tableRows[i];
-                        // Search in Name (index 2) and Description (index 3)
+                        // Search in name and description
                         const gameName = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
                         const gameDesc = row.cells[3] ? row.cells[3].textContent.toLowerCase() : '';
                         
                         if (gameName.includes(searchTerm) || gameDesc.includes(searchTerm)) {
-                            row.style.display = ""; // Show row
+                            row.style.display = ""; //Show row
                         } else {
-                            row.style.display = "none"; // Hide row
+                            row.style.display = "none"; //Hide row
                         }
                     }
                 });

@@ -783,4 +783,3 @@ if (empty($gallery_images)) {
 
 </body>
 </html>
-}

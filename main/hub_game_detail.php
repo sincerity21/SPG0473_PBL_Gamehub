@@ -2,7 +2,6 @@
 session_start();
 require '../hub_conn.php'; 
 
-//  --- MODIFIED BLOCK: Added all modal variables ---
 $login_error = '';
 $register_error = '';
 $forgot_step1_error = '';
@@ -12,21 +11,17 @@ $reset_success = '';
 $login_register_success = '';
 
 if ($_POST) {
-    //  Check which action is being performed
     $action = $_POST['action'] ?? '';
 
-    //  --- LOGIN LOGIC ---
+    // For Login (uses modal; modal has no PHP)
     if ($action === 'login') {
         $username = $_POST['username'];
         $password = $_POST['password'];
-
         $result = loginUser($username, $password);
-
         if($result){
             $_SESSION['user_id'] = $result['user_id'];
             $_SESSION['username'] = $result['user_username'];
             $_SESSION['email'] = $result['user_email'];
-
             if (isset($result['is_admin']) && $result['is_admin'] == 1) {
                 $_SESSION['is_admin'] = true;
                 header("Location: ../admin/user/hub_admin_user.php"); 
@@ -41,18 +36,16 @@ if ($_POST) {
         }
     }
 
-    //  --- REGISTER LOGIC ---
+    // For Registration (uses modal)
     if ($action === 'register') {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        //  $server = $_POST['server']; //  REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            //  Call function without $server
             $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
@@ -62,10 +55,12 @@ if ($_POST) {
         }
     }
     
-    //  --- FORGOT PASSWORD STEP 1 LOGIC ---
+    // For Forget Password (uses modal)
     if ($action === 'forgot_step1') {
         $username = trim($_POST['username']);
+        // Input username
         if (!empty($username)) {
+            // Gets username, check with database and see if it exists
             $userData = getUserResetData($conn, $username);
             if ($userData) {
                 //  Success: Store data and let the page reload to show modal 2
@@ -81,7 +76,7 @@ if ($_POST) {
         }
     }
     
-    //  --- FORGOT PASSWORD STEP 2 LOGIC ---
+    // For Forget Password #2 (uses modal)
     if ($action === 'forgot_step2') {
         if (!isset($_SESSION['temp_user_id']) || !isset($_SESSION['security_answer_hash'])) {
             $forgot_step1_error = "Session expired. Please start over.";
@@ -89,8 +84,10 @@ if ($_POST) {
             session_unset();
             session_destroy();
         } else {
+            // Fetches the username's security answer
             $user_answer = trim($_POST['security_answer']);
             if (empty($user_answer)) {
+                // User needs to input their 1-to-1 security answer
                 $forgot_step2_error = "Please provide an answer to your security question.";
             } elseif (password_verify($user_answer, $_SESSION['security_answer_hash'])) {
                 //  Success: Set auth flag and let page reload to show modal 3
@@ -104,13 +101,14 @@ if ($_POST) {
         }
     }
     
-    //  --- RESET PASSWORD STEP 3 LOGIC ---
+    // For Reset Password (uses modal)
     if ($action === 'reset_password') {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
             session_destroy();
             $reset_error = "Security authorization lost. Please start over.";
         } else {
+            // User input new password, and confirmation of new password
             $user_id = $_SESSION['temp_user_id'];
             $new_password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_password'];
@@ -122,6 +120,7 @@ if ($_POST) {
             } elseif (strlen($new_password) < 8) {
                 $reset_error = "Password must be at least 8 characters long.";
             } else {
+                // Password will be hashed
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                 $update_successful = updateUserPassword($conn, $user_id, $hashed_password);
                 
@@ -141,19 +140,22 @@ if ($_POST) {
     }
 }
 
-//  --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
+// For Forget Password #2 (Logic Block, uses modal)
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
 if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) && isset($_SESSION['temp_username'])) {
-    
+    // Fetches user's security answer
     $username = $_SESSION['temp_username'];
     $security_question = $_SESSION['security_question'];
+
     $default_question = "Your selected security question (not recognized by internal logic).";
     $default_greeting = "Hi $username, That's okay, it happens! Just answer the question below to confirm it's you and reset your password.";
-    $resolved_question_text = $security_question;
+
+    $resolved_question_text = $security_question; //  Default to the raw prompt code
     $greeting_text = $default_greeting;
 
+    //  Converts the sec_question's internal name into actual questions
     switch (strtolower(trim($security_question))) {
         case 'prompt_1':
             $resolved_question_text = "What is love?";
@@ -181,9 +183,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-//  --- END OF LOGIC BLOCK ---
 
-//  --- 1. Get and Validate Game ID ---
+//  Directed from hub_game_category, try to get and validate game_id
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
     header('Location: hub_home_category.php'); //  Redirect if no valid game ID
     exit();
@@ -191,7 +192,7 @@ if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
 
 $game_id = (int)$_GET['game_id'];
 
-//  --- 2. Fetch All Data ---
+//  Fetch all relevant data
 $game = selectGameByID($game_id);
 
 if (!$game) {
@@ -201,7 +202,7 @@ if (!$game) {
 
 $gallery_images = selectGameGalleryImages($game_id);
 
-//  --- 3. Set Defaults for Logged-out state ---
+//  Default state of rating & favourite for logged-out users
 $current_rating = 0;
 $is_favorite = 0;
 
@@ -217,10 +218,11 @@ if (empty($gallery_images)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($game['game_name']); ?> - GameHub</title>
-    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /*Variables for Theming*/
         :root {
+            /* Light Mode Defaults */
             --bg-color: #f4f7f6;
             --main-text-color: #333;
             --accent-color: #3498db;
@@ -233,6 +235,8 @@ if (empty($gallery_images)) {
             --heart-color: #e74c3c;
             --login-color: #2ecc71; /* Green for login */
         }
+
+        /* Dark Mode Override */
         html.dark-mode body {
             --bg-color: #121212; --main-text-color: #f4f4f4; --accent-color: #4dc2f9;
             --secondary-text-color: #95a5a6; --card-bg-color: #1e1e1e; --shadow-color: rgba(0, 0, 0, 0.4);
@@ -241,17 +245,77 @@ if (empty($gallery_images)) {
         }
 
         /* --- 2. Base & Menu Styles --- */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--main-text-color); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
-        .header { background-color: var(--card-bg-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px var(--shadow-color); position: sticky; top: 0; z-index: 1001; }
-        .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
-        .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
-        .side-menu { position: fixed; top: 60px; right: 0; width: 220px; background-color: var(--card-bg-color); box-shadow: -4px 4px 8px var(--shadow-color); border-radius: 8px 0 8px 8px; padding: 10px 0; z-index: 1000; transform: translateX(100%); transition: transform 0.3s ease-in-out; }
-        .side-menu.open { transform: translateX(0); }
-        .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
-        .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
-        .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
-        .side-menu a.active:hover { background-color: #2980b9; }
-        /* --- NEW: Login Link Style --- */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg-color); 
+            color: var(--main-text-color); 
+            min-height: 100vh; 
+            transition: background-color 0.3s, color 0.3s; 
+        }
+
+        
+        /* Header (Top Bar) */
+        .header { 
+            background-color: var(--card-bg-color); 
+            padding: 15px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 4px var(--shadow-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1001; 
+        }
+        .logo { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--accent-color); 
+            text-decoration: none; 
+        }
+        .menu-toggle { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 24px; 
+            color: var(--main-text-color); 
+            padding: 5px; 
+        }
+        .side-menu { 
+            position: fixed; 
+            top: 60px; 
+            right: 0; 
+            width: 220px; 
+            background-color: var(--card-bg-color); 
+            box-shadow: -4px 4px 8px var(--shadow-color); 
+            border-radius: 8px 0 8px 8px; 
+            padding: 10px 0; 
+            z-index: 1000; 
+            transform: translateX(100%); 
+            transition: transform 0.3s ease-in-out; 
+        }
+        .side-menu.open { 
+            transform: translateX(0); 
+        }
+        .side-menu a, .menu-item { 
+            display: block; 
+            padding: 12px 20px; 
+            color: var(--main-text-color); 
+            text-decoration: none; 
+            transition: background-color 0.2s; 
+            cursor: pointer; 
+        }
+        .side-menu a:hover, .menu-item:hover { 
+            background-color: var(--bg-color); 
+            color: var(--accent-color); 
+        }
+        .side-menu a.active { 
+            background-color: var(--accent-color); 
+            color: white; font-weight: bold; }
+        .side-menu a.active:hover { 
+            background-color: #2980b9; 
+        }
         .side-menu a.login-link {
             color: var(--login-color) !important;
             font-weight: bold;
@@ -260,12 +324,22 @@ if (empty($gallery_images)) {
             background-color: var(--bg-color);
             color: #2ecc71 !important;
         }
-        /* --- END NEW --- */
-        .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
-        .icon { margin-right: 10px; width: 20px; text-align: center; }
-        .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .menu-divider { 
+            border-top: 1px solid var(--secondary-text-color); 
+            margin: 5px 0; 
+        }
+        .icon { 
+            margin-right: 10px; 
+            width: 20px; 
+            text-align: center; 
+        }
+        .dark-mode-label { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            user-select: none; 
+        }
         
-        /* --- 3. Page Layout (Sketch) --- */
         .content-container {
             max-width: 1000px; 
             margin: 0 auto;
@@ -279,7 +353,7 @@ if (empty($gallery_images)) {
             align-items: flex-start;
         }
         
-        /* --- 4. Left Column: Slideshow --- */
+        /* Left Column: Slideshow */
         .image-slideshow {
             position: relative;
             width: 100%;
@@ -301,7 +375,7 @@ if (empty($gallery_images)) {
         .dot { display: inline-block; width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: background 0.3s; }
         .dot.active { background: white; }
 
-        /* --- 5. Right Column: Game Info --- */
+        /* Right Column: Game Info */
         .game-info {
             display: flex;
             flex-direction: column;
@@ -390,7 +464,7 @@ if (empty($gallery_images)) {
             font-weight: 600;
         }
         .back-link:hover { text-decoration: underline; }
-        /* Dark Mode Styling (Toggle placeholder styling updated) */
+        /* Dark Mode Styling*/
         .dark-mode-label {
             display: flex;
             justify-content: space-between;
@@ -401,7 +475,6 @@ if (empty($gallery_images)) {
             font-size: 1.2em;
         }
         
-        /* --- Modal Styles (Copied from hub_home.php) --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -413,7 +486,7 @@ if (empty($gallery_images)) {
             display: none; /* Hidden by default */
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow scrolling if modal is tall */
         }
         .modal-container {
             background-color: var(--card-bg-color);
@@ -422,21 +495,24 @@ if (empty($gallery_images)) {
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
             width: 100%;
-            max-width: 500px;
+            max-width: 500px; /* Width of register modal */
             color: var(--main-text-color); 
-            margin: 20px;
+            margin: 20px; /* Add margin for small screens */
         }
+
         .modal-close {
             position: absolute;
             top: 10px;
             right: 15px;
             font-size: 28px;
             font-weight: bold;
-            color: var(--secondary-text-color);
+            color: #aaa;
             background: none;
             border: none;
             cursor: pointer;
+            color: var(--secondary-text-color);
         }
+
         .modal-container h2 {
             color: var(--welcome-title-color);
             text-align: center;
@@ -467,6 +543,7 @@ if (empty($gallery_images)) {
             background-color: var(--bg-color);
             color: var(--main-text-color);
         }
+
         .modal-container .btn {
             width: 100%;
             padding: 12px;
@@ -540,9 +617,11 @@ if (empty($gallery_images)) {
             background-color: var(--bg-color);
             opacity: 0.7;
         }
+
     </style>
     
     <script>
+        // Local Storage; Essential for Dark Mode Fix
         (function() {
             const localStorageKey = 'gamehubDarkMode'; 
             if (localStorage.getItem(localStorageKey) === 'dark') {
@@ -551,15 +630,14 @@ if (empty($gallery_images)) {
         })();
     </script>
 </head>
-<body id="appBody">
-
-<div class="header">
+<body id="appBody"> <div class="header">
     <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
 </div>
 
+<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php" class="active"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a> 
@@ -570,6 +648,7 @@ if (empty($gallery_images)) {
     <a href="#" class="login-link" onclick="openModal('loginModal')"><span class="icon"><i class="fas fa-sign-in-alt"></i></span>Login</a>
     
     <div class="menu-divider"></div>
+    
     <div class="menu-item dark-mode-label" onclick="toggleDarkMode()">
         <span class="icon"><i class="fas fa-moon"></i></span>
         <span id="darkModeText">Switch Dark Mode</span>
@@ -635,28 +714,24 @@ if (empty($gallery_images)) {
 </div>
 
 <?php
-    //  --- MODIFIED BLOCK: Include all modals ---
+    // Included relevant modals
     include '../hub_login.php';
     include '../hub_register.php';
-    include '../hub_forgotpassword.php'; //  Step 1
-    include '../hub_forgotpassword2.php'; //  Step 2
-    include '../hub_resetpassword.php'; //  Step 3
+    include '../hub_forgotpassword.php'; // Step 1
+    include '../hub_forgotpassword2.php'; // Step 2
+    include '../hub_resetpassword.php'; // Step 3
 ?>
 
 <script>
-    
-
-    //  --- 1. Side Menu & Dark Mode (Standard) ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sideMenu').classList.toggle('open');
     });
 
-    //  --- Updated Dark Mode Logic ---
+    // Updated Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; //  Target the <html> tag
 
-    //  This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -667,9 +742,8 @@ if (empty($gallery_images)) {
         }
     }
 
-    //  This function toggles the mode
+    // Function toggles  mode
     function toggleDarkMode() {
-        //  Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
         //  Toggle the state
@@ -679,14 +753,12 @@ if (empty($gallery_images)) {
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    //  This function runs on page load to set the *button text* correctly.
-    //  The class itself was already set by the script in the <head>.
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
 
-    //  --- 2. Slideshow Logic ---
+    //  Slideshow Logic
     let currentSlide = 0;
     const slides = document.querySelectorAll('#slideshow-content .slide');
     const dots = document.querySelectorAll('#slide-indicators .dot');
@@ -720,10 +792,8 @@ if (empty($gallery_images)) {
         startAutoSlide();
     });
 
-
-    //  --- 3. UPDATED: Logged-out Feedback Click ---
     
-    //  --- NEW Modal JavaScript ---
+    //  Modal's Javascript
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -739,7 +809,6 @@ if (empty($gallery_images)) {
         openModal(toModalId);
     }
     
-    //  --- MODIFIED BLOCK: Updated JS to check all variables ---
     <?php if (!empty($login_error)): ?>
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>
@@ -760,7 +829,7 @@ if (empty($gallery_images)) {
         openModal('forgotPasswordModal2');
     <?php endif; ?>
 
-    //  --- Favorite (Heart) Logic ---
+    //  Favourite (Heart) Logic
     const favoriteIcon = document.getElementById('favoriteIcon');
     if (favoriteIcon) {
         favoriteIcon.addEventListener('click', function() {
@@ -768,7 +837,7 @@ if (empty($gallery_images)) {
         });
     }
 
-    //  --- Star Rating Logic ---
+    //  Star Rating Logic
     const starRatingContainer = document.getElementById('starRating');
     if (starRatingContainer) {
         const stars = starRatingContainer.querySelectorAll('.star');

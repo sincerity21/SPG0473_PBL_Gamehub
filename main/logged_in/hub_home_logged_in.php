@@ -15,7 +15,7 @@ $username = htmlspecialchars($_SESSION['username']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Welcome</title>
-    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /*Variables for Theming*/
         :root {
@@ -163,7 +163,7 @@ $username = htmlspecialchars($_SESSION['username']);
             margin-bottom: 40px;
         }
 
-        /* Start Button (Red Accented) */
+        /* Start Button */
         .start-button {
             padding: 15px 40px;
             background: #e74c3c;
@@ -251,11 +251,9 @@ $username = htmlspecialchars($_SESSION['username']);
 <div class="side-menu" id="sideMenu">
     <a href="hub_home_logged_in.php" class="active"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category_logged_in.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
-    
-    <!--  ADDED LINKS  -->
     <a href="hub_main_profile.php"><span class="icon"><i class="fas fa-user-circle"></i></span>Profile</a>
     <a href="hub_main_about_logged_in.php"><span class="icon"><i class="fas fa-info-circle"></i></span>About</a>
-    <!--  END OF ADDED LINKS  -->
+
 
     <div class="menu-divider"></div>
     

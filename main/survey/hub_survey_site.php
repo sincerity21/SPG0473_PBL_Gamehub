@@ -2,15 +2,12 @@
 session_start();
 require '../../hub_conn.php'; 
 
-//  --- 1. Authentication & Authorization ---
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header('Location: ../../hub_login.php');
     exit();
 }
 
-//  --- 2. Get and Validate Game ID (from previous page) ---
 if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
-    //  If game_id is lost, redirect to home
     header('Location: ../logged_in/hub_home_logged_in.php'); 
     exit();
 }
@@ -18,11 +15,9 @@ if (!isset($_GET['game_id']) || !is_numeric($_GET['game_id'])) {
 $game_id = (int)$_GET['game_id'];
 $user_id = (int)$_SESSION['user_id'];
 $username = htmlspecialchars($_SESSION['username']);
-
-//  --- 3. Fetch Game Data (for the modal's "Go to Game" button) ---
 $game = selectGameByID($game_id);
+
 if (!$game) {
-    //  If game is invalid, just set a fallback link
     $game_link = '../logged_in/hub_home_category_logged_in.php'; 
 } else {
     $game_link = $game['game_Link'];
@@ -32,7 +27,7 @@ $message = '';
 $message_type = '';
 $survey_finished = false;
 
-//  --- 4. Handle Form Submission ---
+//  Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $satisfaction = $_POST['satisfaction'] ?? '';
     $open_feedback = $_POST['site_feedback'] ?? '';
@@ -51,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-//  --- 5. Fetch Existing Feedback to pre-fill form ---
+//  Fetch existing feedback if exists
 $existing_feedback = selectUserSiteFeedback($user_id);
 $current_satisfaction = $existing_feedback['feedback_site_satisfaction'] ?? '';
 $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
@@ -63,10 +58,11 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site Feedback - GameHub</title>
-    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /*Variables for Theming*/
         :root {
+            /* Light Mode Defaults */
             --bg-color: #f4f7f6;
             --main-text-color: #333;
             --accent-color: #3498db;
@@ -84,7 +80,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             --error-border: #f5c6cb;
         }
         
-        /* --- 2. Dark Mode Fix --- */
+        /* Dark Mode Override */
         html.dark-mode body {
             --bg-color: #121212; 
             --main-text-color: #f4f4f4; 
@@ -103,7 +99,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             --error-border: #5c2a30;
         }
 
-        /* --- 3. Base & Menu Styles --- */
+        /* Base Setup */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
@@ -113,6 +109,9 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             min-height: 100vh; 
             transition: background-color 0.3s, color 0.3s; 
         }
+
+        
+        /* Header (Top Bar) */
         .header { 
             background-color: var(--card-bg-color); 
             padding: 15px 30px; 
@@ -122,28 +121,55 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             box-shadow: 0 2px 4px var(--shadow-color); 
             position: sticky; top: 0; z-index: 1001; 
         }
-        .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
-        .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
+        .logo { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--accent-color); 
+            text-decoration: none; 
+        }
+        .menu-toggle { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 24px; 
+            color: var(--main-text-color); 
+            padding: 5px; 
+        }
         .side-menu { 
-            position: fixed; top: 60px; right: 0; width: 220px; 
+            position: fixed; 
+            top: 60px; 
+            right: 0; 
+            width: 220px; 
             background-color: var(--card-bg-color); 
             box-shadow: -4px 4px 8px var(--shadow-color); 
             border-radius: 8px 0 8px 8px; 
-            padding: 10px 0; z-index: 1000; 
+            padding: 10px 0; 
+            z-index: 1000; 
             transform: translateX(100%); 
             transition: transform 0.3s ease-in-out; 
         }
-        .side-menu.open { transform: translateX(0); }
+        .side-menu.open { 
+            transform: translateX(0); 
+        }
         .side-menu a, .menu-item { 
-            display: block; padding: 12px 20px; 
+            display: block; 
+            padding: 12px 20px; 
             color: var(--main-text-color); 
             text-decoration: none; 
             transition: background-color 0.2s; 
             cursor: pointer; 
         }
-        .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
-        .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
-        .side-menu a.active:hover { background-color: #2980b9; }
+        .side-menu a:hover, .menu-item:hover { 
+            background-color: var(--bg-color); 
+            color: var(--accent-color); 
+        }
+        .side-menu a.active { 
+            background-color: var(--accent-color); 
+            color: white; font-weight: bold; 
+        }
+        .side-menu a.active:hover { 
+            background-color: #2980b9; 
+        }
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .logout-link { color: #e74c3c !important; font-weight: bold; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
@@ -240,7 +266,6 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             border: 1px solid var(--error-border); 
         }
 
-        /* --- 5. Modal Styles --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -252,6 +277,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
             display: none; 
             align-items: center;
             justify-content: center;
+            overflow-y: auto; /* Allow scrolling if modal is tall */
         }
         .modal-container {
             background-color: var(--card-bg-color);
@@ -305,8 +331,8 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         }
     </style>
 
-    <!-- === DARK MODE FIX SCRIPT === -->
     <script>
+        // Local Storage; Essential for Dark Mode Fix
         (function() {
             const localStorageKey = 'gamehubDarkMode'; 
             if (localStorage.getItem(localStorageKey) === 'dark') {
@@ -316,9 +342,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
     </script>
 
 </head>
-<body>
-
-<div class="header">
+<body id="appBody"> <div class="header">
     <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
@@ -394,22 +418,20 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
 </div>
 
 <?php
-    //  Include the new modal file
-    //  We pass the $game_link variable to it
+    // Included relevant modals
     include 'hub_survey_finished.php';
 ?>
 
 <script>
-    //  --- 1. Side Menu Toggle Logic ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    //  --- 2. Updated Dark Mode Logic (Fixes Flicker) ---
+    // Updated Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
-    const htmlElement = document.documentElement; 
+    const htmlElement = document.documentElement; //  Target the <html> tag
 
     function applyDarkMode(isDark) {
         if (isDark) {
@@ -421,9 +443,14 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         }
     }
 
+    // Function toggles  mode
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
+
+        //  Toggle the state
         applyDarkMode(!isDark);
+
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
@@ -432,7 +459,7 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         applyDarkMode(isDark);
     })();
     
-    //  --- 3. Modal Control Logic ---
+    //  Modal's Javascript
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -443,7 +470,6 @@ $current_open_feedback = $existing_feedback['feedback_site_open'] ?? '';
         if (modal) modal.style.display = 'none';
     }
     
-    //  Auto-open modal if PHP has set the survey_finished flag
     <?php if ($survey_finished): ?>
         openModal('surveyFinishedModal');
     <?php endif; ?>

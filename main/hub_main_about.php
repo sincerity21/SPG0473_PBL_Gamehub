@@ -1,8 +1,7 @@
 <?php
 session_start();
-require '../hub_conn.php'; //  Path to hub_conn.php from /main/ folder
+require '../hub_conn.php';
 
-//  --- MODIFIED BLOCK: Added all modal variables ---
 $login_error = '';
 $register_error = '';
 $forgot_step1_error = '';
@@ -12,21 +11,17 @@ $reset_success = '';
 $login_register_success = '';
 
 if ($_POST) {
-    //  Check which action is being performed
     $action = $_POST['action'] ?? '';
 
-    //  --- LOGIN LOGIC ---
+    // For Login (uses modal; modal has no PHP)
     if ($action === 'login') {
         $username = $_POST['username'];
         $password = $_POST['password'];
-
         $result = loginUser($username, $password);
-
         if($result){
             $_SESSION['user_id'] = $result['user_id'];
             $_SESSION['username'] = $result['user_username'];
             $_SESSION['email'] = $result['user_email'];
-
             if (isset($result['is_admin']) && $result['is_admin'] == 1) {
                 $_SESSION['is_admin'] = true;
                 header("Location: ../admin/user/hub_admin_user.php"); 
@@ -40,18 +35,16 @@ if ($_POST) {
         }
     }
 
-    //  --- REGISTER LOGIC ---
+    // For Registration (uses modal)
     if ($action === 'register') {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        //  $server = $_POST['server']; //  REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            //  Call function without $server
             $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
@@ -61,10 +54,12 @@ if ($_POST) {
         }
     }
 
-    //  --- FORGOT PASSWORD STEP 1 LOGIC ---
+    // For Forget Password (uses modal)
     if ($action === 'forgot_step1') {
         $username = trim($_POST['username']);
+        // Input username
         if (!empty($username)) {
+            // Gets username, check with database and see if it exists
             $userData = getUserResetData($conn, $username);
             if ($userData) {
                 //  Success: Store data and let the page reload to show modal 2
@@ -73,6 +68,7 @@ if ($_POST) {
                 $_SESSION['security_answer_hash'] = $userData['security_answer_hash'];
                 $_SESSION['temp_username'] = $username;
             } else {
+                // Username doesn't exist
                 $forgot_step1_error = "Username not found. Please try again.";
             }
         } else {
@@ -80,7 +76,7 @@ if ($_POST) {
         }
     }
     
-    //  --- FORGOT PASSWORD STEP 2 LOGIC ---
+    // For Forget Password #2 (uses modal)
     if ($action === 'forgot_step2') {
         if (!isset($_SESSION['temp_user_id']) || !isset($_SESSION['security_answer_hash'])) {
             $forgot_step1_error = "Session expired. Please start over.";
@@ -88,8 +84,10 @@ if ($_POST) {
             session_unset();
             session_destroy();
         } else {
+            // Fetches the username's security answer
             $user_answer = trim($_POST['security_answer']);
             if (empty($user_answer)) {
+                // User needs to input their 1-to-1 security answer
                 $forgot_step2_error = "Please provide an answer to your security question.";
             } elseif (password_verify($user_answer, $_SESSION['security_answer_hash'])) {
                 //  Success: Set auth flag and let page reload to show modal 3
@@ -103,13 +101,14 @@ if ($_POST) {
         }
     }
     
-    //  --- RESET PASSWORD STEP 3 LOGIC ---
+    // For Reset Password (uses modal)
     if ($action === 'reset_password') {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
             session_destroy();
             $reset_error = "Security authorization lost. Please start over.";
         } else {
+            // User input new password, and confirmation of new password
             $user_id = $_SESSION['temp_user_id'];
             $new_password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_password'];
@@ -121,6 +120,7 @@ if ($_POST) {
             } elseif (strlen($new_password) < 8) {
                 $reset_error = "Password must be at least 8 characters long.";
             } else {
+                // Password will be hashed
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                 $update_successful = updateUserPassword($conn, $user_id, $hashed_password);
                 
@@ -140,19 +140,22 @@ if ($_POST) {
     }
 }
 
-//  --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
+// For Forget Password #2 (Logic Block, uses modal)
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
 if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) && isset($_SESSION['temp_username'])) {
-    
+    // Fetches user's security answer
     $username = $_SESSION['temp_username'];
     $security_question = $_SESSION['security_question'];
+
     $default_question = "Your selected security question (not recognized by internal logic).";
     $default_greeting = "Hi $username, That's okay, it happens! Just answer the question below to confirm it's you and reset your password.";
-    $resolved_question_text = $security_question;
+
+    $resolved_question_text = $security_question; //  Default to the raw prompt code
     $greeting_text = $default_greeting;
 
+    //  Converts the sec_question's internal name into actual questions
     switch (strtolower(trim($security_question))) {
         case 'prompt_1':
             $resolved_question_text = "What is love?";
@@ -180,7 +183,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-//  --- END OF LOGIC BLOCK ---
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -188,14 +190,14 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - About Us</title>
-    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <link rel="preconnect" href="https:// fonts.googleapis.com">
     <link rel="preconnect" href="https:// fonts.gstatic.com" crossorigin>
     <link href="https:// fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /*Variables for Theming*/
         :root {
             --bg-color: #f4f7f6;
             --main-text-color: #333;
@@ -209,6 +211,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             --card-info-text: #333;
             --login-color: #2ecc71; /* Green for login */
         }
+
+        /* Dark Mode Override */
         html.dark-mode body {
             --bg-color: #121212; 
             --main-text-color: #f4f4f4; 
@@ -246,51 +250,20 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             background-color: var(--bg-color);
         }
 
-        /* 1. Light Mode Image */
-        #bg-light {
-            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
-            background-image: url('../uploads/home/prototype.jpg');
-            opacity: 1; /* Visible by default */
-        }
-
-        /* 2. Dark Mode Image */
-        #bg-dark {
-            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
-            background-image: url('../uploads/home/darksouls.jpg');
-            opacity: 0; /* Hidden by default */
-        }
-
-        /* 3. The Swap Logic */
-        html.dark-mode body #bg-light {
-            opacity: 0; /* Hide light image in dark mode */
-        }
-        html.dark-mode body #bg-dark {
-            opacity: 1; /* Show dark image in dark mode */
-        }
-        
-        /* === NEW: Dark Mode Glass Override === */
-        html.dark-mode body .header,
-        html.dark-mode body .side-menu {
-            background-color: var(--glass-bg-dark); /* Dark glass */
-        }
-        /* === END NEW === */
-
 
         /* --- 2. Base Styles --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            /* background-color: var(--bg-color); */ /* REMOVED */
             color: var(--main-text-color);
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
         }
 
         .header {
-            /* background-color: var(--card-bg-color); */ /* OLD */
-            background-color: var(--glass-bg-light); /* NEW */
-            backdrop-filter: blur(10px); /* NEW */
+            background-color: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
@@ -304,12 +277,11 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
         
-        /* --- 3. Side Menu --- */
+        /* Side Menu Styles*/
         .side-menu {
             position: fixed; top: 60px; right: 0; width: 220px;
-            /* background-color: var(--card-bg-color); */ /* OLD */
-            background-color: var(--glass-bg-light); /* NEW */
-            backdrop-filter: blur(10px); /* NEW */
+            background-color: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
             box-shadow: -4px 4px 8px var(--shadow-color);
             border-radius: 8px 0 8px 8px;
             padding: 10px 0; z-index: 1000;
@@ -321,7 +293,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
         .side-menu a.active { background-color: var(--accent-color); color: white; font-weight: bold; }
         .side-menu a.active:hover { background-color: #2980b9; }
-        /* --- NEW: Login Link Style --- */
         .side-menu a.login-link {
             color: var(--login-color) !important;
             font-weight: bold;
@@ -330,12 +301,10 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             background-color: var(--bg-color);
             color: #2ecc71 !important;
         }
-        /* --- END NEW --- */
         .menu-divider { border-top: 1px solid var(--secondary-text-color); margin: 5px 0; }
         .icon { margin-right: 10px; width: 20px; text-align: center; }
         .dark-mode-label { display: flex; justify-content: space-between; align-items: center; user-select: none; }
         
-        /* --- 4. Content & Team Card Styles (Sketch) --- */
         .content-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -367,12 +336,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             line-height: 1.7;
             color: var(--secondary-text-color);
         }
-
-        /*
-        ===============================================
-           === TEAM CARD CSS (Already Added) ===
-        ===============================================
-        */
 
         .team-grid {
             display: grid;
@@ -444,12 +407,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             transform: scale(1.1);
         }
         
-        /*
-        ===============================================
-           === MODAL STYLES (Already Added) ===
-        ===============================================
-        */
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -480,10 +437,11 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             right: 15px;
             font-size: 28px;
             font-weight: bold;
-            color: var(--secondary-text-color);
+            color: #aaa;
             background: none;
             border: none;
             cursor: pointer;
+            color: var(--secondary-text-color);
         }
         .modal-container h2 {
             color: var(--welcome-title-color);
@@ -515,6 +473,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             background-color: var(--bg-color);
             color: var(--main-text-color);
         }
+
         .modal-container .btn {
             width: 100%;
             padding: 12px;
@@ -588,9 +547,11 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             background-color: var(--bg-color);
             opacity: 0.7;
         }
+
     </style>
 
     <script>
+        // Local Storage; Essential for Dark Mode Fix
         (function() {
             const localStorageKey = 'gamehubDarkMode'; 
             if (localStorage.getItem(localStorageKey) === 'dark') {
@@ -610,7 +571,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     </button>
 </div>
 
-
+<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     <a href="hub_home.php"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
     <a href="hub_home_category.php"><span class="icon"><i class="fas fa-book-open"></i></span>Library</a>
@@ -683,29 +644,25 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 </div>
 
 <?php
-    //  --- MODIFIED BLOCK: Include all modals ---
+    // Included relevant modals
     include '../hub_login.php';
     include '../hub_register.php';
-    include '../hub_forgotpassword.php'; //  Step 1
-    include '../hub_forgotpassword2.php'; //  Step 2
-    include '../hub_resetpassword.php'; //  Step 3
+    include '../hub_forgotpassword.php'; // Step 1
+    include '../hub_forgotpassword2.php'; // Step 2
+    include '../hub_resetpassword.php'; // Step 3
 ?>
 
 <script>
-    
-
-    //  --- Standard Menu & Dark Mode JS ---
     document.getElementById('menuToggle').addEventListener('click', function() {
         const menu = document.getElementById('sideMenu');
         menu.classList.toggle('open');
     });
 
-    //  --- Updated Dark Mode Logic ---
+    // Updated Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; //  Target the <html> tag
 
-    //  This function now applies the class to <html> AND updates the button text
     function applyDarkMode(isDark) {
         if (isDark) {
             htmlElement.classList.add('dark-mode');
@@ -716,9 +673,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         }
     }
 
-    //  This function toggles the mode
+    // Function toggles  mode
     function toggleDarkMode() {
-        //  Check the class on the <html> tag
         const isDark = htmlElement.classList.contains('dark-mode');
 
         //  Toggle the state
@@ -728,14 +684,12 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    //  This function runs on page load to set the *button text* correctly.
-    //  The class itself was already set by the script in the <head>.
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
     
-    //  --- NEW Modal JavaScript ---
+    //  Modal's Javascript
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -751,7 +705,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         openModal(toModalId);
     }
     
-    //  --- MODIFIED BLOCK: Updated JS to check all variables ---
     <?php if (!empty($login_error)): ?>
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>

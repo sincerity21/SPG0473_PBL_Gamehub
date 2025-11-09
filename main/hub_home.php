@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../hub_conn.php'; //  Path to hub_conn.php from /main/ folder
+require '../hub_conn.php';
 
 $login_error = '';
 $register_error = '';
@@ -11,10 +11,9 @@ $reset_success = '';
 $login_register_success = '';
 
 if ($_POST) {
-    //  Check which action is being performed
     $action = $_POST['action'] ?? '';
 
-    //  --- LOGIN LOGIC ---
+    // For Login (uses modal; modal has no PHP)
     if ($action === 'login') {
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -36,18 +35,16 @@ if ($_POST) {
         }
     }
 
-    //  --- REGISTER LOGIC ---
+    // For Registration (uses modal)
     if ($action === 'register') {
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        //  $server = $_POST['server']; //  REMOVED
         $prompt = $_POST['prompt'];
         $answer = $_POST['answer'];
         if (empty($username) || empty($email) || empty($password) || empty($answer)) {
             $register_error = "You must fill in all fields.";
         } else {
-            //  Call function without $server
             $success = registerUser($username, $email, $password, $prompt, $answer);
             if ($success) {
                 $login_register_success = "Registration successful! You can now log in.";
@@ -57,10 +54,12 @@ if ($_POST) {
         }
     }
     
-    //  --- FORGOT PASSWORD STEP 1 LOGIC ---
+    // For Forget Password (uses modal)
     if ($action === 'forgot_step1') {
         $username = trim($_POST['username']);
+        // Input username
         if (!empty($username)) {
+            // Gets username, check with database and see if it exists
             $userData = getUserResetData($conn, $username);
             if ($userData) {
                 //  Success: Store data and let the page reload to show modal 2
@@ -69,6 +68,7 @@ if ($_POST) {
                 $_SESSION['security_answer_hash'] = $userData['security_answer_hash'];
                 $_SESSION['temp_username'] = $username;
             } else {
+                // Username doesn't exist
                 $forgot_step1_error = "Username not found. Please try again.";
             }
         } else {
@@ -76,7 +76,7 @@ if ($_POST) {
         }
     }
     
-    //  --- FORGOT PASSWORD STEP 2 LOGIC ---
+    // For Forget Password #2 (uses modal)
     if ($action === 'forgot_step2') {
         if (!isset($_SESSION['temp_user_id']) || !isset($_SESSION['security_answer_hash'])) {
             $forgot_step1_error = "Session expired. Please start over.";
@@ -84,8 +84,10 @@ if ($_POST) {
             session_unset();
             session_destroy();
         } else {
+            // Fetches the username's security answer
             $user_answer = trim($_POST['security_answer']);
             if (empty($user_answer)) {
+                // User needs to input their 1-to-1 security answer
                 $forgot_step2_error = "Please provide an answer to your security question.";
             } elseif (password_verify($user_answer, $_SESSION['security_answer_hash'])) {
                 //  Success: Set auth flag and let page reload to show modal 3
@@ -99,13 +101,14 @@ if ($_POST) {
         }
     }
     
-    //  --- RESET PASSWORD STEP 3 LOGIC ---
+    // For Reset Password (uses modal)
     if ($action === 'reset_password') {
         if (!isset($_SESSION['auth_for_reset']) || $_SESSION['auth_for_reset'] !== true || !isset($_SESSION['temp_user_id'])) {
             session_unset();
             session_destroy();
             $reset_error = "Security authorization lost. Please start over.";
         } else {
+            // User input new password, and confirmation of new password
             $user_id = $_SESSION['temp_user_id'];
             $new_password = $_POST['new_password'];
             $confirm_password = $_POST['confirm_password'];
@@ -117,6 +120,7 @@ if ($_POST) {
             } elseif (strlen($new_password) < 8) {
                 $reset_error = "Password must be at least 8 characters long.";
             } else {
+                // Password will be hashed
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                 $update_successful = updateUserPassword($conn, $user_id, $hashed_password);
                 
@@ -136,12 +140,12 @@ if ($_POST) {
     }
 }
 
-//  --- LOGIC BLOCK FOR MODAL 2 (Security Question) ---
+// For Forget Password #2 (Logic Block, uses modal)
 $resolved_question_text = 'Error: No question loaded.';
 $greeting_text = 'Please answer your security question.';
 
 if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) && isset($_SESSION['temp_username'])) {
-    
+    // Fetches user's security answer
     $username = $_SESSION['temp_username'];
     $security_question = $_SESSION['security_question'];
 
@@ -151,7 +155,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     $resolved_question_text = $security_question; //  Default to the raw prompt code
     $greeting_text = $default_greeting;
 
-    //  Map the prompt codes to human-readable questions and greetings
+    //  Converts the sec_question's internal name into actual questions
     switch (strtolower(trim($security_question))) {
         case 'prompt_1':
             $resolved_question_text = "What is love?";
@@ -179,17 +183,16 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             break;
     }
 }
-//  --- END OF LOGIC BLOCK ---
 ?>
 <!DOCTYPE html>
-<html> 
+<html lang="en"> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameHub - Welcome</title>
-    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- 1. CSS Variables for Theming --- */
+        /*Variables for Theming*/
         :root {
             /* Light Mode Defaults */
             --bg-color: #f4f7f6;
@@ -200,24 +203,22 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             --shadow-color: rgba(0, 0, 0, 0.05);
             --wave-opacity: 0.15;
             --welcome-title-color: #2c3e50;
-            --login-color: #2ecc71; /* Green for login */
-            --border-color: #ccc; /* Added for dark mode forms */
+            --login-color: #2ecc71;
+            --border-color: #ccc;
         }
 
-        /* * --- CHANGE 2: CSS SELECTOR ---
-         * All 'body.dark-mode' selectors are changed to 'html.dark-mode body'
-         */
+        /* Dark Mode Override */
         html.dark-mode body {
             --bg-color: #121212;
             --main-text-color: #f4f4f4;
-            --accent-color: #4dc2f9; /* Lighter blue for visibility */
+            --accent-color: #4dc2f9;
             --secondary-text-color: #95a5a6;
             --card-bg-color: #1e1e1e;
             --shadow-color: rgba(0, 0, 0, 0.4);
             --wave-opacity: 0.05;
             --welcome-title-color: #ecf0f1;
-            --login-color: #27ae60; /* Darker green */
-            --border-color: #444; /* Added for dark mode forms */
+            --login-color: #27ae60;
+            --border-color: #444;
         }
 
 
@@ -226,29 +227,28 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color); /* Uses variable */
-            color: var(--main-text-color); /* Uses variable */
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s; /* Smooth transition */
         }
 
-        /* ... (rest of CSS is unchanged) ... */
         
         /* Header (Top Bar) */
         .header {
-            background-color: var(--card-bg-color); /* Uses variable */
+            background-color: var(--card-bg-color);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px var(--shadow-color); /* Uses variable */
+            box-shadow: 0 2px 4px var(--shadow-color);
         }
         .logo {
             font-size: 24px;
             font-weight: 700;
-            color: var(--accent-color); /* Uses variable */
+            color: var(--accent-color);
         }
 
         /* Menu Toggle Button */
@@ -257,7 +257,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             border: none;
             cursor: pointer;
             font-size: 24px;
-            color: var(--main-text-color); /* Uses variable */
+            color: var(--main-text-color);
             padding: 5px;
             transition: color 0.2s;
         }
@@ -265,14 +265,14 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             color: var(--accent-color);
         }
 
-        /* Side Menu Styles (Matching Sketch) */
+        /* Side Menu Styles*/
         .side-menu {
             position: fixed;
             top: 60px; /* Below the header */
             right: 0;
             width: 220px;
-            background-color: var(--card-bg-color); /* Uses variable */
-            box-shadow: -4px 4px 8px var(--shadow-color); /* Uses variable */
+            background-color: var(--card-bg-color);
+            box-shadow: -4px 4px 8px var(--shadow-color);
             border-radius: 8px 0 8px 8px;
             padding: 10px 0;
             z-index: 1000;
@@ -285,7 +285,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         .side-menu a, .menu-item {
             display: block;
             padding: 12px 20px;
-            color: var(--main-text-color); /* Uses variable */
+            color: var(--main-text-color);
             text-decoration: none;
             font-size: 16px;
             transition: background-color 0.2s, color 0.2s;
@@ -318,6 +318,9 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             width: 20px;
             text-align: center;
         }
+
+
+        /* Main Content Area */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -331,12 +334,12 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         .welcome-title {
             font-size: 3.5em;
             font-weight: 600;
-            color: var(--welcome-title-color); /* Uses variable */
+            color: var(--welcome-title-color);
             margin-bottom: 10px;
         }
         .welcome-subtitle {
             font-size: 1.2em;
-            color: var(--secondary-text-color); /* Uses variable */
+            color: var(--secondary-text-color);
             margin-bottom: 40px;
         }
         .continue-button {
@@ -357,6 +360,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
             transform: translateY(-2px);
         }
+
+        /* Wave Separator*/
         .wave-container {
             position: absolute;
             bottom: 0;
@@ -370,11 +375,11 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             position: absolute;
             width: 200%;
             height: 200%;
-            background: var(--accent-color); /* Uses variable */
+            background: var(--accent-color);
             border-radius: 40%;
             bottom: -150%; 
             left: -50%;
-            opacity: var(--wave-opacity); /* Uses variable */
+            opacity: var(--wave-opacity);
             animation: wave-motion 10s linear infinite;
         }
         .wave:nth-child(2) {
@@ -389,6 +394,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             50% { transform: translate(-25%, 5%); }
             100% { transform: translate(0, 0); }
         }
+        
+        /* Dark Mode Styling*/
         .dark-mode-label {
             display: flex;
             justify-content: space-between;
@@ -545,6 +552,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     </style>
 
     <script>
+        // Local Storage; Essential for Dark Mode Fix
         (function() {
             const localStorageKey = 'gamehubDarkMode'; 
             if (localStorage.getItem(localStorageKey) === 'dark') {
@@ -560,6 +568,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
     </button>
 </div>
 
+<!-- Side Menu -->
 <div class="side-menu" id="sideMenu">
     
     <a href="hub_home.php" class="active"><span class="icon"><i class="fas fa-home"></i></span>Home</a>
@@ -594,12 +603,12 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 </div>
 
 <?php
-    //  Include all modals
+    // Included relevant modals
     include '../hub_login.php';
     include '../hub_register.php';
-    include '../hub_forgotpassword.php'; //  Step 1
-    include '../hub_forgotpassword2.php'; //  Step 2
-    include '../hub_resetpassword.php'; //  Step 3
+    include '../hub_forgotpassword.php'; // Step 1
+    include '../hub_forgotpassword2.php'; // Step 2
+    include '../hub_resetpassword.php'; // Step 3
 ?>
 
 <script>
@@ -608,7 +617,7 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         menu.classList.toggle('open');
     });
 
-    //  --- CHANGE 3: UPDATED DARK MODE SCRIPT ---
+    // Updated Dark Mode
     const darkModeText = document.getElementById('darkModeText');
     const localStorageKey = 'gamehubDarkMode';
     const htmlElement = document.documentElement; //  Target the <html> tag
@@ -623,21 +632,23 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         }
     }
 
+    // Function toggles  mode
     function toggleDarkMode() {
         const isDark = htmlElement.classList.contains('dark-mode');
+
+        //  Toggle the state
         applyDarkMode(!isDark);
+
+        //  Save preference to local storage
         localStorage.setItem(localStorageKey, !isDark ? 'dark' : 'light');
     }
 
-    //  ThisIIFE now just sets the button text
     (function loadButtonText() {
         const isDark = htmlElement.classList.contains('dark-mode');
         applyDarkMode(isDark);
     })();
-    //  --- END OF CHANGE 3 ---
 
-
-    //  --- Modal JavaScript ---
+    //  Modal's Javascript
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.style.display = 'flex';
@@ -653,7 +664,6 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
         openModal(toModalId);
     }
     
-    //  Auto-open modal based on PHP errors or session state
     <?php if (!empty($login_error)): ?>
         openModal('loginModal');
     <?php elseif (!empty($register_error)): ?>

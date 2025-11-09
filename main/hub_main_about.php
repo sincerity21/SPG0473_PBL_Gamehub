@@ -188,8 +188,13 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - GameHub</title>
+    <title>GameHub - About Us</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         /* --- 1. CSS Variables for Theming --- */
         :root {
@@ -219,14 +224,99 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             --login-color: #27ae60; /* Darker green */
         }
 
-        /* --- 2. Base & Menu Styles (from hub_home.php) --- */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--main-text-color); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
-        .header { background-color: var(--card-bg-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px var(--shadow-color); position: sticky; top: 0; z-index: 1001; }
+        /* === NEW BACKGROUND IMAGE STYLES === */
+        .background-image {
+            position: fixed;
+            top: -10px; /* Overscan to hide blur edges */
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            z-index: -1; /* Behind all content */
+            
+            /* Image properties */
+            background-size: cover;
+            background-position: center;
+            
+            /* The Blur Effect */
+            filter: blur(5px);
+            
+            /* Smooth fade transition */
+            transition: opacity 0.5s ease-in-out;
+            
+            /* Fallback color */
+            background-color: var(--bg-color);
+        }
+
+        /* 1. Light Mode Image */
+        #bg-light {
+            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
+            background-image: url('../uploads/home/prototype.jpg');
+            opacity: 1; /* Visible by default */
+        }
+
+        /* 2. Dark Mode Image */
+        #bg-dark {
+            /* --- IMPORTANT: SET YOUR IMAGE PATH --- */
+            background-image: url('../uploads/home/darksouls.jpg');
+            opacity: 0; /* Hidden by default */
+        }
+
+        /* 3. The Swap Logic */
+        html.dark-mode body #bg-light {
+            opacity: 0; /* Hide light image in dark mode */
+        }
+        html.dark-mode body #bg-dark {
+            opacity: 1; /* Show dark image in dark mode */
+        }
+        
+        /* === NEW: Dark Mode Glass Override === */
+        html.dark-mode body .header,
+        html.dark-mode body .side-menu {
+            background-color: var(--glass-bg-dark); /* Dark glass */
+        }
+        /* === END NEW === */
+
+
+        /* --- 2. Base Styles --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* background-color: var(--bg-color); */ /* REMOVED */
+            color: var(--main-text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .header {
+            /* background-color: var(--card-bg-color); */ /* OLD */
+            background-color: var(--glass-bg-light); /* NEW */
+            backdrop-filter: blur(10px); /* NEW */
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            transition: background-color 0.3s; /* Add transition for glass */
+        }
         .logo { font-size: 24px; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .menu-toggle { background: none; border: none; cursor: pointer; font-size: 24px; color: var(--main-text-color); padding: 5px; }
         
-        /* --- 3. Side Menu (Reduced Logged-out Version) --- */
-        .side-menu { position: fixed; top: 60px; right: 0; width: 220px; background-color: var(--card-bg-color); box-shadow: -4px 4px 8px var(--shadow-color); border-radius: 8px 0 8px 8px; padding: 10px 0; z-index: 1000; transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+        /* --- 3. Side Menu --- */
+        .side-menu {
+            position: fixed; top: 60px; right: 0; width: 220px;
+            /* background-color: var(--card-bg-color); */ /* OLD */
+            background-color: var(--glass-bg-light); /* NEW */
+            backdrop-filter: blur(10px); /* NEW */
+            box-shadow: -4px 4px 8px var(--shadow-color);
+            border-radius: 8px 0 8px 8px;
+            padding: 10px 0; z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out, background-color 0.3s;
+        }
         .side-menu.open { transform: translateX(0); }
         .side-menu a, .menu-item { display: block; padding: 12px 20px; color: var(--main-text-color); text-decoration: none; transition: background-color 0.2s; cursor: pointer; }
         .side-menu a:hover, .menu-item:hover { background-color: var(--bg-color); color: var(--accent-color); }
@@ -252,25 +342,38 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             margin: 0 auto;
             padding: 30px;
         }
-        .greeting {
-            font-size: 2.5em;
+        
+        .content-title {
+            font-size: 1.8em;
             font-weight: 600;
             color: var(--welcome-title-color);
-            margin: 0;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+            padding-bottom: 5px;
         }
-        .wave-divider {
-            width: 100%;
-            height: 30px;
+
+        .about-section {
+            background-color: var(--card-bg-color);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px var(--shadow-color);
             margin-bottom: 30px;
-            overflow: hidden;
         }
-        .wave-divider svg {
-            width: 100%;
-            height: 100%;
-            stroke: var(--accent-color);
-            stroke-width: 2;
-            fill: none;
+        
+        .about-section p {
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: var(--secondary-text-color);
         }
+
+        /*
+        ===============================================
+           === TEAM CARD CSS (Already Added) ===
+        ===============================================
+        */
 
         .team-grid {
             display: grid;
@@ -279,82 +382,75 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
             margin-top: 20px;
         }
         .team-card {
-            background-color: var(--card-bg-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px var(--shadow-color);
+            position: relative; 
             overflow: hidden;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px var(--shadow-color);
         }
-        .team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px var(--shadow-color);
-        }
-        .card-image {
+
+        .team-card img {
+            display: block;
             width: 100%;
-            height: 350px;
-        }
-        .card-image img {
-            width: 100%;
-            height: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1; 
             object-fit: cover;
+            transition: transform 0.4s ease; 
         }
-        .card-info {
-            background-color: var(--card-info-bg);
-            padding: 20px;
-            color: var(--card-info-text);
+
+        .team-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(230, 126, 34, 0.9); 
+            color: white;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            box-sizing: border-box; 
+            transform: translateY(100%); 
+            transition: transform 0.4s ease-out;
         }
-        .card-info h3 {
-            margin: 0 0 5px 0;
-            color: var(--card-info-text);
-            font-size: 1.4em;
+
+        .team-card:hover .team-overlay {
+            transform: translateY(0);
         }
-        .card-info p {
-            margin: 0 0 15px 0;
-            font-size: 0.9em;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            min-height: 32px; /* Ensures all cards have same height */
-        }
-        .social-links a {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            font-size: 1.1em;
-            color: var(--card-info-text);
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .social-links a:hover {
-            background-color: white;
+
+        .team-card:hover img {
             transform: scale(1.1);
         }
-        body.dark-mode .social-links a {
-             background-color: rgba(0, 0, 0, 0.2);
+
+        .team-overlay h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
-        body.dark-mode .social-links a:hover {
-             background-color: rgba(0, 0, 0, 0.4);
+
+        .team-overlay p {
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            font-style: italic;
+            color: white; 
+            line-height: 1.4;
         }
-        /* Dark Mode Styling (Toggle placeholder styling updated) */
-        .dark-mode-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin: 0 8px; 
+            transition: color 0.2s;
         }
-        .dark-mode-label .icon {
-            font-size: 1.2em;
+        .social-links a:hover {
+            color: #f4f4f4;
+            transform: scale(1.1);
         }
         
-        /* --- Modal Styles (Copied from hub_home.php) --- */
+        /*
+        ===============================================
+           === MODAL STYLES (Already Added) ===
+        ===============================================
+        */
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -506,6 +602,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 </head>
 <body id="appBody">
 
+<div class="background-image" id="bg-light"></div>
+<div class="background-image" id="bg-dark"></div>
 <div class="header">
     <div class="logo">GAMEHUB</div>
     <button class="menu-toggle" id="menuToggle">
@@ -532,50 +630,52 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 
 <div class="content-container">
 
-    <h1 class="greeting">Let's meets our AMAZING TEAMS</h1>
-    <div class="wave-divider">
-        <svg viewBox="0 0 100 10" preserveAspectRatio="none">
-            <path d="M 0 5 C 25 10, 75 0, 100 5" />
-        </svg>
+    <h2 class="content-title">About GameHub</h2>
+    <div class="about-section">
+        <p>
+            Welcome to GameHub, your ultimate destination for discovering, rating, and discussing your favorite video games. 
+            Our mission is to create a vibrant community of gamers who can share their passion and expertise.
+        </p>
+        <p>
+            Whether you're looking for the next big AAA title, a hidden indie gem, or just want to see how your
+            favorites stack up against the crowd, GameHub provides the tools you need.
+        </p>
     </div>
 
+    <h2 class="content-title">Our Team</h2>
     <div class="team-grid">
         
         <div class="team-card">
-            <div class="card-image">
-                <img src="../uploads/members/iman.jpg" alt="Team Member 1 Photo">
-            </div>
-            <div class="card-info">
-                <h3>IRELAND BOI</h3>
-                <p>FRONT-END,
-                HTML</p>
+            <img src="../uploads/members/iman2.jpg" alt="Team Member 1">
+            <div class="team-overlay">
+                <h3>IMAN DARWISH</h3>
+                <p>Front-End, HTML</p>
                 <div class="social-links">
+                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="team-card">
-            <div class="card-image">
-                <img src="../uploads/members/anwar.jpg" alt="Team Member 2 Photo">
-            </div>
-            <div class="card-info">
-                <h3>ANUAT</h3>
-                <p>DESIGN,
-                GUI</p>
+            <img src="../uploads/members/khairul.jpg" alt="Team Member 2">
+            <div class="team-overlay">
+                <h3>KHAIRULANWAR</h3>
+                <p>Design, GUI</p>
                 <div class="social-links">
+                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="team-card">
-            <div class="card-image">
-                <img src="../uploads/members/fawwaz.jpg" alt="Team Member 3 Photo">
-            </div>
-            <div class="card-info">
+            <img src="../uploads/members/fawwaz2.jpg" alt="Team Member 3">
+            <div class="team-overlay">
                 <h3>FAWWAZ</h3>
-                <p>BACK-END,
-                DATABASE</p>
+                <p>Back-End, Database</p>
                 <div class="social-links">
+                    <a href="https://github.com/sincerity21" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                     </div>
             </div>
         </div>
@@ -597,7 +697,8 @@ if (isset($_SESSION['temp_user_id']) && isset($_SESSION['security_question']) &&
 
     // --- Standard Menu & Dark Mode JS ---
     document.getElementById('menuToggle').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.toggle('open');
+        const menu = document.getElementById('sideMenu');
+        menu.classList.toggle('open');
     });
 
     // --- Updated Dark Mode Logic ---

@@ -15,31 +15,47 @@ $id = $_GET['id'];
 $game = selectGameByID($id); 
 
 if ($game) {
-    // 3a. (NEW) Delete all gallery images AND their files
+    
+    // --- NEW LOGIC: DELETE ASSOCIATED FILES ---
+
+    // 3a. Delete all associated GALLERY image files
     $gallery_images = selectGameGalleryImages($id);
     if ($gallery_images) {
         foreach ($gallery_images as $image) {
-            // This function from hub_conn.php already deletes the file
-            deleteGalleryImageByID($image['game_img_id']);
-        }
-    }
-    
-    // 3b. (NEW) Delete all cover images AND their files
-    $covers = selectGameCovers($id);
-    if ($covers) {
-        foreach ($covers as $cover) {
-            deleteGameCover($cover['game_cover_id']);
+            if (!empty($image['img_path']) && file_exists(ROOT_PATH . $image['img_path'])) {
+                unlink(ROOT_PATH . $image['img_path']);
+            }
         }
     }
 
-    // 3c. (Original code) Delete the main game image file
+    // 3b. Delete all associated COVER image files
+    // (We check if function exists just in case)
+    if (function_exists('selectGameCovers')) {
+        $cover_images = selectGameCovers($id);
+        if ($cover_images) {
+            foreach ($cover_images as $cover) {
+                if (!empty($cover['cover_path']) && file_exists(ROOT_PATH . $cover['cover_path'])) {
+                    unlink(ROOT_PATH . $cover['cover_path']);
+                }
+            }
+        }
+    }
+    
+    // 3c. (Original Code) Delete the MAIN game image file from the server
     $image_path = $game['game_img'];
     if (!empty($image_path) && file_exists(ROOT_PATH . $image_path)) {
+        // Use the absolute path to delete the file
         unlink(ROOT_PATH . $image_path);
     }
     
+    // --- END OF NEW LOGIC ---
+
+
     // 4. Delete the game record from the database
-    deleteGameByID($id); // This will now succeed
+    // Because you added ON DELETE CASCADE, this single call will now
+    // delete the game AND all its associated records from
+    // game_images, game_cover, rating, favourites, and feedback_game.
+    deleteGameByID($id); 
 }
 
 // 5. Redirect back to the game listing page (hub_admin_games.php)

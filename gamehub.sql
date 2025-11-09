@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2025 at 09:41 AM
+-- Generation Time: Nov 09, 2025 at 09:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -115,8 +115,6 @@ INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game
 (13, 'rpg', 'ELDEN RING', 'Another entry in the \"Souls\" genre, by FromSoftware themselves. The most beginner-friendly \"Souls\" game, though that doesn\'t mean the game is any easier than other \"Souls\" titles. Features world-building written by George R. R. Martin. If you\'re new into the \"Souls\" genre, this is the game for you.', 'uploads/images/game_img_6903d2c47a1a77.34827150.jpg', 'https://www.youtube.com/watch?v=E3Huy2cdih0', 'https://store.steampowered.com/app/1245620/ELDEN_RING/'),
 (14, 'rpg', 'Cyberpunk 2077', 'The most anticipated games of the 2020s, only for it to release in a buggy state that renders the game unplayable. Fast-forward to now, through constant updates and fixes, the game has more than redeemed itself. With an incredibly detailed world and charming characters, one of which played by a certain Keanu Reeves. Welcome To Night City.', 'uploads/images/game_img_6903d36a481187.22550180.jpg', 'https://www.youtube.com/watch?v=lJiCOFwoyMA', 'https://store.steampowered.com/app/1091500/Cyberpunk_2077/'),
 (17, 'moba', 'Dota 2', 'The biggest MOBA game in the world, the second biggest e-Sports behind Counter-Strike 2. Dota 2 is complex, having a steep learning curve that may turn off new players. And yet, it\'s one of the most rewarding game there is. ', 'uploads/images/game_img_69046f7a41e7b5.00230625.jpg', 'https://www.youtube.com/watch?v=-cSFPIwMEq4', 'https://store.steampowered.com/app/570/Dota_2/'),
-(18, 'moba', 'Mobile Legends: Bang Bang', 'A fast-paced MOBA, developed specifically for mobile devices. It follows the general MOBA blueprint; teams of five, push down the three lanes, destroy the enemy\'s opposing turrets and eliminate their base. Being a mobile game, it\'s incredibly accessible, making it the biggest mobile e-Sports game.', 'uploads/images/game_img_690470564fc6f3.71791790.jpg', 'https://www.youtube.com/watch?v=cftqT7au9gk', 'https://www.mobilelegends.com/'),
-(19, 'moba', 'Brawl Stars', 'Another fast-paced MOBA developed for mobile, with a more vibrant creative direction compared to Mobile Legends. It features a quick 3v3 battle and a solo or duo Battle Royale mode. It emphasizes rapid-fire action and strategic team coordination, making it easy to pick up, but hard to master.', 'uploads/images/game_img_6904714ba71fb1.30964272.webp', 'https://www.youtube.com/watch?v=Fik4Rp6S1Bs', 'https://supercell.com/en/games/brawlstars/'),
 (22, 'puzzle', 'Portal', 'You play as Chell, a test subject in the Aperture Science Lab, where you\'re tasked with solving puzzles, involving escaping rooms, using a Portal gun. A legendary game that redefined the concept of portals in general.', 'uploads/images/game_img_69047c07c08de9.76248477.jpg', 'https://www.youtube.com/watch?v=TluRVBhmf8w', 'https://store.steampowered.com/app/400/Portal/'),
 (23, 'puzzle', 'The Talos Principle', 'You play as an unnamed robot as you traverse a strange, yet beautiful world filled with ancient ruins and advanced technology. Guided by a voice known as Elohim, you are tasked with solving complex environmental puzzles.\r\n', 'uploads/images/game_img_69050ffbaaaa07.56713655.jpg', 'https://www.youtube.com/watch?v=Vu9QFBWb7WQ', 'https://store.steampowered.com/app/257510/The_Talos_Principle/'),
 (24, 'puzzle', 'The Witness', 'An open-world puzzle game, set in a dazzling, bright, densely packed island. Unlike other puzzle games, the game does not provide instructions, instead relying on environmental cues and keen observation by the player to solve the ever-evolving puzzles.', 'uploads/images/game_img_690510be9da306.30675164.jpg', 'https://www.youtube.com/watch?v=ul7kNFD6noU', 'https://store.steampowered.com/app/210970/The_Witness/'),
@@ -132,9 +130,9 @@ INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game
 (34, 'fight', 'TEKKEN 8', 'The 8th full title in the long-standing TEKKEN series, the game continues the story surrounding the TEKKEN world, from recurring characters such as Kazuya Mishima and his family, Jun Kazama and Jin Kazama, but also new additions to the series such as Reina and Victor Chevalier. Now updated with brand new animations and visuals.', 'uploads/images/game_img_69051e41c03877.17729290.jpg', 'https://www.youtube.com/watch?v=_MM4clV2qjE', 'https://store.steampowered.com/app/1778820/TEKKEN_8/'),
 (35, 'fight', 'Mortal Kombat 1', 'Serving as the reboot in the long-standing Mortal Kombat series, the game is violent, with stunning visuals, but still maintained the fast-paced fighting gameplay everyone expects, and of course, fatalities.', 'uploads/images/game_img_69051f3c2da550.36042022.jpeg', 'https://www.youtube.com/watch?v=PL6ZdOXlj6g', 'https://store.steampowered.com/app/1971870/Mortal_Kombat_1/'),
 (36, 'fight', 'Street Fighter 6', 'The latest entry in the long-standing Street Fighter series, the game features new fighting mechanics that revolutionize the gameplay, alongside brand new modes to appeal to newcomers.\r\n', 'uploads/images/game_img_69051fec556ed3.48763014.jpg', 'https://www.youtube.com/watch?v=4EnsDg6DCTE', 'https://store.steampowered.com/app/1364780/Street_Fighter_6/'),
-(37, 'fps', 'iRacing', 'iRacing, the most realistic racing simulator there is. Compete with other racers in highly-detailed race-tracks around the world, in fully-simulated racing machines from all kinds of motorsports, under proper regulations employed by real motorsports. It can\'t get any more realistic than this.', 'uploads/images/game_img_690522237b2068.57186791.png', 'https://www.youtube.com/watch?v=ecfJGNauAwY', 'https://store.steampowered.com/app/266410/iRacing/'),
-(38, 'fps', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'uploads/images/game_img_690522d95e1c63.09347479.png', 'https://www.youtube.com/watch?v=TDFN-E30jhU', 'https://store.steampowered.com/app/244210/Assetto_Corsa/'),
-(39, 'fps', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'uploads/images/game_img_690523a41c71b3.07100900.avif', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/');
+(37, 'racing', 'iRacing', 'iRacing, the most realistic racing simulator there is. Compete with other racers in highly-detailed race-tracks around the world, in fully-simulated racing machines from all kinds of motorsports, under proper regulations employed by real motorsports. It can\'t get any more realistic than this.', 'uploads/images/game_img_690522237b2068.57186791.png', 'https://www.youtube.com/watch?v=ecfJGNauAwY', 'https://store.steampowered.com/app/266410/iRacing/'),
+(38, 'racing', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'uploads/images/game_img_690522d95e1c63.09347479.png', 'https://www.youtube.com/watch?v=TDFN-E30jhU', 'https://store.steampowered.com/app/244210/Assetto_Corsa/'),
+(39, 'racing', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'uploads/images/game_img_690523a41c71b3.07100900.avif', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/');
 
 -- --------------------------------------------------------
 
@@ -177,9 +175,7 @@ INSERT INTO `game_cover` (`game_cover_id`, `game_id`, `cover_path`) VALUES
 (23, 37, 'uploads/covers/cover_37_690a268a07dc1.jpg'),
 (24, 38, 'uploads/covers/cover_38_690a26b1d8ed0.jpg'),
 (25, 9, 'uploads/covers/cover_9_690a2cf3570e9.jpg'),
-(27, 39, 'uploads/covers/cover_39_690a332508cd6.jpg'),
-(28, 18, 'uploads/covers/cover_18_690a51011355e.webp'),
-(29, 19, 'uploads/covers/cover_19_690a51505532b.jpg');
+(27, 39, 'uploads/covers/cover_39_690a332508cd6.jpg');
 
 -- --------------------------------------------------------
 
@@ -346,13 +342,7 @@ INSERT INTO `game_images` (`game_img_id`, `game_id`, `img_path`, `img_order`) VA
 (163, 39, 'uploads/gallery/game_39_690a35b610bf6.jpg', 4),
 (164, 39, 'uploads/gallery/game_39_690a35b611293.png', 2),
 (165, 39, 'uploads/gallery/game_39_690a35b61192a.jpg', 5),
-(166, 39, 'uploads/gallery/game_39_690a35b611ec8.jpg', 3),
-(167, 18, 'uploads/gallery/game_18_690a50aaa73a5.webp', 0),
-(168, 18, 'uploads/gallery/game_18_690a50aaa82d8.jpg', 1),
-(169, 18, 'uploads/gallery/game_18_690a50aaa8ca7.jpg', 2),
-(170, 19, 'uploads/gallery/game_19_690a51982ae95.webp', 0),
-(171, 19, 'uploads/gallery/game_19_690a51982bb21.webp', 1),
-(172, 19, 'uploads/gallery/game_19_690a51982c597.jpg', 2);
+(166, 39, 'uploads/gallery/game_39_690a35b611ec8.jpg', 3);
 
 -- --------------------------------------------------------
 
@@ -375,7 +365,6 @@ INSERT INTO `rating` (`rating_id`, `rating_game`, `game_id`, `user_id`) VALUES
 (1, 4, 7, 3),
 (5, 5, 38, 3),
 (8, 5, 14, 3),
-(9, 1, 18, 3),
 (10, 4, 29, 3);
 
 -- --------------------------------------------------------
@@ -452,7 +441,7 @@ ALTER TABLE `game_cover`
 --
 ALTER TABLE `game_images`
   ADD PRIMARY KEY (`game_img_id`),
-  ADD KEY `game_id` (`game_id`);
+  ADD KEY `game_images_ibfk_1` (`game_id`);
 
 --
 -- Indexes for table `rating`
@@ -496,19 +485,19 @@ ALTER TABLE `feedback_site`
 -- AUTO_INCREMENT for table `games`
 --
 ALTER TABLE `games`
-  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `game_cover`
 --
 ALTER TABLE `game_cover`
-  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `game_images`
 --
 ALTER TABLE `game_images`
-  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=173;
+  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
 
 --
 -- AUTO_INCREMENT for table `rating`
@@ -558,7 +547,7 @@ ALTER TABLE `game_cover`
 -- Constraints for table `game_images`
 --
 ALTER TABLE `game_images`
-  ADD CONSTRAINT `game_images_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`game_id`);
+  ADD CONSTRAINT `game_images_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`game_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `rating`

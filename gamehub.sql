@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2025 at 08:08 AM
+-- Generation Time: Nov 11, 2025 at 09:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -137,7 +137,9 @@ INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game
 (36, 'fight', 'Street Fighter 6', 'The latest entry in the long-standing Street Fighter series, the game features new fighting mechanics that revolutionize the gameplay, alongside brand new modes to appeal to newcomers.\r\n', 'https://www.youtube.com/watch?v=4EnsDg6DCTE', 'https://store.steampowered.com/app/1364780/Street_Fighter_6/'),
 (37, 'racing', 'iRacing', 'iRacing, the most realistic racing simulator there is. Compete with other racers in highly-detailed race-tracks around the world, in fully-simulated racing machines from all kinds of motorsports, under proper regulations employed by real motorsports. It can\'t get any more realistic than this.', 'https://www.youtube.com/watch?v=ecfJGNauAwY', 'https://store.steampowered.com/app/266410/iRacing/'),
 (38, 'racing', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'https://www.youtube.com/watch?v=TDFN-E30jhU', 'https://store.steampowered.com/app/244210/Assetto_Corsa/'),
-(39, 'racing', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/');
+(39, 'racing', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/'),
+(42, 'rpg', 'DARK SOULS: REMASTERED', 'The iconic first entry into the Dark Souls franchise, now remastered! Set in the bleak, decaying fantasy kingdom of Lordran, you play as an Undead cursed to a cycle of rebirth, tasked with a monumental quest. Suffering is a main feature.', 'https://www.youtube.com/watch?v=KfjG9ZLGBHE', 'https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/'),
+(44, 'rpg', 'Prototype', 'You play as the Prototype, Alex Mercer, a man with no memory, whom suddenly gained inhuman abilities that allows you to shape-shift. Discover who you are, adapt to situations, and uncover the truth behind the making of you, the Prototype.', 'https://www.youtube.com/watch?v=Nc3XptLacMM', 'https://store.steampowered.com/app/10150/Prototype/');
 
 -- --------------------------------------------------------
 
@@ -180,7 +182,9 @@ INSERT INTO `game_cover` (`game_cover_id`, `game_id`, `cover_path`) VALUES
 (23, 37, 'uploads/covers/cover_37_690a268a07dc1.jpg'),
 (24, 38, 'uploads/covers/cover_38_690a26b1d8ed0.jpg'),
 (25, 9, 'uploads/covers/cover_9_690a2cf3570e9.jpg'),
-(27, 39, 'uploads/covers/cover_39_690a332508cd6.jpg');
+(27, 39, 'uploads/covers/cover_39_690a332508cd6.jpg'),
+(31, 42, 'uploads/covers/cover_42_6912ecf593995.jpg'),
+(33, 44, 'uploads/covers/cover_44_6912ef11d3a85.jpg');
 
 -- --------------------------------------------------------
 
@@ -347,7 +351,18 @@ INSERT INTO `game_images` (`game_img_id`, `game_id`, `img_path`, `img_order`) VA
 (163, 39, 'uploads/gallery/game_39_690a35b610bf6.jpg', 4),
 (164, 39, 'uploads/gallery/game_39_690a35b611293.png', 2),
 (165, 39, 'uploads/gallery/game_39_690a35b61192a.jpg', 5),
-(166, 39, 'uploads/gallery/game_39_690a35b611ec8.jpg', 3);
+(166, 39, 'uploads/gallery/game_39_690a35b611ec8.jpg', 3),
+(174, 42, 'uploads/gallery/game_42_6912ecfbdc91e.jpg', 4),
+(175, 42, 'uploads/gallery/game_42_6912ecfbdda76.jpg', 3),
+(176, 42, 'uploads/gallery/game_42_6912ecfbde042.jpg', 2),
+(177, 42, 'uploads/gallery/game_42_6912ecfbde56a.jpg', 1),
+(178, 42, 'uploads/gallery/game_42_6912ecfbdead8.jpg', 0),
+(180, 44, 'uploads/gallery/game_44_6912ef2e3ec61.jpg', 2),
+(181, 44, 'uploads/gallery/game_44_6912ef2e3f2de.jpg', 1),
+(182, 44, 'uploads/gallery/game_44_6912ef2e3f89f.jpg', 0),
+(183, 44, 'uploads/gallery/game_44_6912ef2e3ff22.jpg', 5),
+(184, 44, 'uploads/gallery/game_44_6912ef2e4049f.jpg', 3),
+(185, 44, 'uploads/gallery/game_44_6912ef2e40a88.jpg', 4);
 
 -- --------------------------------------------------------
 
@@ -491,19 +506,19 @@ ALTER TABLE `feedback_site`
 -- AUTO_INCREMENT for table `games`
 --
 ALTER TABLE `games`
-  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `game_cover`
 --
 ALTER TABLE `game_cover`
-  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `game_images`
 --
 ALTER TABLE `game_images`
-  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
+  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
 
 --
 -- AUTO_INCREMENT for table `rating`

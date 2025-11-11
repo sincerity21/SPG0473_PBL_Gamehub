@@ -370,8 +370,8 @@ $username = htmlspecialchars($_SESSION['username']);
                 <h3>IMAN DARWISH</h3>
                 <p>Front-End, HTML</p>
                 <div class="social-links">
-                    <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/idvlog_06/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/iman-darwish-5393ab347" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>

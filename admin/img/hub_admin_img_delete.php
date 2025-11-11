@@ -48,7 +48,7 @@ if ($deleted_data) {
 }
 
 // Determine the redirect location
-$redirect_url = ($game_id) ? 'hub_admin_img.php?game_id=' . $game_id : 'hub_admin_img.php';
+$redirect_url = ($game_id) ? 'hub_admin_img.php?game_id=' . $game_id . '#gallery' : 'hub_admin_img.php';
 
 // Redirect back to the gallery view (or the main list if game_id wasn't available)
 header('Location: ' . $redirect_url);

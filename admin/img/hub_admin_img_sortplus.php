@@ -21,6 +21,6 @@ $change_amount = 1; // Increase the sort order value
 updateImageSortOrder($image_id, $change_amount);
 
 // Redirect back to the gallery view for the specific game
-header('Location: hub_admin_img.php?game_id=' . $game_id);
+header('Location: hub_admin_img.php?game_id=' . $game_id . '#gallery');
 exit();
 ?>

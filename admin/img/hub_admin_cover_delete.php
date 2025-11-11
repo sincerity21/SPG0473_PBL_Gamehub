@@ -42,7 +42,7 @@ if ($deleted_data) {
 
 // Redirect back to the image management page for that game
 if ($game_id) {
-    header('Location: hub_admin_img.php?game_id=' . $game_id);
+    header('Location: hub_admin_img.php?game_id=' . $game_id . '#cover');
 } else {
     header('Location: hub_admin_img.php');
 }

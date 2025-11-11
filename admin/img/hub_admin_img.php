@@ -259,7 +259,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
                 <a href="../games/hub_admin_games.php">← Back to Game Selection</a>
             </div>
             
-            <h2>Game Cover</h2>
+            <h2 id="cover">Game Cover</h2>
             
             <a href="hub_admin_img.php?game_id=<?php echo $game_id; ?>&action=add_cover" class="add-link" style="background-color: #9b59b6;"><?php echo $cover_button_text; ?></a>
 
@@ -285,7 +285,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
             <?php endif; ?>
             
             <hr class="section-divider">
-            <h2>Gallery Images</h2>
+            <h2 id="gallery">Gallery Images</h2>
             
             <a href="hub_admin_img.php?game_id=<?php echo $game_id; ?>&action=add_gallery" class="add-link">➕ Add New Pictures to Gallery</a>
 

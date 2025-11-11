@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2025 at 09:12 AM
+-- Generation Time: Nov 11, 2025 at 02:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -70,7 +70,8 @@ INSERT INTO `feedback_game` (`feedback_game_id`, `feedback_game_frequency`, `fee
 (7, 'frequency_0', 'I\'ve never thought driving trucks can be fun, yet here we are. A surprisingly fun game about driving, well, trucks, in a miniaturized, scaled-down Europe, that still feels massive on its own, excluding various map mods one can download for the game. \r\n\r\nLive out your trucker dreams.', 29, 3),
 (10, 'frequency_0', 'An incredibly immersive game. A rich world with well-written characters, and an open-world that generally lets the player do whatever they want, without locking them to a mission or a certain path. \r\nThe perfect \"isekai\" game.', 12, 3),
 (13, 'frequency_0', 'Fun car game.', 39, 1),
-(19, 'frequency_1', 'Good good good', 38, 3);
+(19, 'frequency_1', 'Good good good', 38, 3),
+(23, 'frequency_0', 'Hard game af. ', 42, 3);
 
 -- --------------------------------------------------------
 
@@ -139,7 +140,12 @@ INSERT INTO `games` (`game_id`, `game_category`, `game_name`, `game_desc`, `game
 (38, 'racing', 'Assetto Corsa', 'A racing simulator, with heavy emphasis on the driving physics. Features a single-player mode, multiplayer, and various other race modes, with the main appeal being the modding scene. Mod the game to race Japanese Drift Machines in Tokyo\'s busy highways, and many more!', 'https://www.youtube.com/watch?v=TDFN-E30jhU', 'https://store.steampowered.com/app/244210/Assetto_Corsa/'),
 (39, 'racing', 'Gran Turismo 7', 'A PlayStation-exclusive, and the latest entry in the long-standing Gran Turismo series. A celebration of car culture, where you can drive, race, modify, and simply appreciate highly detailed cars from all spectrums, from the fastest machines ever to the historical machines that paved the way for the industry. This is Gran Turismo, the Real Driving Simulator.', 'https://www.youtube.com/watch?v=oz-O74SmTSQ', 'https://www.gran-turismo.com/us/gt7/top/'),
 (42, 'rpg', 'DARK SOULS: REMASTERED', 'The iconic first entry into the Dark Souls franchise, now remastered! Set in the bleak, decaying fantasy kingdom of Lordran, you play as an Undead cursed to a cycle of rebirth, tasked with a monumental quest. Suffering is a main feature.', 'https://www.youtube.com/watch?v=KfjG9ZLGBHE', 'https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/'),
-(44, 'rpg', 'Prototype', 'You play as the Prototype, Alex Mercer, a man with no memory, whom suddenly gained inhuman abilities that allows you to shape-shift. Discover who you are, adapt to situations, and uncover the truth behind the making of you, the Prototype.', 'https://www.youtube.com/watch?v=Nc3XptLacMM', 'https://store.steampowered.com/app/10150/Prototype/');
+(44, 'action', 'Prototype', 'You play as the Prototype, Alex Mercer, a man with no memory, whom suddenly gained inhuman abilities that allows you to shape-shift. Discover who you are, adapt to situations, and uncover the truth behind the making of you, the Prototype.', 'https://www.youtube.com/watch?v=Nc3XptLacMM', 'https://store.steampowered.com/app/10150/Prototype/'),
+(46, 'fight', 'Brawlhalla', 'A free-to-play platform 2D fighter, where you only need to push your opponents off the platform. Sounds simple enough, but combined with various playstyle combinations possible with each character, you\'ll learn how hard it actually is.', 'https://www.youtube.com/watch?v=Odj7pIsHRt0', 'https://store.steampowered.com/app/291550/Brawlhalla/'),
+(47, 'fight', 'DRAGON BALL XENOVERSE 2', 'Immerse yourself in the most detailed rendition of Dragon Ball world yet with Xenoverse 2! Create your own Time Patroller and travel through Dragon Ball\'s timeline to correct dangerous changes made by new villains. ', 'https://www.youtube.com/watch?v=VFDugj5yjNw', 'https://store.steampowered.com/app/454650/DRAGON_BALL_XENOVERSE_2/'),
+(48, 'fight', 'GUILTY GEAR -STRIVE-', 'The critically-acclaimed fighting game, famous for its blend of cell-shaded and 3D visual style, Guilty Gear Strive is a reconstruction of the series, made to be more accessible for newcomers with simplified combo routes while retaining the high-octane, aggressive gameplay veterans love.', 'https://www.youtube.com/watch?v=-rbffP5aQoA', 'https://store.steampowered.com/app/1384160/GUILTY_GEAR_STRIVE/'),
+(49, 'fight', 'FATAL FURY: City of the Wolves', 'The first new mainline entry into the FATAL FURY franchise in 26 years, City of the Wolves features a striking, modern visual style while building on the series\' core mechanics. Its central innovation is the \"REV System,\" an offensive meter that allows players to use powerful moves like \"REV Arts\" and \"REV Blows\" right from the start of the match, encouraging aggressive play until the meter overheats.', 'https://www.youtube.com/watch?v=lHjjlpCoBOQ', 'https://store.steampowered.com/app/2492040/FATAL_FURY_City_of_the_Wolves/'),
+(50, 'fight', 'Granblue Fantasy Versus: Rising', 'A spin-off entry into the world-famous Granblue Fantasy franchise, Versus: Rising serves as an expanded and revamped to Granblue Fantasy Versus. It\'s renowned for its gorgeous anime art style and a design philosophy that balances accessibility for newcomers with significant depth for veterans.', 'https://www.youtube.com/watch?v=SbI26Ehde3g', 'https://store.steampowered.com/app/2157560/Granblue_Fantasy_Versus_Rising/');
 
 -- --------------------------------------------------------
 
@@ -184,7 +190,12 @@ INSERT INTO `game_cover` (`game_cover_id`, `game_id`, `cover_path`) VALUES
 (25, 9, 'uploads/covers/cover_9_690a2cf3570e9.jpg'),
 (27, 39, 'uploads/covers/cover_39_690a332508cd6.jpg'),
 (31, 42, 'uploads/covers/cover_42_6912ecf593995.jpg'),
-(33, 44, 'uploads/covers/cover_44_6912ef11d3a85.jpg');
+(33, 44, 'uploads/covers/cover_44_6912ef11d3a85.jpg'),
+(35, 46, 'uploads/covers/cover_46_6912f4941a865.jpg'),
+(36, 47, 'uploads/covers/cover_47_6912f7795a2e4.jpg'),
+(37, 48, 'uploads/covers/cover_48_6912f9df7af0d.jpg'),
+(38, 49, 'uploads/covers/cover_49_6912fd6de77fd.jpg'),
+(39, 50, 'uploads/covers/cover_50_69130682895bc.jpg');
 
 -- --------------------------------------------------------
 
@@ -362,7 +373,37 @@ INSERT INTO `game_images` (`game_img_id`, `game_id`, `img_path`, `img_order`) VA
 (182, 44, 'uploads/gallery/game_44_6912ef2e3f89f.jpg', 0),
 (183, 44, 'uploads/gallery/game_44_6912ef2e3ff22.jpg', 5),
 (184, 44, 'uploads/gallery/game_44_6912ef2e4049f.jpg', 3),
-(185, 44, 'uploads/gallery/game_44_6912ef2e40a88.jpg', 4);
+(185, 44, 'uploads/gallery/game_44_6912ef2e40a88.jpg', 4),
+(187, 46, 'uploads/gallery/game_46_6912f4994e164.jpg', 3),
+(188, 46, 'uploads/gallery/game_46_6912f4994e89e.jpg', 5),
+(189, 46, 'uploads/gallery/game_46_6912f4994ef13.jpg', 4),
+(190, 46, 'uploads/gallery/game_46_6912f4994f4e5.jpg', 1),
+(191, 46, 'uploads/gallery/game_46_6912f4994fa61.jpg', 2),
+(192, 46, 'uploads/gallery/game_46_6912f49950035.jpg', 0),
+(193, 47, 'uploads/gallery/game_47_6912f77e1ebda.jpg', 5),
+(194, 47, 'uploads/gallery/game_47_6912f77e1f2bb.jpg', 4),
+(195, 47, 'uploads/gallery/game_47_6912f77e1fbee.jpg', 3),
+(196, 47, 'uploads/gallery/game_47_6912f77e201ae.jpg', 2),
+(197, 47, 'uploads/gallery/game_47_6912f77e20738.jpg', 1),
+(198, 47, 'uploads/gallery/game_47_6912f77e20be1.jpg', 0),
+(199, 48, 'uploads/gallery/game_48_6912f9e517a4e.jpg', 5),
+(200, 48, 'uploads/gallery/game_48_6912f9e5185c0.jpg', 4),
+(201, 48, 'uploads/gallery/game_48_6912f9e518e75.jpg', 3),
+(202, 48, 'uploads/gallery/game_48_6912f9e5195a4.jpg', 2),
+(203, 48, 'uploads/gallery/game_48_6912f9e519bb0.jpg', 1),
+(204, 48, 'uploads/gallery/game_48_6912f9e51a1a7.jpg', 0),
+(205, 49, 'uploads/gallery/game_49_6912fd9756c61.jpg', 5),
+(206, 49, 'uploads/gallery/game_49_6912fd9757446.jpg', 4),
+(207, 49, 'uploads/gallery/game_49_6912fd97580a2.jpg', 3),
+(208, 49, 'uploads/gallery/game_49_6912fd97586f8.jpg', 2),
+(209, 49, 'uploads/gallery/game_49_6912fd975902d.jpg', 1),
+(210, 49, 'uploads/gallery/game_49_6912fd9759662.jpg', 0),
+(211, 50, 'uploads/gallery/game_50_6913069bc993a.jpg', 5),
+(212, 50, 'uploads/gallery/game_50_6913069bc9eae.jpg', 4),
+(213, 50, 'uploads/gallery/game_50_6913069bca707.jpg', 3),
+(214, 50, 'uploads/gallery/game_50_6913069bcacb9.jpg', 2),
+(215, 50, 'uploads/gallery/game_50_6913069bcb103.jpg', 1),
+(216, 50, 'uploads/gallery/game_50_6913069bcb52c.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -388,7 +429,8 @@ INSERT INTO `rating` (`rating_id`, `rating_game`, `game_id`, `user_id`) VALUES
 (10, 4, 29, 3),
 (11, 5, 12, 3),
 (13, 5, 39, 1),
-(14, 3, 39, 3);
+(14, 3, 39, 3),
+(22, 4, 42, 3);
 
 -- --------------------------------------------------------
 
@@ -412,7 +454,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_email`, `user_password`, `sec_prompt`, `sec_answer`, `is_admin`) VALUES
 (1, 'admin', 'sincerity2103@gmail.com', '$2y$10$PagVgbv92r5BqIe/3hm6GuAlP0/9.iKhCKx3nnjh6BzibtN0kM2Fy', 'prompt_1', '$2y$10$rgN6yG/mXBVk/zFdo6BCW.NvHBrcwlaueYZ5SMVKfgfhn3OtvaV/K', 1),
-(3, 'max_beingstepen', 'anwar@gmail.com', '$2y$10$5mklEPxoMus/.Se25s5aS.gZW23aFHdwiI6T/Jm9mFd0nKVzpWRwu', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
+(3, 'max_beingstepen', 'anwar@gmail.com', '$2y$10$6.OVrOfT7S1ehLZpP2lEaOq8aPWWX2/A333ZwtXafy8G5MlVw1Ikq', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
 (6, 'irelandboi69', 'irelandboi@gmail.com', '$2y$10$n8Og4Z.8JJLohNqlpFdsS.vPUY0SmELlS7QQompVxRebv0uF4PK1a', 'prompt_4', '$2y$10$gWjf8y5rOBu.NCnWvF0mJOT1.nl3kXQw/vS8TQZvBg2lqpbxzQ3QS', 0),
 (23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1);
 
@@ -494,37 +536,37 @@ ALTER TABLE `favourites`
 -- AUTO_INCREMENT for table `feedback_game`
 --
 ALTER TABLE `feedback_game`
-  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `feedback_site`
 --
 ALTER TABLE `feedback_site`
-  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `games`
 --
 ALTER TABLE `games`
-  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `game_cover`
 --
 ALTER TABLE `game_cover`
-  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `game_cover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `game_images`
 --
 ALTER TABLE `game_images`
-  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `game_img_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=217;
 
 --
 -- AUTO_INCREMENT for table `rating`
 --
 ALTER TABLE `rating`
-  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `users`

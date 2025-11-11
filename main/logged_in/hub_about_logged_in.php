@@ -227,11 +227,11 @@ $username = htmlspecialchars($_SESSION['username']);
         .about-section p {
             font-size: 1.1em;
             line-height: 1.7;
-            color: #444;
+            color: #000000ff;
         }
 
         html.dark-mode body .about-section p {
-            color: var(--secondary-text-color);
+            color: #ffffffff;
         }
 
         .team-grid {

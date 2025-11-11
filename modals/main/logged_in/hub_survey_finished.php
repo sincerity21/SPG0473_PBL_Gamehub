@@ -1,6 +1,5 @@
 <div id="surveyFinishedModal" class="modal-overlay">
     <div class="modal-container">
-        <!-- We don't have a close button, user must choose an action -->
         
         <h2>Thank you for your feedback!</h2>
         

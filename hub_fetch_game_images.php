@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'hub_conn.php'; // hub_conn.php is in the same directory
+require 'hub_conn.php';
 
 header('Content-Type: application/json'); // Respond with JSON
 

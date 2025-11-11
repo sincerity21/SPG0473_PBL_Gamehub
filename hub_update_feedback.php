@@ -5,14 +5,14 @@ require 'hub_conn.php';
 // Set content type to JSON
 header('Content-Type: application/json');
 
-// --- 1. Check for Authentication ---
+// Check for Authentication
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401); // Unauthorized
     echo json_encode(['success' => false, 'message' => 'User not logged in.']);
     exit();
 }
 
-// --- 2. Get Data from POST request ---
+// Get Data from POST request
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!$data) {
@@ -21,7 +21,7 @@ if (!$data) {
     exit();
 }
 
-// --- 3. Sanitize and Prepare Variables ---
+// Sanitize and Prepare Variables
 $user_id = (int)$_SESSION['user_id'];
 $game_id = isset($data['game_id']) ? (int)$data['game_id'] : 0;
 
@@ -56,7 +56,7 @@ if ($game_id <= 0) {
     exit();
 }
 
-// --- 4. Call the correct upsert function ---
+// Call the correct upsert function
 $success = false;
 if ($rating !== null) {
     // Call the new rating-specific function
@@ -66,7 +66,7 @@ if ($rating !== null) {
     $success = upsertGameFavourite($user_id, $game_id, $favorite);
 }
 
-// --- 5. Send JSON Response ---
+// Send JSON Response
 if ($success) {
     echo json_encode(['success' => true, 'message' => 'Feedback updated successfully.']);
 } else {

@@ -33,11 +33,6 @@
             </div>
             
             <div class="form-group">
-                <label for="game_img">Game Image (File):</label>
-                <input type="file" id="game_img" name="game_img" accept="image/*" required>
-            </div>
-
-            <div class="form-group">
                 <label for="game_trailerLink">Trailer (Link):</label>
                 <input type="text" id="game_trailerLink" name="game_trailerLink" required>
             </div>

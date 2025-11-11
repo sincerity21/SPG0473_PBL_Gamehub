@@ -33,21 +33,6 @@
             </div>
             
             <div class="form-group">
-                <label>Current Image:</label>
-                <?php if (!empty($game_to_edit['game_img'])): ?>
-                    <img src="../../<?php echo htmlspecialchars($game_to_edit['game_img']); ?>" class="current-img" alt="Current Game Image">
-                    <p><small>File: <?php echo htmlspecialchars($game_to_edit['game_img']); ?></small></p>
-                <?php else: ?>
-                    <p>No current image.</p>
-                <?php endif; ?>
-            </div>
-            
-            <div class="form-group">
-                <label for="game_img">Browse/Upload New Image (Leave blank to keep current):</label>
-                <input type="file" id="game_img" name="game_img" accept="image/*">
-            </div>
-            
-            <div class="form-group">
                 <label for="game_trailerLink">Trailer Link:</label>
                 <input type="text" id="game_trailerLink" name="game_trailerLink" value="<?php echo htmlspecialchars($game_to_edit['game_trailerLink']); ?>" required>
             </div>

@@ -15,12 +15,6 @@ $id = $_GET['id'];
 $game = selectGameByID($id); 
 
 if ($game) {
-    // Delete the associated image file from the server
-    $image_path = $game['game_img'];
-    if (!empty($image_path) && file_exists(ROOT_PATH . $image_path)) {
-        // Use the absolute path to delete the file
-        unlink(ROOT_PATH . $image_path);
-    }
     
     // Delete the game record from the database
     deleteGameByID($id); 

@@ -110,12 +110,12 @@ function deleteByID($id){
 }
 
 // To add a new game on admin page
-function addNewGame($game_category, $game_name, $game_desc, $game_img, $game_trailerLink, $game_Link){
+function addNewGame($game_category, $game_name, $game_desc, $game_trailerLink, $game_Link){
     global $conn;
-    $sql = "INSERT INTO games (game_category, game_name, game_desc, game_img, game_trailerLink, game_Link) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO games (game_category, game_name, game_desc, game_trailerLink, game_Link) 
+            VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssss", $game_category, $game_name, $game_desc, $game_img, $game_trailerLink, $game_Link);
+    $stmt->bind_param("sssss", $game_category, $game_name, $game_desc, $game_trailerLink, $game_Link);
     $result = $stmt->execute();
     $stmt->close();
     return $result;
@@ -143,19 +143,18 @@ function selectGameByID($id){
 }
 
 // To edit a game on admin page
-function updateGameByID($id, $name, $category, $desc, $img, $trailerLink, $game_Link){
+function updateGameByID($id, $name, $category, $desc, $trailerLink, $game_Link){
     global $conn;
     $sql = "UPDATE games SET 
             game_name = ?, 
             game_category = ?, 
             game_desc = ?, 
-            game_img = ?, 
             game_trailerLink = ?,
             game_Link = ? 
             WHERE game_id = ?";
             
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi", $name, $category, $desc, $img, $trailerLink, $game_Link, $id);
+    $stmt->bind_param("sssssi", $name, $category, $desc, $trailerLink, $game_Link, $id);
     $result = $stmt->execute();
     $stmt->close();
     return $result;

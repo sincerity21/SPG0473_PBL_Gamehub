@@ -23,25 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
         $game_Link = $_POST['game_Link']; // <-- ADDED
-        $game_img_filename = ''; // Default to empty string
-
-        if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
-            $file_tmp_path = $_FILES['game_img']['tmp_name'];
-            $file_name = $_FILES['game_img']['name'];
-            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $new_file_name = uniqid('game_img_', true) . '.' . $ext;
-            $dest_path = ROOT_PATH . $upload_dir . $new_file_name;
-
-            if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                $game_img_filename = $upload_dir . $new_file_name; 
-            } else {
-                $error = "Error uploading file. Check directory permissions.";
-            }
-        }
 
         if (!$error) {
             // MODIFIED function call
-            $result = addNewGame($game_category, $game_name, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
+            $result = addNewGame($game_category, $game_name, $game_desc, $game_trailerLink, $game_Link);
             if ($result) {
                 header('Location: hub_admin_games.php?status=added');
                 exit();
@@ -63,31 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         // Get current game data to find old image path
         $game = selectGameByID($id);
         if ($game) {
-            $game_img_filename = $game['game_img']; // Start with the existing image
-
-            // Check if a new file was uploaded
-            if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
-                $file_tmp_path = $_FILES['game_img']['tmp_name'];
-                $file_name = $_FILES['game_img']['name'];
-                $ext = pathinfo($file_name, PATHINFO_EXTENSION);
-                $new_file_name = uniqid('game_img_', true) . '.' . $ext;
-                $dest_path = ROOT_PATH . $upload_dir . $new_file_name;
-
-                if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                    $game_img_filename = $upload_dir . $new_file_name; // Set new path
-                    // Delete the old file
-                    if (!empty($game['game_img']) && file_exists(ROOT_PATH . $game['game_img'])) {
-                         unlink(ROOT_PATH . $game['game_img']);
-                    }
-                } else {
-                    $error = "Error uploading new file. Check directory permissions.";
-                }
-            }
 
             // Update database if no upload error
             if (!$error) {
                 // MODIFIED function call
-                $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
+                $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_trailerLink, $game_Link);
                 if ($result) {
                     header('Location: hub_admin_games.php?status=updated'); 
                     exit();
@@ -279,7 +244,6 @@ $games = selectAllGames();
                     <th>Category</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Image</th>
                     <th>Trailer Link</th>
                     <th>Game Link</th> <th>Action</th>
                 </tr>
@@ -291,17 +255,6 @@ $games = selectAllGames();
                     <td><?php echo htmlspecialchars($game['game_category']); ?></td>
                     <td><?php echo htmlspecialchars($game['game_name']); ?></td>
                     <td style="max-width: 300px;"><?php echo htmlspecialchars($game['game_desc']); ?></td> 
-                    <td>
-                        <?php if ($game['game_img']): ?>
-                            <img 
-                                src="../../<?php echo htmlspecialchars($game['game_img']); ?>" 
-                                alt="<?php echo htmlspecialchars($game['game_name']); ?> Cover" 
-                                class="game-image"
-                            >
-                        <?php else: ?>
-                            No Image
-                        <?php endif; ?>
-                    </td>
                     <td><a href="<?php echo htmlspecialchars($game['game_trailerLink']); ?>" target="_blank">Watch Trailer</a></td>
                     
                     <td><a href="<?php echo htmlspecialchars($game['game_Link']); ?>" target="_blank">Go to Game</a></td>

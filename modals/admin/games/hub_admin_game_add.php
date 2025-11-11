@@ -13,6 +13,7 @@
                     <option value="action">Action</option>
                     <option value="fight">Fighting</option>
                     <option value="fps">First-Person Shooter</option>
+                    <option value="horror">Horror</option>
                     <option value="moba">Multiplayer Online Battle Area (MOBA)</option>
                     <option value="puzzle">Puzzle</option>
                     <option value="racing">Racing</option>

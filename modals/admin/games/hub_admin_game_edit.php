@@ -14,6 +14,7 @@
                     <option value="action" <?php echo ($game_to_edit['game_category'] == 'action') ? 'selected' : ''; ?>>Action</option>
                     <option value="fight" <?php echo ($game_to_edit['game_category'] == 'fight') ? 'selected' : ''; ?>>Fighting</option>
                     <option value="fps" <?php echo ($game_to_edit['game_category'] == 'fps') ? 'selected' : ''; ?>>First-Person Shooter</option>
+                    <option value="horror" <?php echo ($game_to_edit['game_category'] == 'horror') ? 'selected' : ''; ?>>Horror</option>
                     <option value="moba" <?php echo ($game_to_edit['game_category'] == 'moba') ? 'selected' : ''; ?>>Multiplayer Online Battle Arena (MOBA)</option>
                     <option value="puzzle" <?php echo ($game_to_edit['game_category'] == 'puzzle') ? 'selected' : ''; ?>>Puzzle</option>
                     <option value="racing" <?php echo ($game_to_edit['game_category'] == 'racing') ? 'selected' : ''; ?>>Racing</option>

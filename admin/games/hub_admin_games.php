@@ -3,27 +3,27 @@ session_start();
 require '../../hub_conn.php';
 
 if (!isset($_SESSION['username'])) {
-    header('Location: ../../hub_login.php');
+    header('Location: ../../modals/hub_login.php');
     exit();
 }
 
-//  Define root path for file handling
+// Define root path for file handling
 define('ROOT_PATH', __DIR__ . '/../../'); 
 $upload_dir = 'uploads/images/';
 $error = '';
 $game_to_edit = null;
 
-// Handle form submission
+// --- NEW: Handle All POST Actions ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
-    // Add game
+    // --- HANDLE ADD GAME ---
     if ($_POST['action'] === 'add_game') {
         $game_category = $_POST['game_category'];
         $game_name = $_POST['game_name'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; //  <-- Added
-        $game_img_filename = ''; //  Default --> empty string
+        $game_Link = $_POST['game_Link']; // <-- ADDED
+        $game_img_filename = ''; // Default to empty string
 
         if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
             $file_tmp_path = $_FILES['game_img']['tmp_name'];
@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         if (!$error) {
+            // MODIFIED function call
             $result = addNewGame($game_category, $game_name, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
             if ($result) {
                 header('Location: hub_admin_games.php?status=added');
@@ -50,21 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // Edit game
+    // --- HANDLE EDIT GAME ---
     if ($_POST['action'] === 'edit_game') {
         $id = (int)$_POST['game_id'];
         $game_name = $_POST['game_name'];
         $game_category = $_POST['game_category'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; //  <-- Added
+        $game_Link = $_POST['game_Link']; // <-- ADDED
 
         // Get current game data to find old image path
         $game = selectGameByID($id);
         if ($game) {
-            $game_img_filename = $game['game_img']; // Assume we're keeping the old image, unless a new one is uploaded
+            $game_img_filename = $game['game_img']; // Start with the existing image
 
-            // Check if the new file was uploaded
+            // Check if a new file was uploaded
             if (isset($_FILES['game_img']) && $_FILES['game_img']['error'] === UPLOAD_ERR_OK) {
                 $file_tmp_path = $_FILES['game_img']['tmp_name'];
                 $file_name = $_FILES['game_img']['name'];
@@ -83,9 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
             }
 
-            // If no errors occurred, proceed with the database update
+            // Update database if no upload error
             if (!$error) {
-
+                // MODIFIED function call
                 $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_img_filename, $game_trailerLink, $game_Link);
                 if ($result) {
                     header('Location: hub_admin_games.php?status=updated'); 
@@ -100,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Check URL fo actions 
+// --- NEW: Check for GET actions (to open modals) ---
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $game_to_edit = selectGameByID((int)$_GET['id']);
@@ -117,7 +118,7 @@ $games = selectAllGames();
     <title>Game Listing - Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Main Page Styles */
+        /* ... (All CSS rules from file) ... */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -240,7 +241,7 @@ $games = selectAllGames();
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode'; //  <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -316,17 +317,17 @@ $games = selectAllGames();
     </div>
 
     <?php
-    // modal files
-    include 'hub_admin_game_add.php';
+    // --- NEW: Include modal files ---
+    include '../../modals/admin/games/hub_admin_game_add.php';
     if ($game_to_edit) {
-        include 'hub_admin_game_edit.php';
+        include '../../modals/admin/games/hub_admin_game_edit.php';
     }
     ?>
 
     <script>
-        // Updated Dark Mode
+        // --- Updated Dark Mode Logic ---
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode'; //  <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -350,7 +351,7 @@ $games = selectAllGames();
             applyDarkMode(isDark);
         })();
 
-        // Modal Js
+        // --- Modal JavaScript ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -366,7 +367,7 @@ $games = selectAllGames();
             openModal('editGameModal');
         <?php endif; ?>
 
-        // Search bar
+        // --- Search Bar Logic ---
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('gameSearchInput');
             const tableBody = document.getElementById('gameTableBody');
@@ -378,7 +379,7 @@ $games = selectAllGames();
 
                     for (let i = 0; i < tableRows.length; i++) {
                         const row = tableRows[i];
-                        //  Search in name and description
+                        // Search in Name (index 2) and Description (index 3)
                         const gameName = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
                         const gameDesc = row.cells[3] ? row.cells[3].textContent.toLowerCase() : '';
                         

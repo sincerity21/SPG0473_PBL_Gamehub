@@ -1,46 +1,50 @@
 <?php
 session_start();
 require '../../hub_conn.php';
+
+// --- 1. Authentication Check (Must be logged in) ---
 if (!isset($_SESSION['username'])) {
-    header('Location: ../../hub_login.php');
+    header('Location: ../../modals/hub_login.php');
     exit();
 }
+
+// --- 2. Authorization Check (Must be an Admin) ---
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header('Location: ../../main/hub_home_logged_in.php'); 
     exit();
 }
 
-// User is confirmed as admin
+// Only admins can reach this point
 $username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $error = '';
 $user_to_edit = null;
 
-// Edit User
+// --- 3. NEW: Handle POST logic for editing a user ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit_user') {
     $id = (int)$_POST['user_id'];
     $username_form = $_POST['username'];
     $email_form = $_POST['email'];
     $new_password = $_POST['password'] ?? '';
     
-    // Get the user's current info
+    // Fetch the user's current data to get the old password hash
     $current_user_data = selectUserByID($id);
     
     if ($current_user_data) {
-        // Check if password was changed
+        // 1. Determine which password hash to use
         if (!empty($new_password)) {
-            // If new password, hash it
+            // HASH the new password if provided
             $final_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
         } else {
-            //  Keep the existing hash if the field was left blank
+            // Keep the existing hash if the field was left blank
             $final_password_hash = $current_user_data['user_password'];
         }
 
-        // Save the changes to the database
+        // 2. Update the data using the determined hash
         $result = updateByID($id, $username_form, $email_form, $final_password_hash);  
 
         if ($result) {
-            // Succes, go back to the user list
+            // (3) Go back to hub_admin_user.php on success
             header('Location: hub_admin_user.php?status=updated');     
             exit();
         } else {
@@ -51,12 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Check if URL is for editing a user
+// --- 4. NEW: Check for GET request to edit a user ---
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id']) && is_numeric($_GET['id'])) {
     $user_to_edit = selectUserByID((int)$_GET['id']);
 }
 
-// Get all users to show in the table
+// Get all users for the table
 $users = selectAllUsers(); 
 ?>
 <!DOCTYPE html>
@@ -116,7 +120,7 @@ $users = selectAllUsers();
         }
         .dark-mode-switch:hover { color: #1abc9c; }
 
-        /* Modal Styles */
+        /* --- Modal Styles --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); z-index: 2000; display: none;
@@ -165,7 +169,7 @@ $users = selectAllUsers();
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode';
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -220,19 +224,19 @@ $users = selectAllUsers();
     </div>
 
     <?php
-    // Include the modal file
-    //  We only include it if we are in an edit state
+    // --- NEW: Include the modal file ---
+    // We only include it if we are in an edit state
     if ($user_to_edit) {
-        include 'hub_admin_user_edit.php';
+        include '../../modals/admin/user/hub_admin_user_edit.php';
     }
     ?>
 
     <script>
         
         
-        // Updated Dark Mode
+        // --- Updated Dark Mode Logic ---
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode';
+        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -256,7 +260,7 @@ $users = selectAllUsers();
             applyDarkMode(isDark);
         })();
 
-        // Modal JS
+        // --- NEW: Modal JavaScript ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -265,11 +269,11 @@ $users = selectAllUsers();
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            // clean the URL
+            // Also, update URL to remove the 'id' parameter to prevent re-opening on refresh
             window.history.pushState({}, '', 'hub_admin_user.php');
         }
         
-        //  Auto-open modal if PHP has set the user_to_edit
+        // Auto-open modal if PHP has set the user_to_edit
         <?php if ($user_to_edit): ?>
             openModal('editUserModal');
         <?php endif; ?>

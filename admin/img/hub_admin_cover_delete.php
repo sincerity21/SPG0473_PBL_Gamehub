@@ -2,46 +2,45 @@
 session_start();
 require '../../hub_conn.php';
 
-// Check for admin login
+// Ensure the user is logged in
 if (!isset($_SESSION['username'])) {
-    header('Location: ../hub_login.php');
+    header('Location: ../modals/hub_login.php');
     exit();
 }
 
-// Make sure the image ID is given
+// Ensure the image ID is provided
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header('Location: hub_admin_img.php');
     exit();
 }
 
 $image_id = (int)$_GET['id'];
-$game_id = (int)$_GET['game_id']; //  Get game_id from URL to redirect back
+$game_id = (int)$_GET['game_id']; // Get game_id from URL to redirect back
 
-// Delete the image from the db and get its path for file deletion
+// Execute the database deletion and retrieve the image data
 $deleted_data = deleteGameCover($image_id);
 
 if ($deleted_data) {
     $file_path = $deleted_data['cover_path'];
 
-    // Delete the actual image file from the server
+    // --- CRITICAL STEP: Physical File Deletion ---
     $server_file_path = __DIR__ . '/../../' . $file_path; 
 
     if (file_exists($server_file_path)) {
         if (unlink($server_file_path)) {
-        } 
-        else {
+            // File deleted successfully
+        } else {
             error_log("Failed to delete physical cover file: " . $server_file_path);
         }
     } else {
         error_log("Physical cover file not found (but DB record deleted): " . $server_file_path);
     }
     
-} else 
-{
+} else {
     error_log("Failed to delete cover image ID: " . $image_id);
 }
 
-// Go back to the game's image list
+// Redirect back to the image management page for that game
 if ($game_id) {
     header('Location: hub_admin_img.php?game_id=' . $game_id);
 } else {

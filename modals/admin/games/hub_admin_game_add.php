@@ -10,15 +10,16 @@
             <div class="form-group">
                 <label for="game_category">Category:</label>
                 <select name="game_category" id="game_category" required>
+                    <option value="action">Action</option>
+                    <option value="fight">Fighting</option>
                     <option value="fps">First-Person Shooter</option>
-                    <option value="rpg">Role-Playing Games</option>
                     <option value="moba">Multiplayer Online Battle Area (MOBA)</option>
                     <option value="puzzle">Puzzle</option>
-                    <option value="sport">Sports</option>
                     <option value="racing">Racing</option>
+                    <option value="rpg">Role-Playing Games</option>
                     <option value="sim">Simulator</option>
+                    <option value="sport">Sports</option>
                     <option value="survival">Survival</option>
-                    <option value="fight">Fighting</option>
                 </select>
             </div>
 

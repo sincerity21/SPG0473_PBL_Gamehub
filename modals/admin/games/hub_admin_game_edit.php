@@ -11,14 +11,16 @@
             <div class="form-group">
                 <label for="game_category">Category:</label>
                 <select name="game_category" id="game_category" required>
+                    <option value="action" <?php echo ($game_to_edit['game_category'] == 'action') ? 'selected' : ''; ?>>Action</option>
+                    <option value="fight" <?php echo ($game_to_edit['game_category'] == 'fight') ? 'selected' : ''; ?>>Fighting</option>
                     <option value="fps" <?php echo ($game_to_edit['game_category'] == 'fps') ? 'selected' : ''; ?>>First-Person Shooter</option>
-                    <option value="rpg" <?php echo ($game_to_edit['game_category'] == 'rpg') ? 'selected' : ''; ?>>Role-Playing Games</option>
                     <option value="moba" <?php echo ($game_to_edit['game_category'] == 'moba') ? 'selected' : ''; ?>>Multiplayer Online Battle Arena (MOBA)</option>
                     <option value="puzzle" <?php echo ($game_to_edit['game_category'] == 'puzzle') ? 'selected' : ''; ?>>Puzzle</option>
-                    <option value="sport" <?php echo ($game_to_edit['game_category'] == 'sport') ? 'selected' : ''; ?>>Sports</option>
+                    <option value="racing" <?php echo ($game_to_edit['game_category'] == 'racing') ? 'selected' : ''; ?>>Racing</option>
+                    <option value="rpg" <?php echo ($game_to_edit['game_category'] == 'rpg') ? 'selected' : ''; ?>>Role-Playing Games</option>
                     <option value="sim" <?php echo ($game_to_edit['game_category'] == 'sim') ? 'selected' : ''; ?>>Simulator</option>
+                    <option value="sport" <?php echo ($game_to_edit['game_category'] == 'sport') ? 'selected' : ''; ?>>Sports</option>
                     <option value="survival" <?php echo ($game_to_edit['game_category'] == 'survival') ? 'selected' : ''; ?>>Survival</option>
-                    <option value="fight" <?php echo ($game_to_edit['game_category'] == 'fight') ? 'selected' : ''; ?>>Fighting</option>
                 </select>
             </div>
             

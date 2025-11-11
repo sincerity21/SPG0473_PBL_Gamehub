@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 09, 2025 at 11:44 AM
+-- Generation Time: Nov 11, 2025 at 07:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,9 @@ INSERT INTO `favourites` (`favourite_id`, `favourite_game`, `game_id`, `user_id`
 (1, 1, 7, 3),
 (4, 1, 38, 3),
 (5, 1, 14, 3),
-(6, 1, 29, 3);
+(6, 1, 29, 3),
+(7, 1, 39, 1),
+(8, 1, 39, 3);
 
 -- --------------------------------------------------------
 
@@ -65,7 +67,10 @@ CREATE TABLE `feedback_game` (
 INSERT INTO `feedback_game` (`feedback_game_id`, `feedback_game_frequency`, `feedback_game_open`, `game_id`, `user_id`) VALUES
 (4, 'frequency_0', 'Incredibly fun. A breath of fresh air (ironically) compared to 2042. The game, in a way, feels similar to older Battlefield titles like BF4 and BF3, in a good way. It has some QoL here and there, and unfortunately some bugs, but I believe they\'ll be fixed soon. \r\n\r\nThe best part about this game, is that I can feel the passion the devs put into this title. After 2042\'s...disastrous launch, this game had an incredibly smooth launch, and is possibly the most optimized triple-A title of 2025, which is impressive, even more so for EA.\r\n\r\n\r\nNonetheless, if you like Battlefield, you need to try this.', 7, 3),
 (6, 'frequency_0', 'Quite a bad launch for the game, and yet, as years gone by, the game kept receiving updates, that optimized it a bit more, fixed more bugs, and people realized under all the mess, is such a beautiful, highly-detailed world, with a great RPG story and captivating characters. \r\n\r\nI honestly prefer this over GTAV. It just feels...more immersive. Play this game, you need to.', 14, 3),
-(7, 'frequency_0', 'I\'ve never thought driving trucks can be fun, yet here we are. A surprisingly fun game about driving, well, trucks, in a miniaturized, scaled-down Europe, that still feels massive on its own, excluding various map mods one can download for the game. \r\n\r\nLive out your trucker dreams.', 29, 3);
+(7, 'frequency_0', 'I\'ve never thought driving trucks can be fun, yet here we are. A surprisingly fun game about driving, well, trucks, in a miniaturized, scaled-down Europe, that still feels massive on its own, excluding various map mods one can download for the game. \r\n\r\nLive out your trucker dreams.', 29, 3),
+(10, 'frequency_0', 'An incredibly immersive game. A rich world with well-written characters, and an open-world that generally lets the player do whatever they want, without locking them to a mission or a certain path. \r\nThe perfect \"isekai\" game.', 12, 3),
+(13, 'frequency_0', 'Fun car game.', 39, 1),
+(19, 'frequency_1', 'Good good good', 38, 3);
 
 -- --------------------------------------------------------
 
@@ -85,7 +90,8 @@ CREATE TABLE `feedback_site` (
 --
 
 INSERT INTO `feedback_site` (`feedback_site_id`, `feedback_site_satisfaction`, `feedback_site_open`, `user_id`) VALUES
-(1, 'satisfaction_3', 'Maybe decorate it a bit more? Functionality-wise, it\'s impressive, but the background is quite bland. ', 3);
+(1, 'satisfaction_3', 'Maybe decorate it a bit more? Functionality-wise, it\'s impressive, but the background is quite bland.  Test\r\n12345', 3),
+(8, 'satisfaction_3', 'Good.', 1);
 
 -- --------------------------------------------------------
 
@@ -365,7 +371,10 @@ INSERT INTO `rating` (`rating_id`, `rating_game`, `game_id`, `user_id`) VALUES
 (1, 4, 7, 3),
 (5, 5, 38, 3),
 (8, 5, 14, 3),
-(10, 4, 29, 3);
+(10, 4, 29, 3),
+(11, 5, 12, 3),
+(13, 5, 39, 1),
+(14, 3, 39, 3);
 
 -- --------------------------------------------------------
 
@@ -389,10 +398,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_email`, `user_password`, `sec_prompt`, `sec_answer`, `is_admin`) VALUES
 (1, 'admin', 'sincerity2103@gmail.com', '$2y$10$PagVgbv92r5BqIe/3hm6GuAlP0/9.iKhCKx3nnjh6BzibtN0kM2Fy', 'prompt_1', '$2y$10$rgN6yG/mXBVk/zFdo6BCW.NvHBrcwlaueYZ5SMVKfgfhn3OtvaV/K', 1),
-(3, 'max_beingstepen', 'anwar@gmail.com', '$2y$10$eXolrW74Tgl1JXBhbgjuje/RTaoF.DCYoA4WhJVqQJPSQMArT2hPC', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
+(3, 'max_beingstepen', 'anwar@gmail.com', '$2y$10$5mklEPxoMus/.Se25s5aS.gZW23aFHdwiI6T/Jm9mFd0nKVzpWRwu', 'prompt_2', '$2y$10$HLXht7TkyDVQiVbcvUBwFOhs3os9cpgJbbto9cuD6ckpxV.lNabHq', 0),
 (6, 'irelandboi69', 'irelandboi@gmail.com', '$2y$10$n8Og4Z.8JJLohNqlpFdsS.vPUY0SmELlS7QQompVxRebv0uF4PK1a', 'prompt_4', '$2y$10$gWjf8y5rOBu.NCnWvF0mJOT1.nl3kXQw/vS8TQZvBg2lqpbxzQ3QS', 0),
-(23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1),
-(25, 'testing12345', 'testing12345@gmail.com', '$2y$10$qexK0JMfN6UDR.VmhoCHquw/s360X1YNi0Am6JmYhkdimRpE6s7I2', 'prompt_5', '$2y$10$pWEVjFgaT6EBdWEYYX0oGuzy2OgbuUens5z6l7JyE7C.hztBEaDJe', 0);
+(23, 'admin21', 'admin21@gmail.com', '$2y$10$ydz26uAkJ1JWqdTLARcpie0tDL8WRiGWN/VZqptMH0tFuDaCHkt2O', 'prompt_1', '$2y$10$RV8.L6xomgj.RV/rMGrQEOR6OV3NtvodISpb7ZgGasd2eRXjmdK9S', 1);
 
 --
 -- Indexes for dumped tables
@@ -466,19 +474,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `favourites`
 --
 ALTER TABLE `favourites`
-  MODIFY `favourite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `favourite_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `feedback_game`
 --
 ALTER TABLE `feedback_game`
-  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `feedback_game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `feedback_site`
 --
 ALTER TABLE `feedback_site`
-  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `feedback_site_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `games`
@@ -502,7 +510,7 @@ ALTER TABLE `game_images`
 -- AUTO_INCREMENT for table `rating`
 --
 ALTER TABLE `rating`
-  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `rating_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`

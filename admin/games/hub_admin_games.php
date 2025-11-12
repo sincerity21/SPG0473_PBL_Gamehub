@@ -13,16 +13,16 @@ $upload_dir = 'uploads/images/';
 $error = '';
 $game_to_edit = null;
 
-// --- NEW: Handle All POST Actions ---
+// Handle All POST Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
-    // --- HANDLE ADD GAME ---
+    // HANDLE ADD GAME
     if ($_POST['action'] === 'add_game') {
         $game_category = $_POST['game_category'];
         $game_name = $_POST['game_name'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; // <-- ADDED
+        $game_Link = $_POST['game_Link'];
 
         if (!$error) {
             // MODIFIED function call
@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // --- HANDLE EDIT GAME ---
+    // HANDLE EDIT GAME
     if ($_POST['action'] === 'edit_game') {
         $id = (int)$_POST['game_id'];
         $game_name = $_POST['game_name'];
         $game_category = $_POST['game_category'];
         $game_desc = $_POST['game_desc'];
         $game_trailerLink = $_POST['game_trailerLink'];
-        $game_Link = $_POST['game_Link']; // <-- ADDED
+        $game_Link = $_POST['game_Link']; 
 
         // Get current game data to find old image path
         $game = selectGameByID($id);
@@ -51,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update database if no upload error
             if (!$error) {
-                // MODIFIED function call
                 $result = updateGameByID($id, $game_name, $game_category, $game_desc, $game_trailerLink, $game_Link);
                 if ($result) {
                     header('Location: hub_admin_games.php?status=updated'); 
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// --- NEW: Check for GET actions (to open modals) ---
+// Check for GET actions (to open modals)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $game_to_edit = selectGameByID((int)$_GET['id']);
@@ -83,7 +82,6 @@ $games = selectAllGames();
     <title>Game Listing - Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ... (All CSS rules from file) ... */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -206,7 +204,7 @@ $games = selectAllGames();
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -270,7 +268,7 @@ $games = selectAllGames();
     </div>
 
     <?php
-    // --- NEW: Include modal files ---
+    // Include modal files 
     include '../../modals/admin/games/hub_admin_game_add.php';
     if ($game_to_edit) {
         include '../../modals/admin/games/hub_admin_game_edit.php';
@@ -278,9 +276,9 @@ $games = selectAllGames();
     ?>
 
     <script>
-        // --- Updated Dark Mode Logic ---
+        // Dark Mode Logic
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -304,7 +302,7 @@ $games = selectAllGames();
             applyDarkMode(isDark);
         })();
 
-        // --- Modal JavaScript ---
+        // Modal JavaScript
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -320,7 +318,7 @@ $games = selectAllGames();
             openModal('editGameModal');
         <?php endif; ?>
 
-        // --- Search Bar Logic ---
+        // Search Bar Logic
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('gameSearchInput');
             const tableBody = document.getElementById('gameTableBody');

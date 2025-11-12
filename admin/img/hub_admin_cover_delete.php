@@ -23,7 +23,7 @@ $deleted_data = deleteGameCover($image_id);
 if ($deleted_data) {
     $file_path = $deleted_data['cover_path'];
 
-    // --- CRITICAL STEP: Physical File Deletion ---
+    // Physical File Deletion
     $server_file_path = __DIR__ . '/../../' . $file_path; 
 
     if (file_exists($server_file_path)) {

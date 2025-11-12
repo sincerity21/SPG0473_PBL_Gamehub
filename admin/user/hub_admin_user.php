@@ -2,13 +2,13 @@
 session_start();
 require '../../hub_conn.php';
 
-// --- 1. Authentication Check (Must be logged in) ---
+// Authentication Check (Must be logged in)
 if (!isset($_SESSION['username'])) {
     header('Location: ../../modals/hub_login.php');
     exit();
 }
 
-// --- 2. Authorization Check (Must be an Admin) ---
+// Authorization Check (Must be an Admin)
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     header('Location: ../../main/hub_home_logged_in.php'); 
     exit();
@@ -20,7 +20,7 @@ $email = $_SESSION['email'];
 $error = '';
 $user_to_edit = null;
 
-// --- 3. NEW: Handle POST logic for editing a user ---
+// Handle POST logic for editing a user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit_user') {
     $id = (int)$_POST['user_id'];
     $username_form = $_POST['username'];
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $current_user_data = selectUserByID($id);
     
     if ($current_user_data) {
-        // 1. Determine which password hash to use
+        // Determine which password hash to use
         if (!empty($new_password)) {
             // HASH the new password if provided
             $final_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $final_password_hash = $current_user_data['user_password'];
         }
 
-        // 2. Update the data using the determined hash
+        // Update the data using the determined hash
         $result = updateByID($id, $username_form, $email_form, $final_password_hash);  
 
         if ($result) {
-            // (3) Go back to hub_admin_user.php on success
+            // Go back to hub_admin_user.php on success
             header('Location: hub_admin_user.php?status=updated');     
             exit();
         } else {
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// --- 4. NEW: Check for GET request to edit a user ---
+// Check for GET request to edit a user
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id']) && is_numeric($_GET['id'])) {
     $user_to_edit = selectUserByID((int)$_GET['id']);
 }
@@ -169,7 +169,7 @@ $users = selectAllUsers();
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -224,8 +224,7 @@ $users = selectAllUsers();
     </div>
 
     <?php
-    // --- NEW: Include the modal file ---
-    // We only include it if we are in an edit state
+    // Include the modal file
     if ($user_to_edit) {
         include '../../modals/admin/user/hub_admin_user_edit.php';
     }
@@ -234,9 +233,9 @@ $users = selectAllUsers();
     <script>
         
         
-        // --- Updated Dark Mode Logic ---
+        // Dark Mode Logic
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -260,7 +259,7 @@ $users = selectAllUsers();
             applyDarkMode(isDark);
         })();
 
-        // --- NEW: Modal JavaScript ---
+        // Modal JavaScript
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';
@@ -269,7 +268,7 @@ $users = selectAllUsers();
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            // Also, update URL to remove the 'id' parameter to prevent re-opening on refresh
+            // Update URL to remove the 'id' parameter to prevent re-opening on refresh
             window.history.pushState({}, '', 'hub_admin_user.php');
         }
         

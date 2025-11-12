@@ -10,14 +10,14 @@ if (!isset($_SESSION['username'])) {
 
 $error = ''; // For displaying errors
 
-// 1. Check if a specific game ID is requested
+// Check if a specific game ID is requested
 $game_id = isset($_GET['game_id']) ? (int)$_GET['game_id'] : null;
 
-// --- NEW: Handle All POST Actions ---
+// Handle All POST Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $game_id_form = (int)$_POST['game_id']; // Get game_id from the form
 
-    // --- HANDLE ADD GALLERY IMAGES ---
+    // HANDLE ADD GALLERY IMAGES
     if ($_POST['action'] === 'add_gallery' && isset($_FILES['gallery_images'])) {
         $upload_dir = 'uploads/gallery/'; 
         $server_upload_path = __DIR__ . '/../../' . $upload_dir; 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit();
     }
 
-    // --- HANDLE ADD/UPDATE COVER IMAGE ---
+    // HANDLE ADD/UPDATE COVER IMAGE
     if ($_POST['action'] === 'add_cover' && isset($_FILES['cover_image'])) {
         $old_cover_path = null;
         $covers = selectGameCovers($game_id_form);
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 
-// --- Fetch data for GET request ---
+// Fetch data for GET request
 $games = selectAllGames(); 
 $gallery_images = [];
 $cover_images = [];
@@ -139,8 +139,6 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     <title><?php echo $page_title; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* All CSS from hub_admin_user.php (including modal styles) goes here */
-        /* ... (omitted for brevity, but copy/paste all styles from hub_admin_user.php) ... */
         :root {
             --bg-color: #f4f7f6; --main-text-color: #333; --card-bg-color: white;
             --shadow-color: rgba(0, 0, 0, 0.1); --border-color: #ddd; --header-text-color: #2c3e50;
@@ -227,7 +225,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
 
     <script>
     (function() {
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         if (localStorage.getItem(localStorageKey) === 'dark') {
             document.documentElement.classList.add('dark-mode');
         }
@@ -350,8 +348,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     </div>
 
     <?php
-    // --- NEW: Include modal files ---
-    // Only include if we are in a state that needs them
+    // Include modal files
     if ($game_id) {
         include '../../modals/admin/img/hub_admin_img_add.php';
         include '../../modals/admin/img/hub_admin_cover_add.php';
@@ -361,9 +358,9 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
     <script>
         
 
-        // --- Updated Dark Mode Logic ---
+        // Dark Mode Logic
         const darkModeIcon = document.getElementById('darkModeIcon');
-        const localStorageKey = 'adminGamehubDarkMode'; // <-- Note the different key
+        const localStorageKey = 'adminGamehubDarkMode';
         const htmlElement = document.documentElement;
 
         function applyDarkMode(isDark) {
@@ -387,7 +384,7 @@ $page_title = $current_game ? "Image Management for: " . htmlspecialchars($curre
             applyDarkMode(isDark);
         })();
 
-        // --- NEW: Modal JavaScript ---
+        // Modal JavaScript
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'flex';

@@ -16,7 +16,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $image_id = (int)$_GET['id'];
-$game_id = null; // We will try to get this from the deleteGalleryImageByID function
+$game_id = null;
 
 // Execute the database deletion and retrieve the image data (path and game_id)
 $deleted_data = deleteGalleryImageByID($image_id);
@@ -25,13 +25,10 @@ if ($deleted_data) {
     $file_path = $deleted_data['img_path'];
     $game_id = $deleted_data['game_id'];
 
-    // --- CRITICAL STEP: Physical File Deletion ---
-    
-    // 1. Define the full server path to the file.
-    // UPDATED: Path corrected from /../ to /../../ to point to project root
+    // Physical File Deletion
     $server_file_path = __DIR__ . '/../../' . $file_path; 
 
-    // 2. Check if the file exists on the server and attempt to delete it
+    // Check if the file exists on the server and attempt to delete it
     if (file_exists($server_file_path)) {
         if (unlink($server_file_path)) {
             // File deleted successfully
@@ -43,7 +40,7 @@ if ($deleted_data) {
     }
     
 } else {
-    // Optional: Log an error if deletion failed (e.g., ID not found)
+    // Log an error if deletion failed (e.g., ID not found)
     error_log("Failed to delete gallery image ID: " . $image_id);
 }
 
